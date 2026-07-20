@@ -1,0 +1,70 @@
+<!DOCTYPE html>
+<html lang="zh-Hant">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width,initial-scale=1,viewport-fit=cover" />
+  <title>ANG HR NFC 設定</title>
+  <script src="./config.js"></script>
+  <style>
+    :root{--bg:#f6f7fb;--card:#fff;--text:#111827;--muted:#6b7280;--line:#e5e7eb;--main:#ff7a21}
+    *{box-sizing:border-box;-webkit-tap-highlight-color:transparent}
+    body{margin:0;min-height:100vh;background:#f6f7fb;font-family:-apple-system,BlinkMacSystemFont,"Segoe UI","Noto Sans TC",sans-serif;color:var(--text);padding:20px}
+    .wrap{max-width:760px;margin:0 auto}.card{background:#fff;border:1px solid var(--line);border-radius:24px;box-shadow:0 16px 40px rgba(17,24,39,.08);padding:20px;margin-bottom:14px}
+    h1{margin:0 0 8px;font-size:24px}.hint{color:var(--muted);font-size:13px;line-height:1.6}
+    .grid{display:grid;grid-template-columns:1fr 1fr;gap:12px}@media(max-width:640px){.grid{grid-template-columns:1fr}}
+    label{display:block;font-size:13px;font-weight:900;margin:12px 0 6px}input,select{width:100%;height:44px;border:1px solid #d1d5db;border-radius:14px;padding:0 12px;font-size:14px}
+    button{border:0;border-radius:16px;padding:13px 14px;font-weight:1000;margin-top:14px}.primary{background:linear-gradient(135deg,#ff8a2a,#ff6d1d);color:#fff}.ghost{background:#fff;border:1px solid var(--line);color:#374151}
+    .status{margin-top:14px;border:1px solid var(--line);border-radius:16px;background:#f9fafb;padding:12px;white-space:pre-wrap;font-size:13px;line-height:1.5}
+    table{width:100%;border-collapse:collapse;font-size:13px}th,td{border-bottom:1px solid #e5e7eb;padding:8px;text-align:left}th{background:#f9fafb}
+  </style>
+</head>
+<body>
+<main class="wrap">
+  <section class="card">
+    <h1>NFC 設定</h1>
+    <div class="hint">管理者掃描 NFC 卡片後，填寫分店與名稱並註冊。註冊後員工才能用該 NFC 打卡。</div>
+
+    <div class="grid">
+      <div><label>公司代號</label><input id="companyCode" placeholder="ang_99"></div>
+      <div><label>員編</label><input id="empId" placeholder="ANG0603"></div>
+      <div><label>Token</label><input id="token" placeholder="登入 token"></div>
+      <div><label>NFC ID</label><input id="nfcId" placeholder="掃描後自動帶入"></div>
+      <div><label>分店ID</label><input id="branchId" placeholder="hl / wf"></div>
+      <div><label>分店名稱</label><input id="branchName" placeholder="迴龍店 / 霧峰店"></div>
+      <div><label>NFC 名稱</label><input id="name" placeholder="迴龍店門口 NFC"></div>
+      <div><label>允許動作</label><input id="allowed" value="clock_in,clock_out,overtime"></div>
+      <div><label>位置驗證</label><select id="locReq"><option value="">不指定</option><option value="true">需要</option><option value="false">不需要</option></select></div>
+      <div><label>半徑公尺</label><input id="radius" value="200"></div>
+      <div><label>緯度</label><input id="lat" placeholder="可留空"></div>
+      <div><label>經度</label><input id="lng" placeholder="可留空"></div>
+    </div>
+
+    <button class="primary" onclick="registerTag()">註冊 / 更新 NFC</button>
+    <button class="ghost" onclick="loadList()">重新讀取清單</button>
+    <div id="status" class="status">準備中...</div>
+  </section>
+
+  <section class="card">
+    <h1>已註冊 NFC</h1>
+    <div id="list"></div>
+  </section>
+</main>
+<script>
+const CFG=window.ANG_HR_CONFIG||{},qs=new URLSearchParams(location.search);
+const GAS=qs.get('gas')||CFG.apiBaseUrl||CFG.gasApiUrl||'';
+function $(id){return document.getElementById(id)}
+function device(){let v=qs.get('device_id')||localStorage.getItem('ang_device_id')||'';if(!v){v='web-'+Date.now();localStorage.setItem('ang_device_id',v)}return v}
+$('companyCode').value=qs.get('company_code')||qs.get('company_id')||localStorage.getItem('ang_company_code')||CFG.defaultCompanyCode||'ang_99';
+$('empId').value=qs.get('id')||localStorage.getItem('ang_login_id')||'';
+$('token').value=qs.get('token')||localStorage.getItem('ang_login_token')||'';
+$('nfcId').value=qs.get('nfc_id')||localStorage.getItem('ang_last_nfc_id')||'';
+window.addEventListener('ANG_HR_NFC_SCAN',e=>{const d=e.detail||{};$('nfcId').value=d.id||d.nfc_id||'';localStorage.setItem('ang_last_nfc_id',$('nfcId').value);st('已讀取 NFC：'+$('nfcId').value);});
+function st(s){$('status').textContent=s}
+async function api(action,payload){const r=await fetch(GAS,{method:'POST',headers:{'Content-Type':'text/plain;charset=utf-8'},body:JSON.stringify(Object.assign({action,company_code:$('companyCode').value,device_id:device()},payload||{}))});return JSON.parse(await r.text())}
+async function registerTag(){try{st('送出中...');const data=await api('registerNfcTag',{id:$('empId').value,token:$('token').value,nfc_id:$('nfcId').value,branch_id:$('branchId').value,branch_name:$('branchName').value,name:$('name').value,allowed_actions:$('allowed').value,clock_location_required:$('locReq').value,clock_location_lat:$('lat').value,clock_location_lng:$('lng').value,clock_location_radius:$('radius').value});if(!data.ok)throw new Error(data.message||'註冊失敗');st(data.message);loadList();}catch(e){st(e.message)}}
+async function loadList(){try{const data=await api('getNfcSettings',{});if(!data.ok)throw new Error(data.message||'讀取失敗');const rows=data.items||[];$('list').innerHTML='<table><thead><tr><th>NFC</th><th>分店</th><th>名稱</th><th>啟用</th></tr></thead><tbody>'+rows.map(x=>'<tr><td>'+esc(x.nfc_id)+'</td><td>'+esc(x.branch_id+' '+x.branch_name)+'</td><td>'+esc(x.name)+'</td><td>'+esc(String(x.enabled))+'</td></tr>').join('')+'</tbody></table>';}catch(e){$('list').textContent=e.message}}
+function esc(s){return String(s||'').replace(/[&<>"]/g,m=>({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;'}[m]))}
+loadList();
+</script>
+</body>
+</html>

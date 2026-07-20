@@ -1,0 +1,2436 @@
+<!DOCTYPE html>
+<html lang="zh-Hant">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width,initial-scale=1,maximum-scale=1,user-scalable=no,viewport-fit=cover">
+  <title>ANG Engine 管理中心</title>
+  <script src="https://cdn.jsdelivr.net/npm/sweetalert2@11"></script>
+  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css">
+  <style>
+    :root{
+      --bg:#f5f7fb;--card:#fff;--text:#111827;--muted:#6b7280;--line:#e5e7eb;
+      --soft:#f3f4f6;--ok:#10b981;--warn:#f59e0b;--danger:#ef4444;
+      --emp:#ff7a21;--emp-deep:#c45a10;--emp-soft:rgba(255,122,33,.12);
+      --emp-rgb:255,122,33;--text-on-emp:#fff;
+      --emp-gradient:linear-gradient(135deg,#ff882f 0%,#ff6d1d 58%,#ffac73 100%);
+    }
+    *{box-sizing:border-box;-webkit-tap-highlight-color:transparent}
+    html,body{margin:0;padding:0;background:var(--bg);color:var(--text);font-family:-apple-system,BlinkMacSystemFont,"Segoe UI",sans-serif;overflow-x:hidden}
+    body{padding-bottom:100px}
+
+    /* === 頂部 === */
+    .topbar{position:sticky;top:0;z-index:1000;background:rgba(255,255,255,.96);backdrop-filter:blur(12px);padding:8px 12px;min-height:58px;display:flex;align-items:center;justify-content:space-between;gap:10px;box-shadow:0 2px 10px rgba(0,0,0,.04);overflow:hidden}
+    .topbar-left{display:flex;align-items:center;gap:10px;min-width:0;flex:0 1 auto}
+    .topbar-right{text-align:right;flex:1 1 auto;min-width:0;max-width:54%}
+    .brand-logo{width:48px;height:48px;flex:0 0 48px;border-radius:16px;display:flex;align-items:center;justify-content:center;background:var(--emp-gradient);color:#fff;font-size:16px;font-weight:900;box-shadow:0 6px 14px rgba(var(--emp-rgb),.18);overflow:hidden}
+    .brand-logo img{width:100%;height:100%;object-fit:contain;border-radius:16px;display:block}
+    .brand-title-main{font-size:14px;font-weight:900;color:var(--emp-deep);white-space:nowrap;overflow:hidden;text-overflow:ellipsis;max-width:42vw}
+    .brand-title-sub{font-size:10px;font-weight:800;color:#9ca3af;white-space:nowrap;overflow:hidden;text-overflow:ellipsis;max-width:42vw}
+    .title{font-size:16px;font-weight:900;color:var(--emp-deep);white-space:nowrap;overflow:hidden;text-overflow:ellipsis}
+    .sub-title{font-size:11px;font-weight:800;color:#9ca3af;white-space:nowrap;overflow:hidden;text-overflow:ellipsis}
+    @media(max-width:430px){.topbar{padding:7px 10px;gap:8px}.topbar-right{max-width:52%}.brand-logo{width:42px;height:42px;flex-basis:42px;border-radius:14px}.brand-logo img{border-radius:14px}.brand-title-main{font-size:13px;max-width:34vw}.brand-title-sub{font-size:9px;max-width:34vw}.title{font-size:14px}.sub-title{font-size:10px}}
+
+    /* === 通用 === */
+    .safe{padding:8px 16px 0}
+    .page{display:none}.page.active{display:block;animation:fadeIn .2s ease}
+    @keyframes fadeIn{from{opacity:0;transform:translateY(4px)}to{opacity:1;transform:none}}
+    .card{background:var(--card);border-radius:22px;padding:14px;margin-bottom:10px;box-shadow:0 8px 24px rgba(0,0,0,.05);border:1px solid rgba(0,0,0,.03)}
+    .label{display:block;font-size:13px;color:var(--muted);font-weight:900;margin:0 0 7px}
+    input,select,textarea{width:100%;border:none;outline:none;border-radius:16px;background:var(--soft);padding:13px 12px;font:inherit;color:var(--text);margin-bottom:10px}
+    textarea{resize:vertical;min-height:80px}
+    .hidden{display:none!important}
+
+    /* === 按鈕 === */
+    .btn-main,.btn-ghost,.btn-soft,.btn-danger,.btn-success{border:none;outline:none;cursor:pointer;font:inherit;width:100%;border-radius:18px;padding:14px;font-weight:900;font-size:15px;transition:transform .15s,box-shadow .18s,background .18s}
+    .btn-main:active,.btn-ghost:active,.btn-soft:active,.btn-danger:active,.btn-success:active{transform:scale(.98)}
+    .btn-main{background:var(--emp-gradient);color:var(--text-on-emp);box-shadow:0 12px 24px rgba(var(--emp-rgb),.22)}
+    .btn-ghost{background:linear-gradient(135deg,rgba(var(--emp-rgb),.18),rgba(var(--emp-rgb),.30));color:var(--emp-deep);font-size:14px;border:1px solid rgba(var(--emp-rgb),.22)}
+    .btn-soft{background:linear-gradient(135deg,rgba(var(--emp-rgb),.20),rgba(var(--emp-rgb),.34));color:var(--emp-deep);font-size:14px;border:1px solid rgba(var(--emp-rgb),.18)}
+    .btn-danger{background:#fef2f2;color:#b91c1c;font-size:14px;border:1px solid #fecaca}
+    .btn-success{background:#ecfdf5;color:#047857;font-size:14px;border:1px solid #a7f3d0}
+    .btn-sm{display:inline-flex;align-items:center;gap:4px;border:none;outline:none;cursor:pointer;border-radius:12px;padding:8px 12px;font-size:12px;font-weight:900;background:var(--soft);color:var(--text);transition:background .15s,transform .1s}
+    .btn-sm:active{transform:scale(.95)}
+    .btn-sm.active{background:var(--emp-gradient);color:#fff}
+
+    /* === 佈局 === */
+    .mini-row{display:flex;align-items:center;justify-content:space-between;gap:8px;margin-bottom:10px}
+    .mini-row h3{margin:0;font-size:16px;font-weight:900}
+    .badge{display:inline-flex;align-items:center;border-radius:999px;padding:6px 10px;font-size:11px;font-weight:900;background:linear-gradient(180deg,#fff,rgba(var(--emp-rgb),.14));color:var(--emp-deep);border:1px solid rgba(var(--emp-rgb),.14)}
+    .badge.ok{background:#ecfdf5;color:#047857}.badge.warn{background:#fff7ed;color:#c2410c}.badge.danger{background:#fef2f2;color:#b91c1c}
+    .stat-grid{display:grid;grid-template-columns:repeat(3,1fr);gap:8px;margin-bottom:10px}
+    .stat-mini{background:linear-gradient(180deg,#fff,rgba(var(--emp-rgb),.06));border:1px solid rgba(var(--emp-rgb),.10);border-radius:18px;padding:12px;text-align:center}
+    .stat-mini small{display:block;font-size:10px;font-weight:900;color:var(--muted);margin-bottom:5px}
+    .stat-mini .v{font-size:16px;font-weight:900}
+    .tool-grid{display:grid;grid-template-columns:repeat(2,1fr);gap:8px;margin-bottom:10px}
+    .tool-grid-3{display:grid;grid-template-columns:repeat(3,1fr);gap:8px;margin-bottom:10px}
+    .field-row{display:grid;grid-template-columns:1fr 1fr;gap:8px}
+    .check-row{display:flex;align-items:center;gap:10px;padding:10px 12px;background:var(--soft);border-radius:14px;margin-bottom:8px}
+    .check-row input[type="checkbox"]{width:20px;height:20px;margin:0}
+    .check-row label{font-size:14px;font-weight:900}
+
+    /* === Hero === */
+    .hero{background:var(--emp-gradient);color:#fff;border-radius:24px;padding:16px;margin-bottom:10px;box-shadow:0 12px 28px rgba(var(--emp-rgb),.22)}
+    .hero-top{display:flex;justify-content:space-between;align-items:flex-start;gap:10px;margin-bottom:8px}
+    .hello{font-size:22px;font-weight:900;line-height:1.1}
+    .hello-sub{margin-top:5px;font-size:12px;font-weight:800;opacity:.92}
+    .hero-chip{background:rgba(255,255,255,.17);border:1px solid rgba(255,255,255,.15);border-radius:999px;padding:8px 12px;font-size:11px;font-weight:900}
+
+    /* === 卡片項目 === */
+    .notice-item,.review-card{background:linear-gradient(180deg,#fff,rgba(var(--emp-rgb),.06));border:1px solid rgba(var(--emp-rgb),.10);border-radius:18px;padding:12px;box-shadow:0 8px 18px rgba(var(--emp-rgb),.04);margin-bottom:8px}
+    .item-title{font-size:14px;font-weight:900;line-height:1.35;margin-bottom:4px}
+    .item-meta{font-size:12px;color:var(--muted);line-height:1.5;word-break:break-word}
+    .review-actions{display:flex;gap:8px;margin-top:10px}
+    .review-actions button{flex:1}
+
+
+
+    /* === 權限圖標 === */
+    .perm-note{font-size:12px;font-weight:800;color:var(--muted);margin:-2px 0 10px}
+    .role-level-grid{display:grid;grid-template-columns:1fr;gap:10px}
+    .role-level-card{background:linear-gradient(180deg,#fff,rgba(var(--emp-rgb),.06));border:1px solid rgba(var(--emp-rgb),.10);border-radius:20px;padding:12px;box-shadow:0 8px 18px rgba(var(--emp-rgb),.04)}
+    .role-level-head{display:flex;align-items:center;justify-content:space-between;gap:8px;margin-bottom:8px}
+    .role-level-left{display:flex;align-items:center;gap:10px;min-width:0}
+    .role-icon{width:42px;height:42px;border-radius:14px;display:flex;align-items:center;justify-content:center;background:var(--emp-gradient);color:#fff;box-shadow:0 8px 18px rgba(var(--emp-rgb),.18);font-size:18px;flex:0 0 auto}
+    .role-icon i{font-size:19px;line-height:1;display:block}
+    .role-symbol{display:inline-flex;align-items:center;justify-content:center;width:1em;height:1em;font-size:20px;line-height:1;color:#fff;font-weight:1000;text-shadow:0 1px 2px rgba(0,0,0,.16)}
+    .role-name{font-size:15px;font-weight:900;line-height:1.2}
+    .role-desc{font-size:11px;color:var(--muted);font-weight:800;line-height:1.35;margin-top:2px}
+    .role-tag{display:inline-flex;align-items:center;border-radius:999px;padding:6px 10px;font-size:10px;font-weight:900;background:#fff7ed;color:var(--emp-deep);border:1px solid rgba(var(--emp-rgb),.15);white-space:nowrap}
+    .role-features{display:flex;flex-wrap:wrap;gap:6px}
+    .role-chip{display:inline-flex;align-items:center;gap:4px;padding:6px 9px;border-radius:999px;background:var(--soft);font-size:11px;font-weight:900;color:var(--text)}
+    .role-arrow{text-align:center;font-size:16px;color:var(--emp-deep);font-weight:900;line-height:1;margin-top:-2px;margin-bottom:-2px}
+
+
+    /* === People 人員管理 === */
+    .people-list{display:flex;flex-direction:column;gap:8px}
+    .people-card{background:linear-gradient(180deg,#fff,rgba(var(--emp-rgb),.06));border:1px solid rgba(var(--emp-rgb),.10);border-radius:18px;padding:12px;box-shadow:0 8px 18px rgba(var(--emp-rgb),.04)}
+    .people-head{display:flex;justify-content:space-between;align-items:flex-start;gap:8px;margin-bottom:8px}
+    .people-name{font-size:15px;font-weight:900;line-height:1.25}
+    .people-meta{font-size:12px;color:var(--muted);font-weight:800;line-height:1.5;word-break:break-word}
+    .people-actions{display:grid;grid-template-columns:repeat(3,1fr);gap:6px;margin-top:10px}
+    .bind-link-box{background:#f8fafc;border:1px dashed rgba(var(--emp-rgb),.30);border-radius:16px;padding:10px;font-size:12px;line-height:1.5;word-break:break-all;color:var(--text);margin-top:8px}
+    .people-toolbar{display:grid;grid-template-columns:1fr 1fr;gap:8px;margin-bottom:10px}
+    @media(max-width:390px){.people-actions{grid-template-columns:1fr}.people-toolbar{grid-template-columns:1fr}}
+
+    /* === 薪資明細 === */
+    .salary-line{display:flex;align-items:center;gap:8px;padding:10px;background:var(--soft);border-radius:14px;margin-bottom:6px}
+    .salary-line .sl-label{flex:0 0 auto;font-size:13px;font-weight:900;min-width:60px}
+    .salary-line .sl-val{flex:1;text-align:right;font-size:14px;font-weight:900}
+    .salary-line .sl-val.negative{color:#b91c1c}
+    .salary-line input{margin:0;padding:8px;border-radius:10px;text-align:right;font-weight:900;width:100px}
+    .extra-row{display:flex;align-items:center;gap:6px;padding:8px;background:#fff7ed;border:1px solid rgba(var(--emp-rgb),.12);border-radius:14px;margin-bottom:6px}
+    .extra-row select{width:auto;min-width:80px;margin:0;padding:8px;border-radius:10px}
+    .extra-row input{margin:0;padding:8px;border-radius:10px;font-weight:900}
+    .extra-row .del-btn{flex:0 0 auto;width:32px;height:32px;border:none;background:#fef2f2;color:#b91c1c;border-radius:10px;font-size:14px;cursor:pointer;display:flex;align-items:center;justify-content:center}
+
+    /* === L型圓形放射導航｜左三上三六顆版 === */
+    .fab-wrap{
+      position:fixed;right:12px;bottom:calc(12px + env(safe-area-inset-bottom));z-index:1200;
+      width:222px;height:224px;pointer-events:none;
+    }
+    .fab-wrap *{pointer-events:auto}
+    .fab-wrap.is-collapsed .fab-sat{
+      opacity:0;
+      transform:scale(.62);
+      pointer-events:none;
+    }
+    .fab-wrap.is-collapsed .fab-home{
+      box-shadow:0 10px 28px rgba(var(--emp-rgb),.35),0 0 0 8px rgba(255,255,255,.72);
+    }
+    .fab-home{
+      position:absolute;right:0;bottom:0;
+      width:56px;height:56px;border:none;border-radius:999px;
+      background:var(--emp-gradient);color:#fff;font-size:20px;
+      box-shadow:0 10px 28px rgba(var(--emp-rgb),.35);
+      cursor:pointer;display:flex;align-items:center;justify-content:center;
+      transition:transform .18s ease,box-shadow .18s ease;z-index:10;
+    }
+    .fab-home:active{transform:scale(.9)}
+    .fab-home.swap{animation:fabPulse .4s ease}
+    @keyframes fabPulse{0%{transform:scale(1)}50%{transform:scale(1.15)}100%{transform:scale(1)}}
+    .fab-sat{
+      position:absolute;border:none;border-radius:999px;
+      background:rgba(255,255,255,.96);color:var(--emp-deep);font-weight:900;
+      box-shadow:0 6px 18px rgba(0,0,0,.10);cursor:pointer;
+      display:flex;flex-direction:column;align-items:center;justify-content:center;gap:1px;
+      opacity:1;
+      transition:opacity .18s ease,transform .18s ease,background .18s ease,color .18s ease,filter .18s ease;z-index:5;
+    }
+    .fab-sat:active{transform:scale(.88)!important}
+    .fab-sat i{line-height:1}
+    .fab-sat span{line-height:1;font-weight:900;white-space:nowrap}
+    .fab-sat.active{background:var(--emp-gradient);color:#fff;box-shadow:0 8px 22px rgba(var(--emp-rgb),.28)}
+    .fab-sat.locked{opacity:.48;filter:grayscale(.35)}
+    .fab-sat.sat-creator{right:68px!important;left:auto!important;bottom:6px!important;width:48px!important;height:48px!important}
+    .fab-sat.sat-admin{right:120px!important;left:auto!important;bottom:8px!important;width:43px!important;height:43px!important}
+    .fab-sat.sat-manager{right:166px!important;left:auto!important;bottom:10px!important;width:38px!important;height:38px!important}
+    .fab-sat.sat-personnel{right:6px!important;left:auto!important;bottom:68px!important;width:48px!important;height:48px!important}
+    .fab-sat.sat-salary{right:8px!important;left:auto!important;bottom:120px!important;width:43px!important;height:43px!important}
+    .fab-sat.sat-data{right:10px!important;left:auto!important;bottom:166px!important;width:38px!important;height:38px!important}
+    .fab-sat.sat-creator i,.fab-sat.sat-personnel i{font-size:14px!important}.fab-sat.sat-creator span,.fab-sat.sat-personnel span{font-size:7px!important}
+    .fab-sat.sat-admin i,.fab-sat.sat-salary i{font-size:13px!important}.fab-sat.sat-admin span,.fab-sat.sat-salary span{font-size:7px!important}
+    .fab-sat.sat-manager i,.fab-sat.sat-data i{font-size:12px!important}.fab-sat.sat-manager span,.fab-sat.sat-data span{font-size:6px!important}
+    .fab-badge{position:absolute;top:-2px;right:-2px;min-width:16px;height:16px;border-radius:999px;background:#ef4444;color:#fff;font-size:9px;font-weight:900;display:flex;align-items:center;justify-content:center;padding:0 4px}
+    .fab-badge:empty{display:none}
+    @media(max-width:360px){
+      .fab-wrap{right:7px!important;width:214px!important;height:216px!important}
+      .fab-sat.sat-creator{right:64px!important}.fab-sat.sat-admin{right:113px!important}.fab-sat.sat-manager{right:156px!important}
+    }
+
+    @media(max-width:390px){.safe{padding:6px 12px 0}.card{padding:12px;border-radius:20px}.hello{font-size:20px}}
+    @media(min-width:768px){.safe{padding:12px 20px 0}}
+
+    /* ANG_0603_ADMIN_COMPANY_SWITCHER_START
+       管理頁 LOGO 公司選單：縮小版；最多三間公司；登出固定最下格；切換公司固定回員工主頁。 */
+    .topbar-left,.brand-logo{cursor:pointer;user-select:none;-webkit-user-select:none;touch-action:manipulation;}
+        .topbar-left:active,.brand-logo:active{transform:scale(.985);}
+    body.fab-expanded-mode #brandSlot .brand-logo{box-shadow:0 0 0 4px rgba(var(--emp-rgb),.20),0 10px 26px rgba(var(--emp-rgb),.28);filter:saturate(1.12) brightness(1.06);}
+    body.fab-expanded-mode #brandSlot .brand-title-sub::after{content:"｜點 Logo 回員工端";color:var(--emp-deep);font-weight:900;}
+    .ang-company-switcher-backdrop{position:fixed;inset:0;z-index:2290;display:none;background:transparent;}
+    .ang-company-switcher-backdrop.open{display:block;}
+    .ang-company-switcher{position:fixed;top:calc(66px + env(safe-area-inset-top));left:10px;width:min(238px,calc(100vw - 20px));z-index:2300;display:none;transform-origin:28px -8px;animation:angCompanyDrop .16s ease both;}
+    .ang-company-switcher.open{display:block;}
+    @keyframes angCompanyDrop{from{opacity:0;transform:translateY(-6px) scale(.98)}to{opacity:1;transform:translateY(0) scale(1)}}
+    .ang-company-panel{width:100%;padding:7px;border-radius:20px;background:rgba(255,255,255,.95);border:1px solid rgba(148,163,184,.20);box-shadow:0 14px 34px rgba(15,23,42,.16);backdrop-filter:blur(16px);-webkit-backdrop-filter:blur(16px);display:grid;gap:5px;}
+    .ang-company-title{padding:0 4px 3px;font-size:10px;line-height:1.25;font-weight:900;color:var(--muted);}
+    .ang-company-item{width:100%;min-height:52px;border:none;border-radius:16px;padding:7px 8px;display:grid;grid-template-columns:34px minmax(0,1fr) 18px;gap:7px;align-items:center;text-align:left;cursor:pointer;background:linear-gradient(135deg,rgba(var(--emp-rgb),.12),rgba(255,255,255,.95));color:var(--text);box-shadow:0 7px 16px rgba(var(--emp-rgb),.07);border:1px solid rgba(var(--emp-rgb),.14);font:inherit;}
+    .ang-company-item:active{transform:scale(.985);}
+    .ang-company-item.active{background:var(--emp-gradient);color:var(--text-on-emp);border-color:transparent;box-shadow:0 9px 20px rgba(var(--emp-rgb),.18);}
+    .ang-company-mark{width:34px;height:34px;border-radius:12px;display:flex;align-items:center;justify-content:center;overflow:hidden;background:rgba(255,255,255,.74);color:var(--emp-deep);font-size:12px;font-weight:1000;box-shadow:inset 0 0 0 1px rgba(255,255,255,.42);flex:0 0 auto;}
+    .ang-company-mark img{width:100%;height:100%;object-fit:cover;display:block;}
+    .ang-company-name{min-width:0;font-size:13px;line-height:1.18;font-weight:1000;white-space:nowrap;overflow:hidden;text-overflow:ellipsis;}
+    .ang-company-meta{margin-top:2px;font-size:9px;line-height:1.25;font-weight:800;color:rgba(100,116,139,.86);white-space:nowrap;overflow:hidden;text-overflow:ellipsis;}
+    .ang-company-item.active .ang-company-meta{color:rgba(255,255,255,.82);}
+    .ang-company-check{width:18px;height:18px;border-radius:999px;display:flex;align-items:center;justify-content:center;background:rgba(255,255,255,.22);font-size:11px;font-weight:1000;color:inherit;opacity:.95;}
+    .ang-company-logout{margin-top:1px;min-height:48px;background:linear-gradient(135deg,rgba(239,68,68,.09),rgba(255,255,255,.96));border-color:rgba(239,68,68,.16);color:#b91c1c;}
+    .ang-company-logout .ang-company-mark{color:#b91c1c;background:rgba(254,242,242,.92);}
+    @media(max-width:390px){.ang-company-switcher{top:calc(62px + env(safe-area-inset-top));left:8px;width:min(232px,calc(100vw - 16px));}.ang-company-item{min-height:50px;border-radius:15px;padding:6px 7px;}.ang-company-mark{width:32px;height:32px;border-radius:11px;}.ang-company-name{font-size:12px}.ang-company-meta{font-size:9px}}
+    /* ANG_0603_ADMIN_COMPANY_SWITCHER_END */
+  
+    /* ANG_0603_ADMIN_DAY_NIGHT_TOGGLE_START */
+    :root{
+      --toggle-bg:rgba(255,255,255,.74);
+      --toggle-border:rgba(148,163,184,.34);
+      --toggle-shadow:0 10px 24px rgba(15,23,42,.12);
+      --toggle-icon-dim:rgba(71,85,105,.72);
+      --toggle-thumb-bg:#ffffff;
+      --toggle-thumb-shadow:0 6px 14px rgba(15,23,42,.16);
+      --toggle-thumb-x:0px;
+    }
+    body[data-theme="dark"]{
+      --bg:#050816;
+      --card:rgba(18,25,42,.96);
+      --text:#ffffff;
+      --muted:#cbd5e1;
+      --line:rgba(255,255,255,.10);
+      --soft:rgba(255,255,255,.07);
+      --toggle-bg:rgba(15,23,42,.52);
+      --toggle-border:rgba(255,255,255,.12);
+      --toggle-shadow:0 10px 24px rgba(0,0,0,.28);
+      --toggle-icon-dim:rgba(226,232,240,.68);
+      --toggle-thumb-bg:rgba(255,255,255,.15);
+      --toggle-thumb-shadow:0 0 18px rgba(0,217,255,.16);
+      --toggle-thumb-x:28px;
+      background:#050816;
+    }
+    .topbar{padding-right:84px;}
+    .ang-daynight-toggle{
+      position:fixed;
+      top:calc(14px + env(safe-area-inset-top));
+      right:14px;
+      width:58px;
+      height:30px;
+      padding:3px;
+      border:1px solid var(--toggle-border);
+      border-radius:999px;
+      background:var(--toggle-bg);
+      box-shadow:var(--toggle-shadow);
+      backdrop-filter:blur(18px);
+      -webkit-backdrop-filter:blur(18px);
+      z-index:2400;
+      display:grid;
+      grid-template-columns:1fr 1fr;
+      align-items:center;
+      justify-items:center;
+      appearance:none;
+      -webkit-appearance:none;
+      overflow:hidden;
+      cursor:pointer;
+    }
+    .ang-daynight-toggle::before{
+      content:"";
+      position:absolute;
+      left:3px;
+      top:3px;
+      width:24px;
+      height:24px;
+      border-radius:50%;
+      background:var(--toggle-thumb-bg);
+      box-shadow:var(--toggle-thumb-shadow);
+      transform:translateX(var(--toggle-thumb-x));
+      transition:transform .25s ease,background .25s ease,box-shadow .25s ease;
+    }
+    .ang-daynight-toggle span{
+      position:relative;
+      z-index:1;
+      width:24px;
+      height:24px;
+      display:flex;
+      align-items:center;
+      justify-content:center;
+      color:var(--toggle-icon-dim);
+      pointer-events:none;
+    }
+    .ang-daynight-toggle svg{width:14px;height:14px;stroke:currentColor;fill:none;stroke-width:2.1;stroke-linecap:round;stroke-linejoin:round;}
+    body:not([data-theme="dark"]) .ang-daynight-toggle .sun{color:#0f172a;}
+    body[data-theme="dark"] .ang-daynight-toggle .moon{color:#fff;filter:drop-shadow(0 0 5px rgba(255,255,255,.32));}
+    body[data-theme="dark"] .topbar,
+    body[data-theme="dark"] .fab-sat,
+    body[data-theme="dark"] .ang-company-panel{
+      background:rgba(15,23,42,.94) !important;
+      color:#fff !important;
+      border-color:rgba(255,255,255,.10) !important;
+      box-shadow:0 10px 26px rgba(0,0,0,.22) !important;
+    }
+    body[data-theme="dark"] .card,
+    body[data-theme="dark"] .stat-mini,
+    body[data-theme="dark"] .notice-item,
+    body[data-theme="dark"] .review-card,
+    body[data-theme="dark"] .role-level-card,
+    body[data-theme="dark"] .people-card,
+    body[data-theme="dark"] .salary-line,
+    body[data-theme="dark"] .check-row,
+    body[data-theme="dark"] .extra-row,
+    body[data-theme="dark"] .bind-link-box{
+      background:linear-gradient(180deg,rgba(18,25,42,.96) 0%,rgba(15,23,42,.94) 100%) !important;
+      color:var(--text) !important;
+      border-color:rgba(255,255,255,.10) !important;
+      box-shadow:0 10px 26px rgba(0,0,0,.22) !important;
+    }
+    body[data-theme="dark"] input,
+    body[data-theme="dark"] select,
+    body[data-theme="dark"] textarea{
+      background:rgba(255,255,255,.07) !important;
+      color:#fff !important;
+      border:1px solid rgba(255,255,255,.10) !important;
+    }
+    body[data-theme="dark"] input::placeholder,
+    body[data-theme="dark"] textarea::placeholder{color:rgba(226,232,240,.62) !important;}
+    body[data-theme="dark"] .brand-title-sub,
+    body[data-theme="dark"] .sub-title,
+    body[data-theme="dark"] .item-meta,
+    body[data-theme="dark"] .role-desc,
+    body[data-theme="dark"] .perm-note,
+    body[data-theme="dark"] .ang-company-title,
+    body[data-theme="dark"] .ang-company-meta{color:var(--muted) !important;}
+    body[data-theme="dark"] .btn-ghost,
+    body[data-theme="dark"] .btn-soft,
+    body[data-theme="dark"] .btn-sm{
+      color:#ffffff;
+      border-color:rgba(255,255,255,.13);
+      box-shadow:0 10px 22px rgba(0,0,0,.20);
+    }
+    @media(max-width:430px){.topbar{padding-right:78px;}.ang-daynight-toggle{right:10px;top:calc(12px + env(safe-area-inset-top));}}
+    /* ANG_0603_ADMIN_DAY_NIGHT_TOGGLE_END */
+
+  </style>
+  <script src="config.js"></script>
+
+<script>
+(function(){
+  window.ANG_HR_CONFIG = window.ANG_HR_CONFIG || {};
+  function getParam(name){
+    try { return new URLSearchParams(window.location.search).get(name) || ''; } catch(e) { return ''; }
+  }
+  function cleanTemplate(value){
+    var s = String(value == null ? '' : value).trim();
+    if (!s || s.indexOf('<?') >= 0 || s.indexOf('?>') >= 0) return '';
+    return s;
+  }
+  function getDirBase(){
+    var href = String(window.location.href || '').split('#')[0].split('?')[0];
+    return href.replace(/\/[^\/]*$/, '');
+  }
+  function joinUrl(base, file){
+    base = String(base || '').replace(/\/+$/, '');
+    file = String(file || '').replace(/^\/+/, '');
+    return base + '/' + file;
+  }
+  function getApiUrl(){
+    var cfg = window.ANG_HR_CONFIG || {};
+    return getParam('api') || cfg.apiBaseUrl || cfg.workerApiUrl || cfg.gasApiUrl || '';
+  }
+  function getFrontendUrl(pageName){
+    var cfg = window.ANG_HR_CONFIG || {};
+    var base = cfg.frontendBaseUrl || getDirBase();
+    var file = pageName === 'admin' ? (cfg.adminPage || 'admin.html') : (cfg.employeePage || 'employee.html');
+    return joinUrl(base, file);
+  }
+  window.ANG_HR_UTILS = {
+    getParam:getParam,
+    cleanTemplate:cleanTemplate,
+    getApiUrl:getApiUrl,
+    getFrontendUrl:getFrontendUrl,
+    joinUrl:joinUrl
+  };
+})();
+</script>
+
+</head>
+<body>
+
+  <button class="ang-daynight-toggle" id="angDayNightToggle" type="button" aria-label="切換日光與暗夜模式" aria-pressed="false" onclick="angToggleDayNight()">
+    <span class="sun" aria-hidden="true"><svg viewBox="0 0 24 24"><circle cx="12" cy="12" r="4"></circle><path d="M12 2v2.2M12 19.8V22M4.93 4.93l1.56 1.56M17.51 17.51l1.56 1.56M2 12h2.2M19.8 12H22M4.93 19.07l1.56-1.56M17.51 6.49l1.56-1.56"></path></svg></span>
+    <span class="moon" aria-hidden="true"><svg viewBox="0 0 24 24"><path d="M21 14.2A8.6 8.6 0 0 1 9.8 3a7.5 7.5 0 1 0 11.2 11.2z"></path></svg></span>
+  </button>
+
+
+  <!-- ===== 頂部 ===== -->
+  <div class="topbar">
+    <div class="topbar-left" id="brandSlot" role="button" aria-label="開啟公司切換選單">
+      <div class="brand-logo" id="brandLogo">ANG</div>
+      <div><div class="brand-title-main" id="brandTitleMain">ANG.lo</div><div class="brand-title-sub" id="brandTitleSub">管理中心</div></div>
+    </div>
+    <div class="topbar-right">
+      <div class="title" id="topTitle">ANG.lo Engine</div>
+      <div class="sub-title" id="topSub">管理中心</div>
+    </div>
+  </div>
+
+  <div class="safe">
+
+    <!-- ==================== Home 主頁 ==================== -->
+    <section id="page-home" class="page active">
+      <div class="hero">
+        <div class="hero-top">
+          <div><div class="hello" id="homeHello">主頁</div><div class="hello-sub">薪資管理、資料歸檔、匯出</div></div>
+          <div class="hero-chip" id="homeChip">Home</div>
+        </div>
+      </div>
+
+      <div class="card">
+        <div class="mini-row"><h3>權限功能分類</h3><span class="badge">Permission</span></div>
+        <div class="perm-note">角色只當預設權限包；實際顯示與操作改看 permission。Home / Review / Settings / People / Salary / Data 依權限開放。</div>
+        <div class="role-level-grid">
+          <div class="role-level-card">
+            <div class="role-level-head">
+              <div class="role-level-left"><div class="role-icon"><i class="fa-solid fa-crown" aria-hidden="true"></i></div><div><div class="role-name">Creator｜平台方</div><div class="role-desc">平台最高層級｜可建立 / 指派 Creator、Owner</div></div></div>
+              <div class="role-tag">平台最高</div>
+            </div>
+            <div class="role-features"><span class="role-chip">Owner 全部</span><span class="role-chip">平台級管理</span><span class="role-chip">建立 Creator</span><span class="role-chip">指派 Owner</span><span class="role-chip">全部權限</span></div>
+          </div>
+          <div class="role-arrow">↓</div>
+          <div class="role-level-card">
+            <div class="role-level-head">
+              <div class="role-level-left"><div class="role-icon"><i class="fa-solid fa-user-tie" aria-hidden="true"></i></div><div><div class="role-name">Owner｜公司擁有者</div><div class="role-desc">公司內最高權限｜可管理公司全部功能</div></div></div>
+              <div class="role-tag">公司最高</div>
+            </div>
+            <div class="role-features"><span class="role-chip">Admin 全部</span><span class="role-chip">設定 Owner</span><span class="role-chip">權限管理</span><span class="role-chip">系統設定</span><span class="role-chip">公司資料</span></div>
+          </div>
+          <div class="role-arrow">↓</div>
+          <div class="role-level-card">
+            <div class="role-level-head">
+              <div class="role-level-left"><div class="role-icon"><i class="fa-solid fa-user-shield" aria-hidden="true"></i></div><div><div class="role-name">Admin｜公司管理員</div><div class="role-desc">單一公司內管理員｜審核、人員、薪資、資料管理</div></div></div>
+              <div class="role-tag">公司管理</div>
+            </div>
+            <div class="role-features"><span class="role-chip">請假審核</span><span class="role-chip">補打卡審核</span><span class="role-chip">資料審核</span><span class="role-chip">留言審核</span><span class="role-chip">薪資審核</span><span class="role-chip">人員管理</span><span class="role-chip">薪資管理</span><span class="role-chip">資料歸檔</span><span class="role-chip">品牌設定</span><span class="role-chip">打卡位置</span><span class="role-chip">打卡寬限</span></div>
+          </div>
+          <div class="role-arrow">↓</div>
+          <div class="role-level-card">
+            <div class="role-level-head">
+              <div class="role-level-left"><div class="role-icon"><i class="fa-solid fa-user-gear" aria-hidden="true"></i></div><div><div class="role-name">Manager｜主管</div><div class="role-desc">現場主管層｜審核與發布基礎管理</div></div></div>
+              <div class="role-tag">主管</div>
+            </div>
+            <div class="role-features"><span class="role-chip">請假審核</span><span class="role-chip">資料審核</span><span class="role-chip">留言審核</span><span class="role-chip">通知發布</span><span class="role-chip">排班發布</span></div>
+          </div>
+          <div class="role-arrow">↓</div>
+          <div class="role-level-card">
+            <div class="role-level-head">
+              <div class="role-level-left"><div class="role-icon"><i class="fa-solid fa-users" aria-hidden="true"></i></div><div><div class="role-name">Employee｜一般員工</div><div class="role-desc">一般員工｜不進 admin.html，只使用員工端</div></div></div>
+              <div class="role-tag">員工端</div>
+            </div>
+            <div class="role-features"><span class="role-chip">打卡</span><span class="role-chip">請假</span><span class="role-chip">排班查看</span><span class="role-chip">薪資查看</span><span class="role-chip">資料上傳</span></div>
+          </div>
+        </div>
+      </div>
+
+      <!-- 薪資管理 -->
+      <div class="card">
+        <div class="mini-row"><h3>薪資管理</h3><span class="badge ok">設定</span></div>
+        <label class="label">員編</label>
+        <input type="text" id="sm-empId" placeholder="ANG0601">
+        <div class="field-row">
+          <div>
+            <label class="label">薪資類型</label>
+            <select id="sm-salaryType" onchange="smUpdateDailySalary()"><option value="monthly">月薪</option><option value="hourly">時薪</option></select>
+          </div>
+          <div><label class="label">底薪</label><input type="number" id="sm-baseSalary" placeholder="30000" oninput="smUpdateDailySalary()"></div>
+        </div>
+        <div class="field-row">
+          <div><label class="label">月休天數</label><input type="number" id="sm-restDays" placeholder="8" oninput="smUpdateDailySalary()"></div>
+          <div><label class="label">特休天數</label><input type="number" id="sm-annualLeave" placeholder="7"></div>
+        </div>
+        <div id="sm-daily-display" class="notice-item" style="display:none;margin-bottom:10px">
+          <div class="item-title" id="sm-daily-text">日薪：—</div>
+          <div class="item-meta">月薪 ÷（當月天數 - 月休天數）</div>
+        </div>
+        <div class="mini-row" style="margin-top:6px"><h3 style="font-size:14px">法定項目（自動帶入，不可修改）</h3></div>
+        <div class="salary-line"><div class="sl-label">勞保費</div><div class="sl-val" id="sm-labor-ins">—</div></div>
+        <div class="salary-line"><div class="sl-label">健保費</div><div class="sl-val" id="sm-health-ins">—</div></div>
+        <div class="salary-line"><div class="sl-label">勞退提撥6%</div><div class="sl-val" id="sm-pension">—</div></div>
+        <div class="salary-line"><div class="sl-label">補充保費</div><div class="sl-val" id="sm-supple-ins">—</div></div>
+        <div class="mini-row" style="margin-top:6px"><h3 style="font-size:14px">可調整項目</h3></div>
+        <div id="sm-extras-list"></div>
+        <div class="tool-grid-3" style="margin-bottom:10px">
+          <button class="btn-sm" onclick="smAddExtra('獎金')">＋ 獎金</button>
+          <button class="btn-sm" onclick="smAddExtra('津貼')">＋ 津貼</button>
+          <button class="btn-sm" onclick="smAddExtra('加班費')">＋ 加班費</button>
+          <button class="btn-sm" onclick="smAddExtra('餐費')">＋ 餐費</button>
+          <button class="btn-sm" onclick="smAddExtra('扣款')">＋ 扣款</button>
+          <button class="btn-sm" onclick="smAddExtra('行政費用')">＋ 行政費</button>
+          <button class="btn-sm" onclick="smAddExtra('稅金')">＋ 稅金</button>
+          <button class="btn-sm" onclick="smAddExtra('自由項目')">＋ 自訂</button>
+        </div>
+        <div class="salary-line" style="background:var(--emp-soft);border:1px solid rgba(var(--emp-rgb),.15)"><div class="sl-label" style="color:var(--emp-deep)">合計</div><div class="sl-val" id="sm-total" style="font-size:18px;color:var(--emp-deep)">$0</div></div>
+        <label class="label" style="margin-top:10px">薪資表發布日</label>
+        <input type="date" id="sm-publishDate">
+        <div class="field-row" style="margin-top:4px">
+          <button class="btn-main" onclick="smSave()">儲存薪資設定</button>
+          <button class="btn-ghost" onclick="smExport()">📋 匯出薪資表</button>
+        </div>
+      </div>
+
+      <!-- 歸檔 -->
+      <div class="card">
+        <div class="mini-row"><h3>資料歸檔 / 匯出</h3><span class="badge">管理</span></div>
+        <div class="tool-grid">
+          <button class="btn-ghost" onclick="archiveSheet('請假申請')">歸檔請假</button>
+          <button class="btn-ghost" onclick="archiveSheet('補打卡申請')">歸檔補卡</button>
+          <button class="btn-ghost" onclick="archiveSheet('資料接收審核')">歸檔上傳</button>
+          <button class="btn-ghost" onclick="archiveSheet('打卡原始記錄')">歸檔打卡</button>
+        </div>
+        <div class="tool-grid">
+          <button class="btn-soft" onclick="exportSheet('請假申請')">匯出請假</button>
+          <button class="btn-soft" onclick="exportSheet('補打卡申請')">匯出補卡</button>
+          <button class="btn-soft" onclick="exportSheet('資料接收審核')">匯出上傳</button>
+          <button class="btn-soft" onclick="exportSheet('打卡原始記錄')">匯出打卡</button>
+        </div>
+      </div>
+
+    </section>
+
+    <!-- ==================== Review 審核中心 ==================== -->
+    <section id="page-admin" class="page">
+      <div class="hero">
+        <div class="hero-top">
+          <div><div class="hello" id="admHello">Review 審核中心</div><div class="hello-sub">請假、補打卡、上傳、留言、薪資審核</div></div>
+          <div style="display:flex;align-items:center;gap:8px"><div class="hero-chip" id="admChip">Review</div><button class="btn-sm" onclick="loadAll()" style="background:rgba(255,255,255,.20);color:#fff;border:1px solid rgba(255,255,255,.25)">🔄 刷新</button></div>
+        </div>
+      </div>
+      <!-- ANG.lo HR System Deploy Version: 129 - Fix 3: stat-mini clickable scroll -->
+      <div class="stat-grid">
+        <div class="stat-mini" style="cursor:pointer" onclick="document.getElementById('admClockFixList').closest('[data-autohide]').scrollIntoView({behavior:'smooth'})"><small>待審補卡</small><div class="v" id="admClockFixPending">0</div></div>
+        <div class="stat-mini" style="cursor:pointer" onclick="document.getElementById('admSalaryList').closest('.card').scrollIntoView({behavior:'smooth'})"><small>待審薪資</small><div class="v" id="admSalaryPending">0</div></div>
+        <div class="stat-mini" style="cursor:pointer" onclick="document.getElementById('admLeaveList').closest('[data-autohide]').scrollIntoView({behavior:'smooth'})"><small>待審請假</small><div class="v" id="admLeavePending">0</div></div>
+      </div>
+
+      <!-- 補打卡審核 -->
+      <div class="card" data-autohide="1">
+        <div class="mini-row"><h3>補打卡審核</h3><div style="display:flex;gap:6px;align-items:center"><button class="btn-sm" onclick="loadAll()">🔄</button><span class="badge warn">待處理</span></div></div>
+        <div id="admClockFixList"></div>
+      </div>
+
+      <!-- 薪資審核 -->
+      <div class="card">
+        <div class="mini-row"><h3>薪資審核</h3><div style="display:flex;gap:6px;align-items:center"><button class="btn-sm" onclick="loadAll()">🔄</button><span class="badge warn">管理</span></div></div>
+        <div class="field-row" style="margin-bottom:10px">
+          <div><label class="label">員編</label><input type="text" id="salaryEmpId" placeholder="ANG0601"></div>
+          <div><label class="label">月份</label><input type="month" id="salaryMonth"></div>
+        </div>
+        <button class="btn-ghost" style="margin-bottom:10px" onclick="loadSalaryDraft()">📊 載入薪資計算</button>
+        <div id="salaryDraftArea"></div>
+        <div id="salaryExtrasList"></div>
+        <div class="tool-grid-3" id="salaryAddBtns" style="display:none">
+          <button class="btn-sm" onclick="addSalaryExtra('獎金')">＋ 獎金</button>
+          <button class="btn-sm" onclick="addSalaryExtra('津貼')">＋ 津貼</button>
+          <button class="btn-sm" onclick="addSalaryExtra('扣款')">＋ 扣款</button>
+          <button class="btn-sm" onclick="addSalaryExtra('法扣')">＋ 法扣</button>
+          <button class="btn-sm" onclick="addSalaryExtra('行政費用')">＋ 行政費</button>
+          <button class="btn-sm" onclick="addSalaryExtra('稅金')">＋ 稅金</button>
+        </div>
+        <button class="btn-main" id="btnSubmitSalary" style="display:none;margin-top:10px" onclick="submitSalaryReview()">送出薪資審核</button>
+        <div id="admSalaryList" style="margin-top:10px"></div>
+      </div>
+
+      <!-- 請假審核 -->
+      <div class="card" data-autohide="1">
+        <div class="mini-row"><h3>請假審核</h3><div style="display:flex;gap:6px;align-items:center"><button class="btn-sm" onclick="loadAll()">🔄</button><span class="badge warn">待處理</span></div></div>
+        <div id="admLeaveList"></div>
+      </div>
+
+      <!-- 資料接收審核 -->
+      <div class="card" data-autohide="1">
+        <div class="mini-row"><h3>資料接收審核</h3><div style="display:flex;gap:6px;align-items:center"><button class="btn-sm" onclick="loadAll()">🔄</button><span class="badge warn">待處理</span></div></div>
+        <div id="admUploadList"></div>
+      </div>
+
+      <!-- 留言審核 -->
+      <div class="card" data-autohide="1">
+        <div class="mini-row"><h3>留言審核</h3><div style="display:flex;gap:6px;align-items:center"><button class="btn-sm" onclick="loadAll()">🔄</button><span class="badge warn">待處理</span></div></div>
+        <div id="admMessageList"></div>
+      </div>
+
+      <!-- 通知 -->
+      <div class="card"><div class="mini-row"><h3>通知發布</h3><span class="badge ok">管理</span></div><div id="admNoticeList"></div></div>
+
+
+
+    </section>
+
+    <!-- ==================== Settings 系統設定頁 ==================== -->
+    <section id="page-creator" class="page">
+      <div class="hero">
+        <div class="hero-top">
+          <div><div class="hello">Settings 系統設定</div><div class="hello-sub">選休規則、審核流程、班別、權限、品牌、打卡設定</div></div>
+          <div class="hero-chip">Settings</div>
+        </div>
+      </div>
+
+      <!-- 選休規則 -->
+      <div class="card">
+        <div class="mini-row"><h3>選休規則</h3><span class="badge ok">永久套用</span></div>
+        <div class="notice-item" style="margin-bottom:10px"><div class="item-title">設定一次，自動套用到往後每一期</div></div>
+        <label class="label">模式</label>
+        <div class="tool-grid" style="margin-bottom:10px">
+          <button class="btn-main" id="btnModeWeek" onclick="setPreselectMode('week')">📅 週選休</button>
+          <button class="btn-ghost" id="btnModeMonth" onclick="setPreselectMode('month')">🗓️ 月選休</button>
+        </div>
+        <div id="weekRuleBox">
+          <label class="label">起始日</label>
+          <div class="field-row"><select id="weekOpenDay"><option value="一">週一</option><option value="二">週二</option><option value="三" selected>週三</option><option value="四">週四</option><option value="五">週五</option><option value="六">週六</option><option value="日">週日</option></select><input type="time" id="weekOpenTime" value="20:00"></div>
+          <label class="label">截止日</label>
+          <div class="field-row"><select id="weekCloseDay"><option value="一">週一</option><option value="二">週二</option><option value="三">週三</option><option value="四">週四</option><option value="五" selected>週五</option><option value="六">週六</option><option value="日">週日</option></select><input type="time" id="weekCloseTime" value="18:00"></div>
+          <label class="label">發布日</label>
+          <div class="field-row"><select id="weekPublishDay"><option value="一">週一</option><option value="二">週二</option><option value="三">週三</option><option value="四">週四</option><option value="五">週五</option><option value="六" selected>週六</option><option value="日">週日</option></select><input type="time" id="weekPublishTime" value="10:00"></div>
+        </div>
+        <div id="monthRuleBox" class="hidden">
+          <label class="label">起始日（每月幾號）</label>
+          <div class="field-row"><select id="monthOpenDay"></select><input type="time" id="monthOpenTime" value="09:00"></div>
+          <label class="label">截止日</label>
+          <div class="field-row"><select id="monthCloseDay"></select><input type="time" id="monthCloseTime" value="18:00"></div>
+          <label class="label">發布日</label>
+          <div class="field-row"><select id="monthPublishDay"></select><input type="time" id="monthPublishTime" value="10:00"></div>
+        </div>
+        <button class="btn-main" style="margin-top:10px" onclick="savePreselectSettingsFromUI()">儲存選休規則</button>
+      </div>
+
+      <!-- 審核流程 -->
+      <div class="card">
+        <div class="mini-row"><h3>審核流程設定</h3><span class="badge ok">settings.approver</span></div>
+        <div class="check-row"><input type="checkbox" id="chkMultiLevel" checked><label for="chkMultiLevel">啟用多級審核</label></div>
+        <label class="label">請假</label>
+        <div class="check-row"><input type="checkbox" id="chkLeaveManager" checked><label>Manager</label></div>
+        <div class="check-row"><input type="checkbox" id="chkLeaveAdmin"><label>Admin</label></div>
+        <label class="label">補打卡</label>
+        <div class="check-row"><input type="checkbox" id="chkClockfixManager" checked><label>Manager</label></div>
+        <div class="check-row"><input type="checkbox" id="chkClockfixAdmin"><label>Admin</label></div>
+        <label class="label">上傳資料</label>
+        <div class="check-row"><input type="checkbox" id="chkUploadManager" checked><label>Manager</label></div>
+        <div class="check-row"><input type="checkbox" id="chkUploadAdmin"><label>Admin</label></div>
+        <label class="label">留言</label>
+        <div class="check-row"><input type="checkbox" id="chkMsgManager" checked><label>Manager</label></div>
+        <div class="check-row"><input type="checkbox" id="chkMsgAdmin"><label>Admin</label></div>
+        <label class="label">薪資</label>
+        <div class="check-row"><input type="checkbox" id="chkSalaryManager"><label>Manager</label></div>
+        <div class="check-row"><input type="checkbox" id="chkSalaryAdmin" checked><label>Admin</label></div>
+        <button class="btn-main" style="margin-top:10px" onclick="saveApproverSettings()">儲存審核流程</button>
+      </div>
+
+      <!-- 班別設定 -->
+      <div class="card">
+        <div class="mini-row"><h3>班別設定</h3><span class="badge ok">settings.shift</span></div>
+        <div class="check-row"><input type="checkbox" id="chkMixedMode"><label for="chkMixedMode">啟用混合班（不固定班別）</label></div>
+        <div id="shiftListBox"></div>
+        <button class="btn-ghost" style="margin-bottom:10px" onclick="addShiftRow()">＋ 新增班別</button>
+        <button class="btn-main" onclick="saveShiftTypes()">儲存班別設定</button>
+      </div>
+
+      <!-- 寬限 -->
+      <div class="card">
+        <div class="mini-row"><h3>打卡寬限</h3><span class="badge ok">設定</span></div>
+        <div class="field-row">
+          <div><label class="label">上班前（分鐘）</label><input type="number" id="graceBeforeMin" value="15" min="0" max="60"></div>
+          <div><label class="label">下班後（分鐘）</label><input type="number" id="graceAfterMin" value="15" min="0" max="60"></div>
+        </div>
+        <button class="btn-main" onclick="saveGraceSettings()">儲存寬限設定</button>
+      </div>
+
+      <!-- 品牌 / 分店橫幅 -->
+      <div class="card">
+        <div class="mini-row"><h3>Logo & Title / 分店橫幅</h3><span class="badge ok">設定</span></div>
+        <div class="notice-item" style="margin-bottom:10px">
+          <div class="item-title">左側橫幅＝公司名稱 / 公司副名稱</div>
+          <div class="item-meta">例如：ANG.lo 這格會顯示「矽品精密」；Humanized system technology 這格會顯示「精密股份有限公司」。員工資料若有「分店ID」，會優先套用該分店設定。</div>
+        </div>
+        <label class="label">儲存範圍</label>
+        <select id="brandScope" onchange="updateRightBannerPreview()">
+          <option value="global">全公司預設</option>
+          <option value="branch">指定分店</option>
+        </select>
+        <div class="field-row">
+          <div><label class="label">分店ID</label><input type="text" id="branchIdInput" placeholder="例如：puli / yuchi / main" oninput="updateRightBannerPreview()"></div>
+          <div><label class="label">分店名稱</label><input type="text" id="branchNameInput" placeholder="例如：埔里店" oninput="updateRightBannerPreview()"></div>
+        </div>
+        <div class="field-row">
+          <div><label class="label">公司名稱（左側第一行）</label><input type="text" id="companyNameInput" value="ANG.lo" placeholder="例如：矽品精密"></div>
+          <div><label class="label">公司副名稱（左側第二行）</label><input type="text" id="companySubtitleInput" value="Humanized system technology" placeholder="例如：精密股份有限公司"></div>
+        </div>
+        <div class="field-row"><div><label class="label">右側主標題（固定不可改）</label><input type="text" id="mainTitleInput" value="ANG.lo Engine" readonly style="opacity:.72;cursor:not-allowed"></div><div><label class="label">右側第二行（自動：分店 / 總店）</label><input type="text" id="systemNameInput" value="總店" readonly style="opacity:.72;cursor:not-allowed"></div></div>
+        <label class="label">無圖時文字</label><input type="text" id="fallbackTextInput" value="ANG">
+        <label class="label">上傳 Logo</label><input type="file" id="logoUpload" accept="image/*" onchange="handleLogoUpload(event)">
+        <button class="btn-main" style="margin-top:10px" onclick="saveBrandSettings()">儲存品牌 / 分店橫幅設定</button>
+      </div>
+
+      <!-- 權限總覽 -->
+      <div class="card">
+        <div class="mini-row"><h3>權限管理</h3><span class="badge">總覽</span></div>
+        <div class="notice-item"><div class="item-title">Creator｜平台方</div><div class="item-meta">平台最高層級；包含 Owner 全部權限，可建立或指派 Creator / Owner。</div></div>
+        <div class="notice-item"><div class="item-title">Owner｜公司擁有者</div><div class="item-meta">公司內最高權限；公司內全部功能，可指派 Owner，但不可指派 Creator。</div></div>
+        <div class="notice-item"><div class="item-title">Admin｜公司管理員</div><div class="item-meta">單一公司內管理員；審核、人員、薪資、資料、品牌、位置、寬限等公司管理功能。</div></div>
+        <div class="notice-item"><div class="item-title">Manager｜主管</div><div class="item-meta">現場主管層；請假審核、資料審核、留言審核、通知發布、排班發布。</div></div>
+      </div>
+
+      <!-- 分店打卡位置驗證設定 -->
+      <div class="card">
+        <div class="mini-row"><h3>分店打卡位置驗證設定</h3><span class="badge ok">settings.location</span></div>
+        <div class="notice-item" style="margin-bottom:10px">
+          <div class="item-title">這裡儲存的是「分店位置」</div>
+          <div class="item-meta">有分店ID就存該分店位置；沒有分店ID就存「總店」位置。員工打卡時會依自己的人員資料「分店ID」驗證。</div>
+        </div>
+        <div class="field-row">
+          <div><label class="label">分店ID（空白＝總店）</label><input type="text" id="clockBranchIdInput" placeholder="例如：puli / main" oninput="updateClockLocationDisplay()"></div>
+          <div><label class="label">顯示名稱</label><input type="text" id="clockBranchNameInput" placeholder="例如：埔里店 / 總店" oninput="updateClockLocationDisplay()"></div>
+        </div>
+        <div class="notice-item" style="margin-bottom:10px">
+          <div class="item-title" id="clockLocationTargetText">目前設定對象：總店</div>
+          <div class="item-meta">左上公司名稱不會在這裡被改動；這裡只處理打卡 GPS 位置。</div>
+        </div>
+        <div class="check-row"><input type="checkbox" id="chkLocationRequired"><label for="chkLocationRequired">啟用上班/加班打卡位置驗證（外勤模式可略過）</label></div>
+        <label class="label">分店緯度（Latitude）</label>
+        <input type="number" id="clockLocationLat" step="0.000001" placeholder="例如：25.033964">
+        <label class="label">分店經度（Longitude）</label>
+        <input type="number" id="clockLocationLng" step="0.000001" placeholder="例如：121.564468">
+        <label class="label">允許距離（公尺，預設 200）</label>
+        <input type="number" id="clockLocationRadius" placeholder="200" min="50" max="5000">
+        <button class="btn-main" type="button" onclick="saveClockLocationSettings()">儲存分店位置設定</button>
+      </div>
+    </section>
+
+    <!-- ==================== Publish 發布中心頁 ==================== -->
+    <section id="page-manager" class="page">
+      <div class="hero">
+        <div class="hero-top">
+          <div><div class="hello">Publish 發布中心</div><div class="hello-sub">通知發布、排班發布、主管審核備援</div></div>
+          <div style="display:flex;align-items:center;gap:8px"><div class="hero-chip">Publish</div><button class="btn-sm" onclick="loadAll()" style="background:rgba(255,255,255,.20);color:#fff;border:1px solid rgba(255,255,255,.25)">🔄 刷新</button></div>
+        </div>
+      </div>
+      <div class="stat-grid">
+        <div class="stat-mini"><small>待審請假</small><div class="v" id="mgrLeavePending">0</div></div>
+        <div class="stat-mini"><small>待審資料</small><div class="v" id="mgrUploadPending">0</div></div>
+        <div class="stat-mini"><small>待審留言</small><div class="v" id="mgrMsgPending">0</div></div>
+      </div>
+      <div class="card" data-autohide="1"><div class="mini-row"><h3>請假審核</h3><div style="display:flex;gap:6px;align-items:center"><button class="btn-sm" onclick="loadAll()">🔄</button><span class="badge warn">待處理</span></div></div><div id="mgrLeaveList"></div></div>
+      <div class="card" data-autohide="1"><div class="mini-row"><h3>資料接收審核</h3><div style="display:flex;gap:6px;align-items:center"><button class="btn-sm" onclick="loadAll()">🔄</button><span class="badge warn">待處理</span></div></div><div id="mgrUploadList"></div></div>
+      <div class="card" data-autohide="1"><div class="mini-row"><h3>留言審核</h3><div style="display:flex;gap:6px;align-items:center"><button class="btn-sm" onclick="loadAll()">🔄</button><span class="badge warn">待處理</span></div></div><div id="mgrMessageList"></div></div>
+      <div class="card"><div class="mini-row"><h3>通知發布</h3><span class="badge ok">管理</span></div><div id="mgrNoticeList"></div></div>
+      <div class="card"><div class="mini-row"><h3>排班發布</h3><span class="badge ok">管理</span></div><div id="mgrScheduleList"></div></div>
+    </section>
+
+    <!-- ==================== Data 頁 ==================== -->
+    <section id="page-data" class="page">
+      <div class="hero"><div class="hero-top"><div><div class="hello">資料夾</div><div class="hello-sub">員工提交的檔案</div></div></div></div>
+      <div class="card">
+        <div class="mini-row"><h3>HR 提交暫存</h3><span class="badge ok">Drive</span></div>
+        <div class="notice-item"><div class="item-title">📁 點擊下方按鈕開啟 Google Drive 資料夾</div><div class="item-meta">員工上傳的補卡證明、醫生證明、收據等檔案都在這裡。</div></div>
+        <button class="btn-main" onclick="window.open('https://drive.google.com/drive/folders/10ED2Bd72agzl6ZyuQYFAHdl0de02zgv0','_blank')">開啟資料夾</button>
+      </div>
+    </section>
+
+    <!-- ==================== People 人員頁 ==================== -->
+    <section id="page-personnel" class="page">
+      <div class="hero">
+        <div class="hero-top">
+          <div><div class="hello">People 人員</div><div class="hello-sub">新增員工、編輯資料、角色分店、手機綁定連結</div></div>
+          <div style="display:flex;align-items:center;gap:8px"><div class="hero-chip">People</div><button class="btn-sm" onclick="loadPeopleList()" style="background:rgba(255,255,255,.20);color:#fff;border:1px solid rgba(255,255,255,.25)">🔄 刷新</button></div>
+        </div>
+      </div>
+
+      <div class="card">
+        <div class="mini-row"><h3>員工新增 / 編輯</h3><span class="badge ok">Admin</span></div>
+        <div class="notice-item" style="margin-bottom:10px">
+          <div class="item-title">新增員工後，可直接產生手機綁定登入連結</div>
+          <div class="item-meta">員工第一次打開連結後，APP / 手機會綁定該裝置；換手機時請先按「重設手機」。</div>
+        </div>
+
+        <div class="people-toolbar">
+          <button class="btn-main" onclick="peopleNew()">＋ 新增員工</button>
+          <button class="btn-ghost" onclick="loadPeopleList()">重新載入人員</button>
+        </div>
+
+        <div class="field-row">
+          <div><label class="label">員編</label><input type="text" id="peopleEmpId" placeholder="空白會自動產生，例如 ANG0607"></div>
+          <div><label class="label">角色</label><select id="peopleRole"><option value="Employee">Employee</option><option value="Manager">Manager</option><option value="Admin">Admin</option><option value="Owner">Owner</option><option value="Creator">Creator</option></select></div>
+        </div>
+        <div class="field-row">
+          <div><label class="label">姓名</label><input type="text" id="peopleName" placeholder="例如：米米"></div>
+          <div><label class="label">暱稱</label><input type="text" id="peopleNickname" placeholder="例如：小米"></div>
+        </div>
+        <div class="field-row">
+          <div><label class="label">分店ID</label><input type="text" id="peopleBranchId" placeholder="例如：puli"></div>
+          <div><label class="label">班別</label><input type="text" id="peopleShift" placeholder="A / B / C / D"></div>
+        </div>
+        <div class="field-row">
+          <div><label class="label">職稱</label><input type="text" id="peopleJobTitle" placeholder="例如：正職 / 兼職"></div>
+          <div><label class="label">部門</label><input type="text" id="peopleDept" placeholder="例如：外場 / 內場"></div>
+        </div>
+        <div class="field-row">
+          <div><label class="label">顏色</label><input type="color" id="peopleColor" value="#ff87e0" style="height:46px;padding:6px"></div>
+          <div><label class="label">啟用狀態</label><select id="peopleEnabled"><option value="true">啟用</option><option value="false">停用</option></select></div>
+        </div>
+
+        <div class="field-row" style="margin-top:4px">
+          <button class="btn-main" onclick="peopleSave()">儲存員工</button>
+          <button class="btn-ghost" onclick="peopleGenerateLink()">產生綁定連結</button>
+        </div>
+        <div class="field-row" style="margin-top:8px">
+          <button class="btn-soft" onclick="peopleResetDevice()">重設手機綁定</button>
+          <button class="btn-danger" onclick="peopleDisable()">停用此員工</button>
+        </div>
+
+        <div id="peopleBindBox" class="bind-link-box hidden"></div>
+      </div>
+
+      <div class="card">
+        <div class="mini-row"><h3>人員列表</h3><span class="badge" id="peopleCountBadge">0 人</span></div>
+        <input type="text" id="peopleSearch" placeholder="搜尋員編 / 姓名 / 分店 / 角色" oninput="renderPeopleList()">
+        <div id="peopleList" class="people-list">
+          <div class="notice-item"><div class="item-title">讀取中...</div></div>
+        </div>
+      </div>
+    </section>
+
+    <!-- ==================== Salary 薪資頁 ==================== -->
+    <section id="page-salary" class="page">
+      <div class="hero">
+        <div class="hero-top">
+          <div><div class="hello">Salary 薪資</div><div class="hello-sub">薪資設定、薪資審核、薪資表發布</div></div>
+          <div class="hero-chip">Salary</div>
+        </div>
+      </div>
+      <div class="card">
+        <div class="mini-row"><h3>薪資快捷入口</h3><span class="badge ok">salary.*</span></div>
+        <div class="notice-item">
+          <div class="item-title">薪資管理目前集中在 Home 與 Review 審核區</div>
+          <div class="item-meta">按下方按鈕可快速跳到薪資設定或薪資審核，不會影響既有函式與欄位 ID。</div>
+        </div>
+        <div class="tool-grid">
+          <button class="btn-main" onclick="navTo('home');setTimeout(function(){window.scrollTo({top:0,behavior:'smooth'})},50)">薪資設定</button>
+          <button class="btn-ghost" onclick="navTo('admin');setTimeout(function(){var e=document.getElementById('admSalaryList');if(e)e.closest('.card').scrollIntoView({behavior:'smooth'})},80)">薪資審核</button>
+        </div>
+      </div>
+    </section>
+
+
+    <!-- ==================== 無權限 ==================== -->
+    <section id="page-noperm" class="page">
+      <div class="hero"><div class="hero-top"><div><div class="hello">無管理權限</div></div></div></div>
+    </section>
+
+  </div>
+
+  <!-- ===== L 型圓形導航｜左三上三六顆版 ===== -->
+  <div class="fab-wrap is-collapsed" id="fabWrap">
+    <button class="fab-sat sat-creator" id="fab-creator" onclick="navTo('creator')" title="Settings"><i class="fa-solid fa-gear"></i><span>Settings</span></button>
+    <button class="fab-sat sat-admin" id="fab-admin" onclick="navTo('admin')" title="Review"><i class="fa-solid fa-clipboard-check"></i><span>Review</span><div class="fab-badge" id="badgeAdm"></div></button>
+    <button class="fab-sat sat-manager" id="fab-manager" onclick="navTo('manager')" title="Publish"><i class="fa-solid fa-bullhorn"></i><span>Publish</span><div class="fab-badge" id="badgeMgr"></div></button>
+    <button class="fab-sat sat-personnel" id="fab-personnel" onclick="navTo('personnel')" title="People"><i class="fa-solid fa-users"></i><span>People</span></button>
+    <button class="fab-sat sat-salary" id="fab-salary" onclick="navTo('salary')" title="Salary"><i class="fa-solid fa-money-check-dollar"></i><span>Salary</span></button>
+    <button class="fab-sat sat-data" id="fab-data" onclick="navTo('data')" title="Data"><i class="fa-solid fa-folder-open"></i><span>Data</span></button>
+    <button class="fab-home" id="fab-home" onclick="handleHomeClick()" title="開啟選單 / 回主頁"><i class="fa-solid fa-house"></i></button>
+  </div>
+
+  <script>
+    var CTX=(function(){
+      var u=window.ANG_HR_UTILS||{};
+      var q=u.getParam||function(){return''};
+      var c=u.cleanTemplate||function(v){return String(v||'').indexOf('<?')>=0?'':String(v||'').trim()};
+      function isScriptGoogleUrl_(url){return /^https:\/\/script\.google\.com\/macros\/s\//i.test(String(url||'').trim());}
+      function cleanCurrentUrl_(){try{return String(window.location.href||'').split('#')[0].split('?')[0];}catch(e){return'';}}
+      function joinUrl_(base,file){base=String(base||'').replace(/\/+$/,'');file=String(file||'').replace(/^\/+/,'');return base+'/'+file;}
+      function frontendUrl_(file){
+        var cfg=window.ANG_HR_CONFIG||{};
+        file=file||'admin.html';
+        var explicit=String(file==='employee.html'?(cfg.employeePageUrl||cfg.employeePage||''):(cfg.adminPageUrl||cfg.adminPage||'')).trim();
+        if(explicit && !isScriptGoogleUrl_(explicit))return explicit;
+        var fb=String(cfg.frontendBaseUrl||cfg.githubBaseUrl||cfg.frontendUrl||'').trim();
+        if(fb && !isScriptGoogleUrl_(fb))return joinUrl_(fb,file);
+        var here=cleanCurrentUrl_();
+        if(here && !isScriptGoogleUrl_(here))return here.replace(/\/[^\/]*$/, '/'+file);
+        return './'+file;
+      }
+      function apiUrl_(){
+        var cfg=window.ANG_HR_CONFIG||{};
+        return String(q('api')||q('gas')||cfg.apiBaseUrl||cfg.workerApiUrl||cfg.gasApiUrl||c('<?= typeof apiUrl!=="undefined"?apiUrl:"" ?>')||c('<?= typeof gasApiUrl!=="undefined"?gasApiUrl:"" ?>')||'').trim();
+      }
+      return {
+        id:String(q('employee_id')||q('id')||localStorage.getItem('ang_hr_active_employee_id')||localStorage.getItem('ang_employee_id')||localStorage.getItem('employee_id')||localStorage.getItem('loginId')||c('<?= typeof id!=="undefined"?id:"" ?>')||'').trim().toUpperCase(),
+        token:String(q('token')||q('key')||q('session_token')||q('loginToken')||localStorage.getItem('ang_hr_active_login_token')||localStorage.getItem('session_token')||localStorage.getItem('loginToken')||localStorage.getItem('emp_login_token')||localStorage.getItem('ang_employee_token')||c('<?= typeof token!=="undefined"?token:"" ?>')||'').trim(),
+        role:String(q('role')||localStorage.getItem('ang_user_role')||localStorage.getItem('ang_employee_role')||c('<?= typeof role!=="undefined"?role:"" ?>')||'').trim(),
+        name:String(q('name')||c('<?= typeof name!=="undefined"?name:"" ?>')||'').trim(),
+        nickname:String(q('nickname')||c('<?= typeof nickname!=="undefined"?nickname:"" ?>')||'').trim(),
+        companyId:String(q('company_id')||q('companyId')||q('company')||localStorage.getItem('ang_hr_active_company_id')||localStorage.getItem('ang_company_id')||localStorage.getItem('company_id')||'').trim().toUpperCase(),
+        deviceId:String(q('device_id')||q('deviceId')||localStorage.getItem('ang_hr_device_id')||localStorage.getItem('ang_device_id')||localStorage.getItem('device_id')||'').trim(),
+        appMode:String(q('app')||localStorage.getItem('ang_app_mode')||'').trim(),
+        webAppUrl:String(frontendUrl_('admin.html')).trim(),
+        apiUrl:String(apiUrl_()).trim(),
+        employeePageUrl:String(frontendUrl_('employee.html')).trim(),
+        adminPageUrl:String(frontendUrl_('admin.html')).trim()
+      };
+    })();
+    var UID=String(CTX.id||'').trim().toUpperCase();
+    var UTOKEN=String(CTX.token||'').trim();
+    var UROLE=normalizeRole(CTX.role||'Employee', UID);
+    var USER_PERMISSIONS=[];
+    var USER_PERMISSION_MAP={};
+    if(UID)localStorage.setItem('ang_employee_id',UID);
+    if(UTOKEN)localStorage.setItem('ang_employee_token',UTOKEN);
+    if(UROLE){localStorage.setItem('ang_user_role',UROLE);localStorage.setItem('ang_employee_role',UROLE);}
+    if(CTX.companyId)localStorage.setItem('ang_company_id',CTX.companyId);
+    if(CTX.deviceId)localStorage.setItem('ang_device_id',CTX.deviceId);
+    if(CTX.appMode)localStorage.setItem('ang_app_mode',CTX.appMode);
+    try{var __storedPerms=JSON.parse(localStorage.getItem('ang_user_permissions')||'[]');if(Array.isArray(__storedPerms)&&__storedPerms.length){USER_PERMISSIONS=__storedPerms;USER_PERMISSION_MAP={};__storedPerms.forEach(function(p){USER_PERMISSION_MAP[normalizePermissionCode_?normalizePermissionCode_(p):String(p).toLowerCase()]=true;});}}catch(e){}
+    var logoDataUrl='';
+    var mgrData={},admData={},crtData={};
+    var currentTopSystem={};
+    var currentTopProfile={};
+    var currentPage='home';
+    var salaryDraft=null;
+    var REVIEW_BUSY=false;
+    var salaryExtras=[];
+    var preselectMode='week';
+    var shiftRows=[];
+    var DEFAULT_SHIFT_COLOR='#4A90D9';
+    var peopleRows=[];
+    var peopleCurrentId='';
+
+    function qs(id){return document.getElementById(id)}
+    function setText(id,v){var e=qs(id);if(e)e.innerText=v==null?'':String(v)}
+    function esc(s){return String(s||'').replace(/&/g,'&amp;').replace(/</g,'&lt;').replace(/>/g,'&gt;').replace(/"/g,'&quot;')}
+    function gas(){return!!(window.google&&google.script&&google.script.run)}
+    function ok(m){Swal.fire('成功',m||'完成','success')}
+    function err(m){Swal.fire('錯誤',m||'失敗','error')}
+    function warn(m){Swal.fire('提醒',m||'','warning')}
+    function loading(m){Swal.fire({title:m||'處理中...',allowOutsideClick:false,didOpen:function(){Swal.showLoading()}})}
+    function statusCls(s){return/已通過|approved/.test(s)?'ok':/已退回|rejected/.test(s)?'danger':'warn'}
+    function statusLbl(s){return/已通過|approved/.test(s)?'已通過':/已退回|rejected/.test(s)?'已退回':'待審核'}
+
+    function getApiUrl(){
+      return (window.ANG_HR_UTILS && window.ANG_HR_UTILS.getApiUrl ? window.ANG_HR_UTILS.getApiUrl() : (CTX.apiUrl || '')).trim();
+    }
+
+    function normalizePayloadForApi(action,args){
+      var payload={};
+      if(args.length===1 && args[0] && typeof args[0]==='object' && !Array.isArray(args[0])){
+        payload=Object.assign({}, args[0]);
+      }else{
+        payload={ id:args[0]||UID, token:args[1]||UTOKEN };
+      }
+      payload.action=action;
+      if(!payload.id && payload.userId) payload.id=payload.userId;
+      if(!payload.userId && payload.id) payload.userId=payload.id;
+      if(!payload.token && payload.userToken) payload.token=payload.userToken;
+      return payload;
+    }
+
+    function installGithubGasBridge(){
+      if(window.google && google.script && google.script.run) return;
+      function createRunner(successHandler,failureHandler){
+        var runner={
+          withSuccessHandler:function(cb){ return createRunner(cb,failureHandler); },
+          withFailureHandler:function(cb){ return createRunner(successHandler,cb); }
+        };
+        return new Proxy(runner,{
+          get:function(target,prop){
+            if(prop in target) return target[prop];
+            return function(){
+              var apiUrl=getApiUrl();
+              if(!apiUrl){
+                var er=new Error('尚未設定後端 GAS API URL，請檢查 config.js');
+                if(failureHandler) failureHandler(er); else err(er.message);
+                return createRunner();
+              }
+              var args=Array.prototype.slice.call(arguments);
+              var payload=normalizePayloadForApi(String(prop),args);
+              fetch(apiUrl,{
+                method:'POST',
+                headers:{'Content-Type':'text/plain;charset=utf-8'},
+                body:JSON.stringify(payload)
+              })
+              .then(function(response){
+                if(!response.ok) throw new Error('HTTP_'+response.status);
+                return response.text();
+              })
+              .then(function(text){
+                var data={};
+                try{ data=text?JSON.parse(text):{}; }catch(e){ throw new Error('invalid_json_response'); }
+                if(successHandler) successHandler(data);
+              })
+              .catch(function(e){
+                if(failureHandler) failureHandler(e); else err(String(e&&e.message?e.message:e));
+              });
+              return createRunner();
+            };
+          }
+        });
+      }
+      window.google={script:{run:createRunner()}};
+    }
+    installGithubGasBridge();
+
+
+
+    function normalizeRole(role,id){
+      var empId=String(id||UID||'').trim().toUpperCase();
+      var s=String(role||'').trim().toLowerCase();
+      if(empId==='ANG8963' && !s) return 'Creator';
+      if(s==='creator'||s==='platform_creator'||s==='platform_owner'||s==='system_owner'||s==='superowner'||s==='super_owner'||s==='root'||s==='root_admin'||s==='superadmin'||s==='super_admin'||s==='最高權限'||s==='最高擁有者'||s==='平台擁有者'||s==='平台最高權限'||s==='平台總管理'||s==='平台方'||s==='創建者')return'Creator';
+      if(s==='owner'||s==='company_owner'||s==='companyowner'||s==='擁有者'||s==='公司擁有者'||s==='公司負責人'||s==='負責人'||s==='業主'||s==='創辦者'||s==='建立者'||s==='總管理')return'Owner';
+      if(s==='admin'||s==='administrator'||s==='管理員'||s==='系統管理員')return'Admin';
+      if(s==='manager'||s==='主管'||s==='店長'||s==='經理')return'Manager';
+      if(s==='employee'||s==='staff'||s==='member'||s==='員工'||s==='一般員工')return'Employee';
+      return role?String(role).trim():'Employee';
+    }
+
+    function roleRank(role){
+      var r=String(normalizeRole(role)||'Employee').toLowerCase();
+      if(r==='creator')return 5;
+      if(r==='owner')return 4;
+      if(r==='admin')return 3;
+      if(r==='manager')return 2;
+      if(r==='employee')return 1;
+      return 0;
+    }
+
+    function setRuntimeRole(role, force){
+      var next=normalizeRole(role,UID);
+      if(!next)return;
+      if(force || roleRank(next)>=roleRank(UROLE)){
+        UROLE=next;
+        try{localStorage.setItem('ang_user_role',UROLE);localStorage.setItem('ang_employee_role',UROLE);}catch(e){}
+      }
+    }
+
+    function applyPermissionSnapshot(r){
+      if(!r||!r.ok)return false;
+      if(r.employee_id||r.id){UID=String(r.employee_id||r.id||UID).trim().toUpperCase();try{localStorage.setItem('ang_employee_id',UID);localStorage.setItem('ang_hr_active_employee_id',UID);localStorage.setItem('employee_id',UID);}catch(e){}}
+      if(r.session_token||r.token){UTOKEN=String(r.session_token||r.token||UTOKEN).trim();try{localStorage.setItem('ang_employee_token',UTOKEN);localStorage.setItem('ang_hr_active_login_token',UTOKEN);localStorage.setItem('session_token',UTOKEN);localStorage.setItem('loginToken',UTOKEN);}catch(e){}}
+      if(r.company_id){CTX.companyId=String(r.company_id).trim().toUpperCase();try{localStorage.setItem('ang_company_id',CTX.companyId);localStorage.setItem('ang_hr_active_company_id',CTX.companyId);localStorage.setItem('company_id',CTX.companyId);}catch(e){}}
+      if(r.device_id){CTX.deviceId=String(r.device_id).trim();try{localStorage.setItem('ang_device_id',CTX.deviceId);localStorage.setItem('ang_hr_device_id',CTX.deviceId);}catch(e){}}
+      if(r.role)setRuntimeRole(r.role,true);
+      setRuntimePermissions(r.permissions||r.permission_codes||r.permissionList||r.permission_list||null);
+      if(r.companies){try{localStorage.setItem('ang_company_memberships',JSON.stringify(r.companies));}catch(e){}}
+      return true;
+    }
+
+    function bootstrapPermission(done){
+      done=typeof done==='function'?done:function(){};
+      if(!gas()){applyVisibility();done();return;}
+      google.script.run
+        .withSuccessHandler(function(r){
+          applyPermissionSnapshot(r);
+          applyVisibility();
+          done();
+        })
+        .withFailureHandler(function(){
+          applyVisibility();
+          done();
+        })
+        .angGetPermissionSnapshot({id:UID,userId:UID,token:UTOKEN,company_id:CTX.companyId,device_id:CTX.deviceId,role:UROLE});
+    }
+
+    function setLogoValue(value){
+      var el=qs('brandLogo');
+      if(!el)return;
+      var v=String(value||'').trim();
+      if(/^https?:\/\//i.test(v)||/^data:image\//i.test(v)){
+        el.innerHTML='<img src="'+esc(v)+'" alt="logo">';
+      }else{
+        el.textContent=v||'ANG';
+      }
+    }
+
+    function getPageLabel_(page){
+      var map={home:'主頁',admin:'Review 審核中心',creator:'Settings 系統設定',manager:'Publish 發布中心',personnel:'People 人員',salary:'Salary 薪資',data:'Data 資料夾',noperm:'無權限'};
+      return map[page]||'管理中心';
+    }
+
+    function applyTopBrand(system, profile){
+      var s=system||{};
+      var p=profile||currentTopProfile||{};
+      currentTopSystem=s;
+      currentTopProfile=p;
+
+      var companyName=s.company_name||s.brandTitleMain||s.main_title||'ANG.lo';
+      var companySub=s.company_subtitle||s.brandTitleSub||s.system_sub||'Humanized system technology';
+      var branchName=s.branch_name||p.branchName||p.branch_name||'';
+      var branchId=s.branch_id||p.branchId||p.branch_id||'';
+
+      setText('brandTitleMain',companyName);
+      setText('brandTitleSub',companySub);
+
+      // 左側：公司名稱 / 公司副名稱。
+      // 右側第一行：固定系統主標題，例如 ANG.lo Engine。
+      // 右側第二行：顯示分店名稱｜員編，例如 迴龍店｜ANG0603。
+      var topTitle='ANG.lo Engine';
+      var topBranch=branchName||branchId||'總店';
+      var subParts=[];
+      if(topBranch)subParts.push(topBranch);
+      if(UID)subParts.push(UID);
+      setText('topTitle',topTitle);
+      setText('topSub',subParts.filter(Boolean).join('｜'));
+      setLogoValue(s.logo_url||s.fallback_text||'ANG');
+      updateRightBannerPreview();
+    }
+
+    function updateRightBannerPreview(){
+      var branchName=(qs('branchNameInput')&&qs('branchNameInput').value.trim())||'';
+      var branchId=(qs('branchIdInput')&&qs('branchIdInput').value.trim())||'';
+      var display=branchName||branchId||'總店';
+      if(qs('mainTitleInput'))qs('mainTitleInput').value='ANG.lo Engine';
+      if(qs('systemNameInput'))qs('systemNameInput').value=display;
+    }
+
+    function updateClockLocationDisplay(){
+      var branchName=(qs('clockBranchNameInput')&&qs('clockBranchNameInput').value.trim())||'';
+      var branchId=(qs('clockBranchIdInput')&&qs('clockBranchIdInput').value.trim())||'';
+      var display=branchName||branchId||'總店';
+      setText('clockLocationTargetText','目前設定對象：'+display);
+    }
+
+    // ==================== L型導航 ====================
+
+    function getDeviceIdForRoute(){
+      var saved=String(CTX.deviceId||localStorage.getItem('ang_hr_device_id')||localStorage.getItem('ang_device_id')||localStorage.getItem('device_id')||'').trim();
+      if(!saved){saved='DEV-'+Date.now().toString(36).toUpperCase()+'-'+Math.random().toString(36).slice(2,10).toUpperCase();}
+      try{localStorage.setItem('ang_hr_device_id',saved);localStorage.setItem('ang_device_id',saved);localStorage.setItem('device_id',saved);CTX.deviceId=saved;}catch(e){}
+      return saved;
+    }
+
+    function getCurrentCompanyIdForRoute(){
+      return String(CTX.companyId||localStorage.getItem('ang_hr_active_company_id')||localStorage.getItem('ang_company_id')||localStorage.getItem('company_id')||'MAIN').trim().toUpperCase();
+    }
+
+    function getCurrentCleanUrl_(){
+      try{return String(window.location.href||'').split('#')[0].split('?')[0];}catch(e){return'';}
+    }
+
+    function isScriptGoogleUrl_(url){
+      return /^https:\/\/script\.google\.com\/macros\/s\//i.test(String(url||'').trim());
+    }
+
+    function appendQuery_(base, q){
+      base=String(base||'').trim()||'./admin.html';
+      return base+(base.indexOf('?')>-1?'&':'?')+q.join('&');
+    }
+
+    function getSameGasBaseUrl(){
+      // 只有「目前真的跑在 GAS WebApp 頁面」時，才用 GAS page=admin / page=employee 路由。
+      // GitHub Pages 版就算 config.js 裡有 gasApiUrl，也只拿來打 API，不拿來跳頁。
+      var here=getCurrentCleanUrl_();
+      if(isScriptGoogleUrl_(here))return here;
+      return '';
+    }
+
+    function getGithubRouteBase_(pageName){
+      var cfg=window.ANG_HR_CONFIG||{};
+      var page=String(pageName||'admin').toLowerCase();
+      var file=(page==='employee')?'employee.html':'admin.html';
+      var explicit=(page==='employee')
+        ? String((cfg.employeePageUrl||CTX.employeePageUrl||'')).trim()
+        : String((cfg.adminPageUrl||CTX.adminPageUrl||'')).trim();
+      if(explicit && !isScriptGoogleUrl_(explicit))return explicit;
+      var frontendBase=String(cfg.frontendBaseUrl||cfg.githubBaseUrl||'').trim();
+      if(frontendBase && !isScriptGoogleUrl_(frontendBase))return frontendBase.replace(/\/+$/,'')+'/'+file;
+      var here=getCurrentCleanUrl_();
+      if(here && !isScriptGoogleUrl_(here))return here.replace(/\/[^\/]*$/,'/'+file);
+      return './'+file;
+    }
+
+    function buildPageUrl(pageName){
+      persistRouteSession();
+      var page=String(pageName||'employee').toLowerCase();
+      if(page==='people')page='personnel';
+      var routePage=(page==='employee')?'employee':'admin';
+      var id=encodeURIComponent(String(UID||CTX.id||'').trim());
+      var token=encodeURIComponent(String(UTOKEN||CTX.token||'').trim());
+      var role=encodeURIComponent(String(UROLE||CTX.role||'').trim());
+      var companyId=String(getCurrentCompanyIdForRoute()).trim();
+      var deviceId=String(getDeviceIdForRoute()).trim();
+      var appMode=String(CTX.appMode||localStorage.getItem('ang_app_mode')||'').trim();
+      var q=['page='+encodeURIComponent(routePage),'id='+id,'token='+token,'role='+role];
+      if(companyId)q.push('company_id='+encodeURIComponent(companyId));
+      if(deviceId)q.push('device_id='+encodeURIComponent(deviceId));
+      if(appMode)q.push('app='+encodeURIComponent(appMode));
+      q.push('_ts='+Date.now());
+      var gasBase=getSameGasBaseUrl();
+      if(gasBase)return appendQuery_(gasBase,q);
+      return appendQuery_(getGithubRouteBase_(routePage),q);
+    }
+
+    function hardGo(pageName){
+      var url = buildPageUrl(pageName);
+      try{
+        window.location.replace(url);
+      }catch(err){
+        window.location.href = url;
+      }
+    }
+
+    function refreshCurrentPage(){
+      var adminPages=['home','admin','creator','manager','data','personnel','salary'];
+      var url = buildPageUrl(adminPages.indexOf(currentPage)>-1 ? 'admin' : 'employee');
+      try{
+        window.location.replace(url);
+      }catch(err){
+        window.location.href = url;
+      }
+    }
+
+    function goEmployee(){
+      hardGo('employee');
+    }
+
+    function goAdmin(){
+      hardGo('admin');
+    }
+
+    function setFabExpanded(expanded){
+      var wrap=qs('fabWrap');
+      if(!wrap)return;
+      wrap.classList.toggle('is-collapsed',!expanded);
+      document.body.classList.toggle('fab-expanded-mode',!!expanded);
+      window.__angFabLastOpenAt = expanded ? Date.now() : 0;
+    }
+
+    function isFabExpanded(){
+      var wrap=qs('fabWrap');
+      return !!(wrap&&!wrap.classList.contains('is-collapsed'));
+    }
+
+    function hasAdminHomeSwitchPermission_(){
+      return getAllowed().indexOf('home')>-1;
+    }
+
+    function installFabAutoCollapse(){
+      if(window.__angFabAutoCollapseBound)return;
+      window.__angFabAutoCollapseBound=true;
+
+      function shouldIgnoreFabAutoClose_(target){
+        if(!target)return false;
+        if(target.closest&&target.closest('#fabWrap'))return true;
+        // FAB 展開時點 Logo 要執行「回員工端」，不能先被全域自動收合吃掉。
+        if(target.closest&&target.closest('#brandSlot'))return true;
+        if(target.closest&&target.closest('.ang-company-switcher'))return true;
+        return false;
+      }
+
+      function collapseFabByNextTap_(evt){
+        var wrap=qs('fabWrap');
+        if(!wrap||wrap.classList.contains('is-collapsed'))return;
+        if(Date.now()-(window.__angFabLastOpenAt||0)<90)return;
+        var target=evt&&evt.target;
+        if(shouldIgnoreFabAutoClose_(target))return;
+        setFabExpanded(false);
+      }
+
+      document.addEventListener('pointerdown',collapseFabByNextTap_,true);
+      document.addEventListener('touchstart',collapseFabByNextTap_,true);
+      document.addEventListener('click',collapseFabByNextTap_,true);
+      document.addEventListener('keydown',function(evt){
+        if(evt.key==='Escape')setFabExpanded(false);
+      },false);
+    }
+
+    function getActiveAdminPage_(){
+      try{
+        var active=document.querySelector('.page.active');
+        if(active&&active.id&&active.id.indexOf('page-')===0){
+          return String(active.id).replace(/^page-/,'')||'home';
+        }
+      }catch(e){}
+      return String(currentPage||'home').toLowerCase();
+    }
+
+    function handleHomeClick(){
+      var wrap=qs('fabWrap');
+      var isExpanded=wrap&&!wrap.classList.contains('is-collapsed');
+
+      var hb=qs('fab-home');
+      if(hb){
+        hb.classList.add('swap');
+        setTimeout(function(){ hb.classList.remove('swap'); },400);
+      }
+
+      // FAB Home 現在只負責展開 / 收合，不再直接跳頁。
+      // 若要從 Admin 回 Employee：先展開 FAB，再點左上公司 Logo。
+      setFabExpanded(!isExpanded);
+    }
+
+    function getRoleKey(){
+      return String(UROLE||'').trim().toLowerCase();
+    }
+
+    function normalizePermissionCode_(v){
+      return String(v||'').trim().toLowerCase().replace(/\s+/g,'');
+    }
+
+    function splitPermissionInput_(input){
+      if(!input)return[];
+      if(Array.isArray(input))return input;
+      if(typeof input==='object'){
+        var out=[];
+        Object.keys(input).forEach(function(k){
+          var val=input[k];
+          if(val===true||val==='true'||val===1||val==='1'||val==='是'||val==='yes')out.push(k);
+          else if(Array.isArray(val))val.forEach(function(x){out.push(String(k)+'.'+String(x));});
+        });
+        return out;
+      }
+      return String(input||'').split(/[\n,;，；、|｜]+/);
+    }
+
+    function permissionDefaultsByRole_(role){
+      var r=String(normalizeRole(role)||'').trim().toLowerCase();
+      if(r==='creator')return['*'];
+      if(r==='owner')return['*'];
+      if(r==='admin')return[
+        'review.*','people.*','salary.*','data.*','publish.notice','publish.schedule'
+      ];
+      if(r==='manager')return[
+        'review.leave','review.upload','review.message','publish.notice','publish.schedule','data.drive'
+      ];
+      return[];
+    }
+
+    function setRuntimePermissions(perms){
+      var list=splitPermissionInput_(perms).map(normalizePermissionCode_).filter(Boolean);
+      if(!list.length)list=permissionDefaultsByRole_(UROLE);
+      USER_PERMISSIONS=list;
+      USER_PERMISSION_MAP={};
+      list.forEach(function(p){USER_PERMISSION_MAP[p]=true;});
+      try{localStorage.setItem('ang_user_permissions',JSON.stringify(list));}catch(e){}
+    }
+
+    function getRuntimePermissions(){
+      if(!USER_PERMISSIONS||!USER_PERMISSIONS.length)setRuntimePermissions(null);
+      return USER_PERMISSIONS||[];
+    }
+
+    function hasPerm(code){
+      code=normalizePermissionCode_(code);
+      if(!code)return false;
+      var list=getRuntimePermissions();
+      if(USER_PERMISSION_MAP['*'])return true;
+      if(USER_PERMISSION_MAP[code])return true;
+      var head=code.split('.')[0];
+      if(head&&USER_PERMISSION_MAP[head+'.*'])return true;
+      return list.some(function(p){
+        p=normalizePermissionCode_(p);
+        if(p==='*'||p===code)return true;
+        if(p.slice(-2)==='.*')return code.indexOf(p.slice(0,-1))===0;
+        return false;
+      });
+    }
+
+    function hasAnyPerm(list){
+      return (list||[]).some(function(p){return hasPerm(p);});
+    }
+
+    function getAllowed(){
+      setRuntimePermissions(USER_PERMISSIONS&&USER_PERMISSIONS.length?USER_PERMISSIONS:null);
+      var allowed=[];
+      if(hasAnyPerm(['review.*','settings.*','people.*','salary.*','data.*','publish.*','review.leave','review.clockfix','review.upload','review.message','review.salary','settings.preselect','settings.approver','settings.shift','settings.clock_grace','settings.brand','settings.location','people.view','salary.setting','data.drive','publish.notice','publish.schedule']))allowed.push('home');
+      if(hasAnyPerm(['review.*','review.leave','review.clockfix','review.upload','review.message','review.salary']))allowed.push('admin');
+      if(hasAnyPerm(['settings.*','settings.preselect','settings.approver','settings.shift','settings.clock_grace','settings.brand','settings.location','settings.permission']))allowed.push('creator');
+      if(hasAnyPerm(['publish.*','publish.notice','publish.schedule']))allowed.push('manager');
+      if(hasAnyPerm(['people.*','people.view','people.create','people.edit','people.disable','people.role','people.permission','people.bind','people.reset_device']))allowed.push('personnel');
+      if(hasAnyPerm(['salary.*','salary.setting','salary.calculate','salary.adjust','salary.publish','salary.export','review.salary']))allowed.push('salary');
+      if(hasAnyPerm(['data.*','data.archive','data.export','data.drive']))allowed.push('data');
+      return allowed;
+    }
+
+    function getFabPageConfigs_(){
+      return [
+        {page:'admin',id:'fab-admin',label:'Review',perms:['review.*','review.leave','review.clockfix','review.upload','review.message','review.salary']},
+        {page:'creator',id:'fab-creator',label:'Settings',perms:['settings.*','settings.preselect','settings.approver','settings.shift','settings.clock_grace','settings.brand','settings.location','settings.permission']},
+        {page:'manager',id:'fab-manager',label:'Publish',perms:['publish.*','publish.notice','publish.schedule']},
+        {page:'personnel',id:'fab-personnel',label:'People',perms:['people.*','people.view','people.create','people.edit','people.disable','people.role','people.permission','people.bind','people.reset_device']},
+        {page:'salary',id:'fab-salary',label:'Salary',perms:['salary.*','salary.setting','salary.calculate','salary.adjust','salary.publish','salary.export','review.salary']},
+        {page:'data',id:'fab-data',label:'Data',perms:['data.*','data.archive','data.export','data.drive']}
+      ];
+    }
+
+    function getFabPositionClasses_(){
+      return ['sat-creator','sat-admin','sat-manager','sat-personnel','sat-salary','sat-data'];
+    }
+
+    function stripFabPositionClasses_(el){
+      if(!el)return;
+      getFabPositionClasses_().forEach(function(cls){el.classList.remove(cls);});
+    }
+
+    function getPageLabel(page){
+      var map={
+        home:['ANG.lo Engine','主頁'],
+        admin:['ANG.lo Engine','Review 審核中心'],
+        creator:['ANG.lo Engine','Settings 系統設定'],
+        manager:['ANG.lo Engine','Publish 發布中心'],
+        personnel:['ANG.lo Engine','People 人員'],
+        salary:['ANG.lo Engine','Salary 薪資'],
+        data:['ANG.lo Engine','Data 資料夾'],
+        noperm:['ANG.lo Engine','無管理權限']
+      };
+      return map[page]||map.home;
+    }
+
+    function navTo(page){
+      page=String(page||'home').toLowerCase();
+      if(page==='people')page='personnel';
+
+      var a=getAllowed();
+      var allowHome=a.indexOf('home')>-1;
+      if(page==='home'){
+        if(!allowHome)page='noperm';
+      }else if(page!=='noperm'&&a.indexOf(page)===-1){
+        setFabExpanded(false);
+        warn('你沒有此功能權限');
+        return false;
+      }
+
+      currentPage=page;
+      document.querySelectorAll('.page').forEach(function(e){e.classList.remove('active')});
+      document.querySelectorAll('.fab-sat').forEach(function(e){e.classList.remove('active')});
+      var pe=qs('page-'+page);if(pe)pe.classList.add('active');
+      var fe=qs('fab-'+page);if(fe)fe.classList.add('active');
+
+      var lbl=getPageLabel(page);
+      setText('topTitle',lbl[0]);
+      setText('topSub',lbl[1]);
+
+      // 點選導航項目完成後自動收回 FAB 選單。
+      setFabExpanded(false);
+      return true;
+    }
+
+    function applyVisibility(){
+      var a=getAllowed();
+      var configs=getFabPageConfigs_();
+      var positionClasses=getFabPositionClasses_();
+      var visibleIndex=0;
+
+      // 只顯示「目前使用者有權限進入」的功能按鈕，並依功能權限順序重新排列，不留空洞。
+      configs.forEach(function(cfg){
+        var e=qs(cfg.id);
+        if(!e)return;
+        e.classList.remove('active','locked');
+        stripFabPositionClasses_(e);
+        if(a.indexOf(cfg.page)>-1){
+          e.classList.remove('hidden');
+          e.classList.add(positionClasses[visibleIndex]||positionClasses[positionClasses.length-1]);
+          visibleIndex++;
+        }else{
+          e.classList.add('hidden');
+        }
+      });
+
+      if(a.indexOf('home')>-1){
+        if(currentPage&&currentPage!=='noperm'&&currentPage!=='home'&&a.indexOf(currentPage)>-1){
+          navTo(currentPage);
+        }else{
+          navTo('home');
+        }
+      }else{
+        navTo('noperm');
+      }
+      setFabExpanded(false);
+    }
+
+    function _buildReviewCard_(item,idx,tid){
+      var step=item.currentStep?'（待：'+esc(item.currentStep)+')':'';
+      var act='';
+      if(String(item.status||'').toLowerCase()==='pending'){
+        act='<div class="review-actions"><button class="btn-success" onclick="doReview(\''+esc(tid)+'\',\''+esc(item.rowKey||'')+'\',\''+esc(item.sheetName||'')+'\',\'approved\')">通過</button><button class="btn-danger" onclick="doReview(\''+esc(tid)+'\',\''+esc(item.rowKey||'')+'\',\''+esc(item.sheetName||'')+'\',\'rejected\')">退回</button></div>';
+      }
+      var empName=esc(item.empName||item.name||item.applicant||'');
+      var applyDate=esc(item.date||item.applyDate||'');
+      var reason=esc(item.reason||item.note||item.desc||'');
+      var meta='';
+      if(empName)meta+='<div class="item-meta">👤 '+empName+'</div>';
+      if(applyDate)meta+='<div class="item-meta">📅 '+applyDate+'</div>';
+      if(reason)meta+='<div class="item-meta" style="margin-top:4px;white-space:pre-wrap">💬 '+reason+'</div>';
+      return'<div class="review-card"><div class="mini-row"><div class="item-title">'+esc(item.title)+'</div><span class="badge '+statusCls(item.status)+'">'+statusLbl(item.status)+step+'</span></div>'+meta+act+'</div>';
+    }
+
+    // ANG.lo HR System Deploy Version: 129 - Fix 2: skip blank cards
+    function isValidReviewItem(item){
+      var hasName=String(item&&(item.empName||item.name||item.applicant)||'').trim();
+      var hasDesc=String(item&&item.desc||'').trim();
+      var hasKey=String(item&&(item.rowKey||item.date||item.applyDate)||'').trim();
+      return !!(hasName||hasDesc||hasKey);
+    }
+
+    // ANG.lo HR System Deploy Version: 129 - stricter blank-card filter
+    function hasReviewContent_(x){
+      if(!x) return false;
+      var status=String(x.status||x.review_status||'').toLowerCase().trim();
+      if(['approved','rejected','pass','deny','通過','退回','已通過','已退回'].indexOf(status)>-1) return false;
+      var id=String(x.rowKey||x.id||x.no||x.requestId||x.leave_id||x.clockfix_id||x.upload_id||x.salary_id||'').trim();
+      var emp=String(x.employee_id||x.employeeId||x.empId||x.user_id||x.empName||x.name||x.applicant||'').trim();
+      var main=String(x.title||x.type||x.leave_type||x.kind||x.reason||x.content||x.date||x.applyDate||x.start_date||x.month||'').trim();
+      return !!(id && (emp || main));
+    }
+
+    function renderReviewList(tid,items,canAct){
+      var box=qs(tid);if(!box)return;
+      var list=(Array.isArray(items)?items:[]).filter(hasReviewContent_);
+      var card=box.closest('[data-autohide="1"]');
+      if(!list.length){
+        box.innerHTML='<div style="padding:8px 0;font-size:14px;color:var(--muted)">目前沒有資料</div>';
+        if(card)card.style.display='none';
+        return;
+      }
+      if(card)card.style.display='';
+      var MAX=5;var shown=list.slice(0,MAX);
+      var html=shown.map(function(item,idx){return _buildReviewCard_(item,idx,tid)}).join('');
+      if(list.length>MAX){
+        html+='<button class="btn-ghost" style="margin-top:6px" onclick="showAllReviews(\''+esc(tid)+'\')">顯示更多（共 '+list.length+' 筆）</button>';
+      }
+      box.innerHTML=html;
+    }
+
+    function showAllReviews(tid){
+      var raw=getArr(tid);var box=qs(tid);if(!box)return;
+      var list=(Array.isArray(raw)?raw:[]).filter(hasReviewContent_);
+      if(!list.length){
+        box.innerHTML='<div style="padding:8px 0;font-size:14px;color:var(--muted)">目前沒有資料</div>';
+        var card=box.closest('[data-autohide="1"]');
+        if(card)card.style.display='none';
+        return;
+      }
+      box.innerHTML=list.map(function(item,idx){return _buildReviewCard_(item,idx,tid)}).join('');
+    }
+
+    function renderPublishList(tid,items){
+      var box=qs(tid);if(!box)return;
+      var list=Array.isArray(items)?items:[];
+      if(!list.length){box.innerHTML='<div class="notice-item"><div class="item-title">目前沒有資料</div></div>';return}
+      box.innerHTML=list.map(function(i){return'<div class="notice-item"><div class="item-title">'+esc(i.title)+'</div><div class="item-meta">'+esc(i.desc||i.period||'')+'</div></div>'}).join('');
+    }
+
+    // ==================== 審核 ====================
+
+    function getArr(tid){
+      var map={mgrLeaveList:'leaveReviews',mgrUploadList:'receiveReviews',mgrMessageList:'messageReviews',admClockFixList:'clockFixReviews',admSalaryList:'salaryReviews',admLeaveList:'leaveReviews',admUploadList:'receiveReviews',admMessageList:'messageReviews'};
+      var key=map[tid];if(!key)return[];
+      return tid.startsWith('mgr')?(mgrData[key]||[]):(admData[key]||[]);
+    }
+
+    function removeReviewedItem(tid,rowKey){
+      var map={mgrLeaveList:'leaveReviews',mgrUploadList:'receiveReviews',mgrMessageList:'messageReviews',
+               admClockFixList:'clockFixReviews',admSalaryList:'salaryReviews',admLeaveList:'leaveReviews',
+               admUploadList:'receiveReviews',admMessageList:'messageReviews'};
+      var key=map[tid];if(!key)return;
+      var src=tid.startsWith('mgr')?mgrData:admData;
+      if(src[key])src[key]=src[key].filter(function(x){return x.rowKey!==rowKey});
+    }
+
+    function doReview(tid,rowKey,sheetName,status){
+      if(REVIEW_BUSY)return;
+      if(!rowKey||!sheetName){warn('找不到');return}
+      if(!gas()){warn('非正式環境');return}
+      REVIEW_BUSY=true;
+      loading();
+      google.script.run
+        .withSuccessHandler(function(r){
+          Swal.close();
+          if(!r||!r.ok){
+            REVIEW_BUSY=false;
+            err(r?r.message:'失敗');
+            return;
+          }
+          // 立刻從本地數據移除該項並重新渲染
+          removeReviewedItem(tid,rowKey);
+          var arr=getArr(tid);
+          renderReviewList(tid,arr,true);
+          try{ok(r.message);loadAll()}finally{REVIEW_BUSY=false}
+        })
+        .withFailureHandler(function(e){
+          Swal.close();
+          REVIEW_BUSY=false;
+          err(String(e));
+        })
+        .adminSetReviewStatus({userId:UID,token:UTOKEN,sheetName:sheetName,rowKey:rowKey,status:status});
+    }
+
+    // ==================== 薪資審核 ====================
+
+    function loadSalaryDraft(){
+      if(!gas()){warn('非正式環境');return}
+      var empId=qs('salaryEmpId').value.trim().toUpperCase();
+      var month=qs('salaryMonth').value;
+      if(!empId||!month){warn('請填入員編和月份');return}
+      loading('計算薪資中...');
+      google.script.run.withSuccessHandler(function(r){
+        Swal.close();if(!r||!r.ok){err(r?r.message:'載入失敗');return}
+        salaryDraft=r.draft;salaryExtras=[];renderSalaryDraft();
+      }).withFailureHandler(function(e){Swal.close();err(String(e))})
+        .generateSalaryDraft({userId:UID,token:UTOKEN,empId:empId,month:month});
+    }
+
+    function renderSalaryDraft(){
+      if(!salaryDraft){qs('salaryDraftArea').innerHTML='';qs('salaryAddBtns').style.display='none';qs('btnSubmitSalary').style.display='none';return}
+      var d=salaryDraft;
+      var h='<div class="notice-item" style="margin-bottom:10px"><div class="item-title">'+esc(d.empName)+' ('+esc(d.empId)+') — '+esc(d.month)+'</div></div>';
+      h+='<div class="salary-line"><div class="sl-label">底薪</div><input type="number" id="sfBaseSalary" value="'+d.baseSalary+'" onchange="recalcTotal()"></div>';
+      h+='<div class="salary-line"><div class="sl-label">出勤</div><div class="sl-val">'+d.workDays+'天 / '+d.workHours+'時</div></div>';
+      h+='<div class="salary-line"><div class="sl-label">加班</div><div class="sl-val">'+d.overtimeHours+'時</div></div>';
+      h+='<div class="salary-line"><div class="sl-label">加班費</div><input type="number" id="sfOvertimePay" value="'+d.overtimePay+'" onchange="recalcTotal()"></div>';
+      h+='<div class="salary-line"><div class="sl-label">餐費</div><input type="number" id="sfMeal" value="'+d.mealAllowance+'" onchange="recalcTotal()"></div>';
+      h+='<div class="salary-line"><div class="sl-label">遲到</div><div class="sl-val negative">'+d.lateMinutes+'分 = -$'+d.lateDeduction+'</div><input type="number" id="sfLateDed" value="'+d.lateDeduction+'" onchange="recalcTotal()" style="width:80px"></div>';
+      h+='<div class="salary-line"><div class="sl-label">請假扣</div><div class="sl-val negative">'+d.leaveDays+'天 = -$'+d.leaveDeduction+'</div><input type="number" id="sfLeaveDed" value="'+d.leaveDeduction+'" onchange="recalcTotal()" style="width:80px"></div>';
+      if(d.leaveDetail&&d.leaveDetail.length){h+='<div style="padding:6px 10px;font-size:11px;color:var(--muted)">';d.leaveDetail.forEach(function(l){h+=esc(l.type)+' '+l.days+'天 -$'+l.deduction+'<br>'});h+='</div>'}
+      h+='<div id="salaryTotalLine" class="salary-line" style="background:var(--emp-soft);border:1px solid rgba(var(--emp-rgb),.15)"><div class="sl-label" style="color:var(--emp-deep)">合計</div><div class="sl-val" id="sfTotal" style="font-size:18px;color:var(--emp-deep)">$0</div></div>';
+      qs('salaryDraftArea').innerHTML=h;qs('salaryAddBtns').style.display='';qs('btnSubmitSalary').style.display='';renderSalaryExtras();recalcTotal();
+    }
+
+    function addSalaryExtra(type){
+      salaryExtras.push({type:type,name:'',amount:0,isDeduct:['扣款','法扣','行政費用','稅金'].indexOf(type)>-1});
+      renderSalaryExtras();
+    }
+    function removeSalaryExtra(idx){salaryExtras.splice(idx,1);renderSalaryExtras();recalcTotal()}
+
+    function renderSalaryExtras(){
+      var h='';var types=['獎金','津貼','扣款','法扣','行政費用','稅金'];
+      salaryExtras.forEach(function(e,idx){
+        var sel='<select onchange="salaryExtras['+idx+'].type=this.value;salaryExtras['+idx+'].isDeduct=[\'扣款\',\'法扣\',\'行政費用\',\'稅金\'].indexOf(this.value)>-1;recalcTotal()">';
+        types.forEach(function(t){sel+='<option'+(t===e.type?' selected':'')+'>'+t+'</option>'});sel+='</select>';
+        h+='<div class="extra-row">'+sel+'<input type="text" placeholder="名稱" value="'+esc(e.name)+'" onchange="salaryExtras['+idx+'].name=this.value" style="flex:1"><span style="font-weight:900">$</span><input type="number" value="'+e.amount+'" onchange="salaryExtras['+idx+'].amount=Number(this.value);recalcTotal()" style="width:80px"><button class="del-btn" onclick="removeSalaryExtra('+idx+')">✕</button></div>';
+      });
+      qs('salaryExtrasList').innerHTML=h;
+    }
+
+    function recalcTotal(){
+      if(!salaryDraft)return;
+      var b=Number((qs('sfBaseSalary')||{}).value||0),ot=Number((qs('sfOvertimePay')||{}).value||0),ml=Number((qs('sfMeal')||{}).value||0);
+      var ld=Number((qs('sfLateDed')||{}).value||0),lv=Number((qs('sfLeaveDed')||{}).value||0);
+      var ep=0,em=0;salaryExtras.forEach(function(e){if(e.isDeduct)em+=Math.abs(Number(e.amount||0));else ep+=Number(e.amount||0)});
+      setText('sfTotal','$'+(b+ot+ml+ep-ld-lv-em).toLocaleString());
+    }
+
+    function submitSalaryReview(){
+      if(!gas()||!salaryDraft){warn('請先載入薪資');return}
+      loading('送出中...');
+      google.script.run.withSuccessHandler(function(r){
+        Swal.close();if(!r||!r.ok){err(r?r.message:'失敗');return}
+        ok(r.message+'\n合計：$'+r.total);salaryDraft=null;salaryExtras=[];
+        qs('salaryDraftArea').innerHTML='';qs('salaryExtrasList').innerHTML='';
+        qs('salaryAddBtns').style.display='none';qs('btnSubmitSalary').style.display='none';loadAll();
+      }).withFailureHandler(function(e){Swal.close();err(String(e))})
+        .saveSalaryReview({userId:UID,token:UTOKEN,empId:salaryDraft.empId,empName:salaryDraft.empName,month:salaryDraft.month,baseSalary:Number((qs('sfBaseSalary')||{}).value||0),overtimePay:Number((qs('sfOvertimePay')||{}).value||0),overtimeHours:salaryDraft.overtimeHours,workHours:salaryDraft.workHours,mealAllowance:Number((qs('sfMeal')||{}).value||0),lateDeduction:Number((qs('sfLateDed')||{}).value||0),leaveDeduction:Number((qs('sfLeaveDed')||{}).value||0),extras:salaryExtras});
+    }
+
+    // ==================== 期限 / 品牌 / 歸檔 / 寬限 ====================
+
+    function saveGraceSettings(){
+      if(!gas())return warn('非正式環境');loading('儲存中...');
+      google.script.run.withSuccessHandler(function(r){Swal.close();r&&r.ok?ok(r.message):err(r?r.message:'失敗')}).withFailureHandler(function(e){Swal.close();err(String(e))})
+        .saveSystemSettings({userId:UID,token:UTOKEN,settings:{clock_grace_before:qs('graceBeforeMin').value,clock_grace_after:qs('graceAfterMin').value}});
+    }
+
+    function saveClockLocationSettings(){
+      if(!gas())return warn('非正式環境');
+      var branchId=(qs('clockBranchIdInput')&&qs('clockBranchIdInput').value.trim())||'';
+      var branchName=(qs('clockBranchNameInput')&&qs('clockBranchNameInput').value.trim())||'';
+      loading('儲存中...');
+      google.script.run.withSuccessHandler(function(r){Swal.close();r&&r.ok?ok(r.message):err(r?r.message:'失敗')}).withFailureHandler(function(e){Swal.close();err(String(e))})
+        .saveClockLocationSettings({
+          userId:UID,
+          token:UTOKEN,
+          branchId:branchId,
+          branchName:branchName,
+          clock_location_required:qs('chkLocationRequired').checked?'true':'false',
+          clock_location_lat:(qs('clockLocationLat')||{}).value||'',
+          clock_location_lng:(qs('clockLocationLng')||{}).value||'',
+          clock_location_radius:(qs('clockLocationRadius')||{}).value||'200'
+        });
+    }
+
+    function handleLogoUpload(e){var f=e.target.files&&e.target.files[0];if(!f)return;var r=new FileReader();r.onload=function(ev){logoDataUrl=ev.target.result||''};r.readAsDataURL(f)}
+
+    function saveBrandSettings(){
+      if(!gas())return warn('非正式環境');
+      var scope=(qs('brandScope')&&qs('brandScope').value)||'global';
+      var branchId=(qs('branchIdInput')&&qs('branchIdInput').value.trim())||'';
+      if(scope==='branch'&&!branchId){warn('指定分店時，請先填分店ID');return}
+      loading('儲存中...');
+      google.script.run.withSuccessHandler(function(r){
+        Swal.close();
+        if(!r||!r.ok){err(r?r.message:'失敗');return}
+        ok(r.message||'設定已儲存');
+        loadAll();
+      }).withFailureHandler(function(e){Swal.close();err(String(e))})
+        .saveBrandSettings({
+          userId:UID,
+          token:UTOKEN,
+          brandScope:scope,
+          branchId:branchId,
+          branchName:(qs('branchNameInput')&&qs('branchNameInput').value.trim())||'',
+          logoDataUrl:logoDataUrl,
+          fallbackText:(qs('fallbackTextInput')&&qs('fallbackTextInput').value.trim())||'ANG',
+          mainTitle:'ANG.lo Engine',
+          systemName:'總店',
+          companyName:(qs('companyNameInput')&&qs('companyNameInput').value.trim())||'ANG.lo',
+          companySubtitle:(qs('companySubtitleInput')&&qs('companySubtitleInput').value.trim())||'Humanized system technology'
+        });
+    }
+
+    function archiveSheet(name){if(!gas())return;loading('歸檔中...');google.script.run.withSuccessHandler(function(r){Swal.close();r&&r.ok?ok(r.message):err(r?r.message:'失敗')}).withFailureHandler(function(e){Swal.close();err(String(e))}).archiveOldRecords({userId:UID,token:UTOKEN,sheetName:name})}
+    function exportSheet(name){if(!gas())return;loading('匯出中...');google.script.run.withSuccessHandler(function(r){Swal.close();if(!r||!r.ok){err(r?r.message:'失敗');return}Swal.fire({title:'匯出完成',html:'<a href="'+r.fileUrl+'" target="_blank">開啟檔案</a>',icon:'success'})}).withFailureHandler(function(e){Swal.close();err(String(e))}).exportArchivedToDrive({userId:UID,token:UTOKEN,sheetName:name})}
+
+    // ==================== 選休設定 ====================
+
+    function initMonthSelects(){
+      ['monthOpenDay','monthCloseDay','monthPublishDay'].forEach(function(id){
+        var el=qs(id);if(!el)return;el.innerHTML='';
+        for(var d=1;d<=31;d++){var o=document.createElement('option');o.value=d;o.textContent=d+'號';el.appendChild(o)}
+      });
+      if(qs('monthOpenDay'))qs('monthOpenDay').value='20';
+      if(qs('monthCloseDay'))qs('monthCloseDay').value='25';
+      if(qs('monthPublishDay'))qs('monthPublishDay').value='27';
+    }
+
+    function setPreselectMode(m){
+      preselectMode=m;
+      qs('btnModeWeek').className=m==='week'?'btn-main':'btn-ghost';
+      qs('btnModeMonth').className=m==='month'?'btn-main':'btn-ghost';
+      qs('weekRuleBox').classList.toggle('hidden',m!=='week');
+      qs('monthRuleBox').classList.toggle('hidden',m!=='month');
+    }
+
+    function applyPreselectUI(s){
+      if(!s)return;setPreselectMode(s.mode||'week');
+      function pw(v){var m=String(v||'').match(/^([日一二三四五六])\s*(\d{1,2}:\d{2})$/);return m?{d:m[1],t:m[2]}:{d:'三',t:'20:00'}}
+      function pm(v){var m=String(v||'').match(/^(\d{1,2})\s*(\d{1,2}:\d{2})$/);return m?{d:m[1],t:m[2]}:{d:'20',t:'09:00'}}
+      var wo=pw(s.weekOpen),wc=pw(s.weekClose),wp=pw(s.weekPublish);
+      if(qs('weekOpenDay'))qs('weekOpenDay').value=wo.d;if(qs('weekOpenTime'))qs('weekOpenTime').value=wo.t;
+      if(qs('weekCloseDay'))qs('weekCloseDay').value=wc.d;if(qs('weekCloseTime'))qs('weekCloseTime').value=wc.t;
+      if(qs('weekPublishDay'))qs('weekPublishDay').value=wp.d;if(qs('weekPublishTime'))qs('weekPublishTime').value=wp.t;
+      var mo=pm(s.monthOpen),mc=pm(s.monthClose),mp=pm(s.monthPublish);
+      if(qs('monthOpenDay'))qs('monthOpenDay').value=mo.d;if(qs('monthOpenTime'))qs('monthOpenTime').value=mo.t;
+      if(qs('monthCloseDay'))qs('monthCloseDay').value=mc.d;if(qs('monthCloseTime'))qs('monthCloseTime').value=mc.t;
+      if(qs('monthPublishDay'))qs('monthPublishDay').value=mp.d;if(qs('monthPublishTime'))qs('monthPublishTime').value=mp.t;
+    }
+
+    function savePreselectSettingsFromUI(){
+      if(!gas())return warn('非正式環境');
+      var p={userId:UID,token:UTOKEN,mode:preselectMode};
+      p.weekOpen=(qs('weekOpenDay')?qs('weekOpenDay').value:'三')+' '+(qs('weekOpenTime')?qs('weekOpenTime').value:'20:00');
+      p.weekClose=(qs('weekCloseDay')?qs('weekCloseDay').value:'五')+' '+(qs('weekCloseTime')?qs('weekCloseTime').value:'18:00');
+      p.weekPublish=(qs('weekPublishDay')?qs('weekPublishDay').value:'六')+' '+(qs('weekPublishTime')?qs('weekPublishTime').value:'10:00');
+      p.monthOpen=(qs('monthOpenDay')?qs('monthOpenDay').value:'20')+' '+(qs('monthOpenTime')?qs('monthOpenTime').value:'09:00');
+      p.monthClose=(qs('monthCloseDay')?qs('monthCloseDay').value:'25')+' '+(qs('monthCloseTime')?qs('monthCloseTime').value:'18:00');
+      p.monthPublish=(qs('monthPublishDay')?qs('monthPublishDay').value:'27')+' '+(qs('monthPublishTime')?qs('monthPublishTime').value:'10:00');
+      loading('儲存中...');
+      google.script.run.withSuccessHandler(function(r){Swal.close();r&&r.ok?ok(r.message):err(r?r.message:'失敗')}).withFailureHandler(function(e){Swal.close();err(String(e))}).savePreselectSettings(p);
+    }
+
+    // ==================== 審核流程 ====================
+
+    function buildApprovers(pre){var a=[];if(qs('chk'+pre+'Manager')&&qs('chk'+pre+'Manager').checked)a.push('Manager');if(qs('chk'+pre+'Admin')&&qs('chk'+pre+'Admin').checked)a.push('Admin');return a.join(',')||'Manager'}
+
+    function saveApproverSettings(){
+      if(!gas())return warn('非正式環境');loading('儲存中...');
+      google.script.run.withSuccessHandler(function(r){Swal.close();r&&r.ok?ok(r.message):err(r?r.message:'失敗')}).withFailureHandler(function(e){Swal.close();err(String(e))})
+        .saveApproverSettings({userId:UID,token:UTOKEN,multi_level_review_enabled:qs('chkMultiLevel').checked?'true':'false',leave_approvers:buildApprovers('Leave'),clockfix_approvers:buildApprovers('Clockfix'),upload_approvers:buildApprovers('Upload'),message_approvers:buildApprovers('Msg'),salary_approvers:buildApprovers('Salary')});
+    }
+
+    // ==================== 班別設定 ====================
+
+    function addShiftRow(name,start,end,brk,color){
+      shiftRows.push({name:name||'',startTime:start||'08:00',endTime:end||'17:00',breakMinutes:brk||60,color:color||DEFAULT_SHIFT_COLOR});
+      renderShiftRows();
+    }
+
+    function removeShiftRow(idx){shiftRows.splice(idx,1);renderShiftRows()}
+
+    function renderShiftRows(){
+      var box=qs('shiftListBox');if(!box)return;
+      if(!shiftRows.length){box.innerHTML='<div class="notice-item"><div class="item-title">尚未建立班別</div></div>';return}
+      box.innerHTML=shiftRows.map(function(s,idx){
+        return'<div class="extra-row"><input type="text" placeholder="班別名稱" value="'+esc(s.name)+'" onchange="shiftRows['+idx+'].name=this.value" style="flex:1"><input type="time" value="'+s.startTime+'" onchange="shiftRows['+idx+'].startTime=this.value" style="width:90px"><span>～</span><input type="time" value="'+s.endTime+'" onchange="shiftRows['+idx+'].endTime=this.value" style="width:90px"><input type="number" value="'+s.breakMinutes+'" onchange="shiftRows['+idx+'].breakMinutes=Number(this.value)" style="width:50px" placeholder="休"><input type="color" value="'+(s.color||DEFAULT_SHIFT_COLOR)+'" onchange="shiftRows['+idx+'].color=this.value" style="width:36px;height:36px;border:none;padding:2px;border-radius:8px;cursor:pointer" title="班別顏色"><button class="del-btn" onclick="removeShiftRow('+idx+')">✕</button></div>';
+      }).join('');
+    }
+
+    function saveShiftTypes(){
+      if(!gas())return warn('非正式環境');
+      var valid=shiftRows.filter(function(s){return s.name.trim()});
+      if(!valid.length){warn('請至少建立一個班別');return}
+      loading('儲存中...');
+      google.script.run.withSuccessHandler(function(r){Swal.close();r&&r.ok?ok(r.message):err(r?r.message:'失敗')}).withFailureHandler(function(e){Swal.close();err(String(e))})
+        .saveShiftTypes({userId:UID,token:UTOKEN,shifts:valid,mixedMode:qs('chkMixedMode').checked});
+    }
+
+    // ==================== 徽章 ====================
+
+    function countPending(a){return(a||[]).filter(function(x){return x.status==='pending'}).length}
+    function updateBadges(){
+      var mt=countPending(mgrData.leaveReviews)+countPending(mgrData.receiveReviews)+countPending(mgrData.messageReviews);
+      var at=countPending(admData.clockFixReviews)+countPending(admData.salaryReviews);
+      var bm=qs('badgeMgr'),ba=qs('badgeAdm');
+      if(bm)bm.textContent=mt>0?mt:'';if(ba)ba.textContent=at>0?at:'';
+    }
+
+    // ==================== 資料載入 ====================
+
+    function applyMgr(r){
+      if(!r||!r.ok)return;mgrData=r;
+      if(r.profile){UID=String(r.profile.id||UID).trim().toUpperCase();setRuntimeRole(r.profile.role||UROLE,false);}
+      applyTopBrand(r.system||{}, r.profile||{});
+      applyVisibility();
+      setText('mgrLeavePending',countPending(r.leaveReviews));
+      setText('mgrUploadPending',countPending(r.receiveReviews));
+      setText('mgrMsgPending',countPending(r.messageReviews));
+      renderReviewList('mgrLeaveList',r.leaveReviews,true);
+      renderReviewList('mgrUploadList',r.receiveReviews,true);
+      renderReviewList('mgrMessageList',r.messageReviews,true);
+      renderPublishList('mgrNoticeList',r.noticePublishItems);
+      renderPublishList('mgrScheduleList',r.schedulePublishItems);
+      updateBadges();
+    }
+
+    function applyAdm(r){
+      if(!r||!r.ok)return;admData=r;
+      if(r.profile){UID=String(r.profile.id||UID).trim().toUpperCase();setRuntimeRole(r.profile.role||UROLE,false);}
+      applyTopBrand(r.system||{}, r.profile||{});
+      applyVisibility();
+      setText('admClockFixPending',countPending(r.clockFixReviews));
+      setText('admSalaryPending',countPending(r.salaryReviews));
+      setText('admLeavePending',countPending(r.leaveReviews));
+      renderReviewList('admClockFixList',r.clockFixReviews,true);
+      renderReviewList('admSalaryList',r.salaryReviews,true);
+      renderReviewList('admLeaveList',r.leaveReviews,true);
+      renderReviewList('admUploadList',r.receiveReviews,true);
+      renderReviewList('admMessageList',r.messageReviews,true);
+      renderPublishList('admNoticeList',r.noticePublishItems);
+      if(r.system){
+        if(qs('companyNameInput'))qs('companyNameInput').value=r.system.company_name||r.system.main_title||'ANG.lo';
+        if(qs('companySubtitleInput'))qs('companySubtitleInput').value=r.system.company_subtitle||r.system.system_sub||'Humanized system technology';
+        if(qs('mainTitleInput'))qs('mainTitleInput').value='ANG.lo Engine';
+        if(qs('fallbackTextInput'))qs('fallbackTextInput').value=r.system.fallback_text||'ANG';
+        if(qs('branchIdInput'))qs('branchIdInput').value=r.system.branch_id||'';
+        if(qs('branchNameInput'))qs('branchNameInput').value=r.system.branch_name||'';
+        if(qs('brandScope'))qs('brandScope').value=r.system.branch_id?'branch':'global';
+        updateRightBannerPreview();
+        if(r.system.clock_grace_before&&qs('graceBeforeMin'))qs('graceBeforeMin').value=r.system.clock_grace_before;
+        if(r.system.clock_grace_after&&qs('graceAfterMin'))qs('graceAfterMin').value=r.system.clock_grace_after;
+      }
+      updateBadges();
+    }
+
+    function applyCrt(r){
+      if(!r||!r.ok)return;crtData=r;
+      if(r.profile){UID=String(r.profile.id||UID).trim().toUpperCase();setRuntimeRole(r.profile.role||UROLE,false);}
+      applyTopBrand(r.system||{}, r.profile||{});
+      applyVisibility();
+      if(r.approverSettings){
+        qs('chkMultiLevel').checked=String(r.approverSettings.multi_level_review_enabled||'true')!=='false';
+        function sc(pre,v){var a=String(v||'Manager').split(',');if(qs('chk'+pre+'Manager'))qs('chk'+pre+'Manager').checked=a.indexOf('Manager')>-1;if(qs('chk'+pre+'Admin'))qs('chk'+pre+'Admin').checked=a.indexOf('Admin')>-1}
+        sc('Leave',r.approverSettings.leave_approvers);sc('Clockfix',r.approverSettings.clockfix_approvers);
+        sc('Upload',r.approverSettings.upload_approvers);sc('Msg',r.approverSettings.message_approvers);
+        sc('Salary',r.approverSettings.salary_approvers);
+      }
+      if(r.preselectSettings)applyPreselectUI(r.preselectSettings);
+      // 班別
+      if(r.shiftTypes){
+        shiftRows=Array.isArray(r.shiftTypes)?r.shiftTypes:[];
+        renderShiftRows();
+      }
+      if(r.mixedMode!==undefined)qs('chkMixedMode').checked=r.mixedMode===true||r.mixedMode==='true';
+      if(r.system){
+        if(qs('chkLocationRequired'))qs('chkLocationRequired').checked=String(r.system.clock_location_required||'false')==='true';
+        if(qs('clockBranchIdInput'))qs('clockBranchIdInput').value=r.system.branch_id||'';
+        if(qs('clockBranchNameInput'))qs('clockBranchNameInput').value=r.system.branch_name||'';
+        if(r.system.clock_location_lat&&qs('clockLocationLat'))qs('clockLocationLat').value=r.system.clock_location_lat;
+        if(r.system.clock_location_lng&&qs('clockLocationLng'))qs('clockLocationLng').value=r.system.clock_location_lng;
+        if(r.system.clock_location_radius&&qs('clockLocationRadius'))qs('clockLocationRadius').value=r.system.clock_location_radius;
+        updateClockLocationDisplay();
+      }
+    }
+
+    // ANG.lo HR System Deploy Version: 129 - Fix 1: proper refresh clears UI first
+    function loadAll(){
+      if(!gas()){applyVisibility();return}
+      // 重置審核清單顯示，等資料回來再 render
+      ['mgrLeaveList','mgrUploadList','mgrMessageList','admClockFixList','admSalaryList','admLeaveList','admUploadList','admMessageList'].forEach(function(id){
+        var box=qs(id);if(!box)return;
+        box.innerHTML='<div style="padding:8px 0;font-size:14px;color:var(--muted)">讀取中...</div>';
+      });
+      var a=getAllowed();
+      if(a.indexOf('manager')>-1)google.script.run.withSuccessHandler(applyMgr).withFailureHandler(function(){}).getManagerBootstrapData(UID,UTOKEN);
+      if(a.indexOf('admin')>-1)google.script.run.withSuccessHandler(applyAdm).withFailureHandler(function(){}).getAdminBootstrapData(UID,UTOKEN);
+      if(a.indexOf('creator')>-1)google.script.run.withSuccessHandler(applyCrt).withFailureHandler(function(){}).getCreatorBootstrapData(UID,UTOKEN);
+      if(a.indexOf('personnel')>-1)loadPeopleList();
+    }
+
+
+    // ==================== People 人員管理 ====================
+
+    function peopleClearBindBox(){
+      var box=qs('peopleBindBox');
+      if(box){box.classList.add('hidden');box.innerHTML='';}
+    }
+
+    function peopleNew(){
+      peopleCurrentId='';
+      ['peopleEmpId','peopleName','peopleNickname','peopleBranchId','peopleShift','peopleJobTitle','peopleDept'].forEach(function(id){
+        var el=qs(id); if(el) el.value='';
+      });
+      if(qs('peopleRole'))qs('peopleRole').value='Employee';
+      if(qs('peopleColor'))qs('peopleColor').value='#ff87e0';
+      if(qs('peopleEnabled'))qs('peopleEnabled').value='true';
+      peopleClearBindBox();
+      var el=qs('peopleName'); if(el) el.focus();
+    }
+
+    function peopleFill(emp){
+      emp=emp||{};
+      peopleCurrentId=String(emp.id||'').trim().toUpperCase();
+      if(qs('peopleEmpId'))qs('peopleEmpId').value=peopleCurrentId;
+      if(qs('peopleName'))qs('peopleName').value=emp.name||'';
+      if(qs('peopleNickname'))qs('peopleNickname').value=emp.nickname||'';
+      if(qs('peopleRole'))qs('peopleRole').value=emp.role||'Employee';
+      if(qs('peopleBranchId'))qs('peopleBranchId').value=emp.branchId||emp.branch_id||'';
+      if(qs('peopleShift'))qs('peopleShift').value=emp.shift||'';
+      if(qs('peopleJobTitle'))qs('peopleJobTitle').value=emp.jobTitle||'';
+      if(qs('peopleDept'))qs('peopleDept').value=emp.dept||'';
+      if(qs('peopleColor'))qs('peopleColor').value=emp.color||'#ff87e0';
+      if(qs('peopleEnabled'))qs('peopleEnabled').value=(emp.enabled===false||String(emp.enabled).toLowerCase()==='false')?'false':'true';
+      peopleClearBindBox();
+      window.scrollTo({top:0,behavior:'smooth'});
+    }
+
+    function peoplePayload(){
+      return {
+        userId:UID,
+        token:UTOKEN,
+        empId:(qs('peopleEmpId')&&qs('peopleEmpId').value.trim().toUpperCase())||peopleCurrentId||'',
+        name:(qs('peopleName')&&qs('peopleName').value.trim())||'',
+        nickname:(qs('peopleNickname')&&qs('peopleNickname').value.trim())||'',
+        role:(qs('peopleRole')&&qs('peopleRole').value)||'Employee',
+        branchId:(qs('peopleBranchId')&&qs('peopleBranchId').value.trim())||'',
+        shift:(qs('peopleShift')&&qs('peopleShift').value.trim())||'',
+        jobTitle:(qs('peopleJobTitle')&&qs('peopleJobTitle').value.trim())||'',
+        dept:(qs('peopleDept')&&qs('peopleDept').value.trim())||'',
+        color:(qs('peopleColor')&&qs('peopleColor').value)||'#ff87e0',
+        enabled:(qs('peopleEnabled')&&qs('peopleEnabled').value)||'true'
+      };
+    }
+
+    function loadPeopleList(){
+      if(!gas())return;
+      var a=getAllowed();
+      if(a.indexOf('personnel')===-1)return;
+      var box=qs('peopleList');
+      if(box)box.innerHTML='<div class="notice-item"><div class="item-title">讀取中...</div></div>';
+      google.script.run
+        .withSuccessHandler(function(r){
+          if(!r||!r.ok){if(box)box.innerHTML='<div class="notice-item"><div class="item-title">讀取失敗</div><div class="item-meta">'+esc(r&&r.message||'')+'</div></div>';return}
+          peopleRows=Array.isArray(r.people)?r.people:[];
+          renderPeopleList();
+        })
+        .withFailureHandler(function(e){
+          if(box)box.innerHTML='<div class="notice-item"><div class="item-title">讀取失敗</div><div class="item-meta">'+esc(String(e))+'</div></div>';
+        })
+        .getPeopleManagementData({userId:UID,token:UTOKEN});
+    }
+
+    function renderPeopleList(){
+      var box=qs('peopleList'); if(!box)return;
+      var key=((qs('peopleSearch')&&qs('peopleSearch').value)||'').trim().toLowerCase();
+      var list=(peopleRows||[]).filter(function(p){
+        if(!key)return true;
+        return [p.id,p.name,p.nickname,p.role,p.branchId,p.branchName,p.dept,p.jobTitle,p.shift].join(' ').toLowerCase().indexOf(key)>-1;
+      });
+      if(qs('peopleCountBadge'))qs('peopleCountBadge').innerText=list.length+' 人';
+      if(!list.length){
+        box.innerHTML='<div class="notice-item"><div class="item-title">目前沒有符合的人員</div></div>';
+        return;
+      }
+      box.innerHTML=list.map(function(p){
+        var enabled=(p.enabled===false||String(p.enabled).toLowerCase()==='false')?false:true;
+        var device=p.specialdeviceid?'已綁定':'未綁定';
+        var badge=enabled?'<span class="badge ok">啟用</span>':'<span class="badge danger">停用</span>';
+        var idx=peopleRows.indexOf(p);
+        return '<div class="people-card">'+
+          '<div class="people-head"><div><div class="people-name">'+esc(p.name||p.nickname||p.id)+' <span style="font-size:12px;color:var(--muted)">('+esc(p.id)+')</span></div>'+
+          '<div class="people-meta">角色：'+esc(p.role||'Employee')+'｜分店：'+esc(p.branchName||p.branchId||'未設定')+'｜班別：'+esc(p.shift||'未設定')+'</div>'+
+          '<div class="people-meta">部門：'+esc(p.dept||'未設定')+'｜職稱：'+esc(p.jobTitle||'未設定')+'｜手機：'+device+'</div></div>'+badge+'</div>'+
+          '<div class="people-actions">'+
+          '<button class="btn-sm" onclick="peopleFill(peopleRows['+idx+'])">編輯</button>'+
+          '<button class="btn-sm" onclick="peopleGenerateLink(\''+esc(p.id)+'\')">綁定連結</button>'+
+          '<button class="btn-sm" onclick="peopleResetDevice(\''+esc(p.id)+'\')">重設手機</button>'+
+          '</div></div>';
+      }).join('');
+    }
+
+    function peopleSave(){
+      var p=peoplePayload();
+      if(!p.name && !p.nickname){warn('請填姓名或暱稱');return}
+      if(p.role==='Creator' && roleRank(UROLE)<5){warn('只有 Creator 平台方可以建立或設定 Creator');return}
+      if(p.role==='Owner' && roleRank(UROLE)<4){warn('只有 Owner 以上可以建立或設定 Owner');return}
+      google.script.run
+        .withSuccessHandler(function(r){
+          if(!r||!r.ok){err(r?r.message:'儲存失敗');return}
+          ok(r.message||'已儲存');
+          if(r.employee){peopleFill(r.employee);}
+          loadPeopleList();
+        })
+        .withFailureHandler(function(e){err(String(e))})
+        .saveEmployeeProfile(p);
+    }
+
+    function peopleDisable(){
+      var id=((qs('peopleEmpId')&&qs('peopleEmpId').value.trim().toUpperCase())||peopleCurrentId||'');
+      if(!id){warn('請先選擇員工');return}
+      if(id===UID){warn('不可停用目前登入中的自己');return}
+      if(qs('peopleEnabled'))qs('peopleEnabled').value='false';
+      peopleSave();
+    }
+
+    function peopleGenerateLink(empId){
+      var id=String(empId||((qs('peopleEmpId')&&qs('peopleEmpId').value.trim().toUpperCase())||peopleCurrentId||'')).trim().toUpperCase();
+      if(!id){warn('請先選擇或儲存員工');return}
+      google.script.run
+        .withSuccessHandler(function(r){
+          if(!r||!r.ok){err(r?r.message:'產生失敗');return}
+          var box=qs('peopleBindBox');
+          if(box){
+            box.classList.remove('hidden');
+            box.innerHTML='<b>手機綁定登入連結</b><br>'+esc(r.url||'')+
+              '<div class="field-row" style="margin-top:8px"><button class="btn-main" onclick="copyTextToClipboard(\''+String(r.url||'').replace(/\\/g,'\\\\').replace(/'/g,"\\'")+'\')">複製連結</button><button class="btn-ghost" onclick="window.open(\''+String(r.url||'').replace(/\\/g,'\\\\').replace(/'/g,"\\'")+'\',\'_blank\')">打開測試</button></div>';
+          }
+          ok('綁定連結已產生');
+          loadPeopleList();
+        })
+        .withFailureHandler(function(e){err(String(e))})
+        .generateEmployeeBindLink({userId:UID,token:UTOKEN,empId:id});
+    }
+
+    function peopleResetDevice(empId){
+      var id=String(empId||((qs('peopleEmpId')&&qs('peopleEmpId').value.trim().toUpperCase())||peopleCurrentId||'')).trim().toUpperCase();
+      if(!id){warn('請先選擇員工');return}
+      Swal.fire({title:'確認重設手機？',text:id+' 的舊手機綁定會被清空，需重新用綁定連結登入。',icon:'warning',showCancelButton:true,confirmButtonText:'重設',cancelButtonText:'取消'})
+        .then(function(x){
+          if(!x.isConfirmed)return;
+          google.script.run
+            .withSuccessHandler(function(r){
+              if(!r||!r.ok){err(r?r.message:'重設失敗');return}
+              ok(r.message||'已重設手機綁定');
+              if(r.url){
+                var box=qs('peopleBindBox');
+                if(box){box.classList.remove('hidden');box.innerHTML='<b>新綁定連結</b><br>'+esc(r.url);}
+              }
+              loadPeopleList();
+            })
+            .withFailureHandler(function(e){err(String(e))})
+            .resetEmployeeDeviceBinding({userId:UID,token:UTOKEN,empId:id,generateLink:true});
+        });
+    }
+
+    function copyTextToClipboard(text){
+      text=String(text||'');
+      if(navigator.clipboard&&navigator.clipboard.writeText){
+        navigator.clipboard.writeText(text).then(function(){ok('已複製');}).catch(function(){fallbackCopy_(text);});
+      }else{
+        fallbackCopy_(text);
+      }
+    }
+
+    function fallbackCopy_(text){
+      var ta=document.createElement('textarea');
+      ta.value=text;document.body.appendChild(ta);ta.select();
+      try{document.execCommand('copy');ok('已複製');}catch(e){warn('無法自動複製，請手動複製');}
+      document.body.removeChild(ta);
+    }
+
+
+    // ==================== 薪資管理 ====================
+
+    var smExtras=[];
+    var SM_LABOR_INS_CAP=45800,SM_HEALTH_INS_CAP=219500;
+    var SM_LABOR_RATE=0.03,SM_HEALTH_RATE=0.0155,SM_PENSION_RATE=0.06;
+
+    function smUpdateDailySalary(){
+      var type=(qs('sm-salaryType')||{}).value||'monthly';
+      var base=Number((qs('sm-baseSalary')||{}).value||0);
+      var rest=Number((qs('sm-restDays')||{}).value||8);
+      var disp=qs('sm-daily-display'),dailyText=qs('sm-daily-text');
+      var monthly=type==='monthly'?base:(base*240);
+      if(type==='monthly'&&base>0){
+        var now=new Date();var daysInMonth=new Date(now.getFullYear(),now.getMonth()+1,0).getDate();
+        var workDays=Math.max(1,daysInMonth-rest);var daily=Math.round(base/workDays);
+        if(dailyText)dailyText.innerText='日薪：$'+daily.toLocaleString()+'（'+daysInMonth+'天 - '+rest+'天休 = '+workDays+'工作天）';
+        if(disp)disp.style.display='';
+      }else{if(disp)disp.style.display='none'}
+      smUpdateLegalDeductions(monthly);smRecalcTotal();
+    }
+
+    function smUpdateLegalDeductions(monthlySalary){
+      var m=Math.max(0,Number(monthlySalary)||0);
+      var laborIns=Math.round(Math.min(m,SM_LABOR_INS_CAP)*SM_LABOR_RATE);
+      var healthIns=Math.round(Math.min(m,SM_HEALTH_INS_CAP)*SM_HEALTH_RATE);
+      var pension=Math.round(m*SM_PENSION_RATE);
+      setText('sm-labor-ins','-$'+laborIns.toLocaleString());
+      setText('sm-health-ins','-$'+healthIns.toLocaleString());
+      setText('sm-pension','$'+pension.toLocaleString()+'（雇主負擔）');
+      setText('sm-supple-ins','依實際給付計算');
+    }
+
+    function smAddExtra(type){
+      smExtras.push({type:type,name:'',amount:0,isDeduct:['扣款','行政費用','稅金'].indexOf(type)>-1});
+      smRenderExtras();smRecalcTotal();
+    }
+    function smRemoveExtra(idx){smExtras.splice(idx,1);smRenderExtras();smRecalcTotal()}
+
+    function smRenderExtras(){
+      var h='';
+      smExtras.forEach(function(e,idx){
+        h+='<div class="extra-row"><input type="text" placeholder="名稱" value="'+esc(e.name)+'" onchange="smExtras['+idx+'].name=this.value" style="flex:1"><span style="font-weight:900;margin:0 4px">'+(e.isDeduct?'-':'')+'$</span><input type="number" value="'+e.amount+'" onchange="smExtras['+idx+'].amount=Number(this.value);smRecalcTotal()" style="width:80px"><button class="del-btn" onclick="smRemoveExtra('+idx+')">✕</button></div>';
+      });
+      if(qs('sm-extras-list'))qs('sm-extras-list').innerHTML=h;
+    }
+
+    function smRecalcTotal(){
+      var base=Number((qs('sm-baseSalary')||{}).value||0);
+      var ep=0,em=0;
+      smExtras.forEach(function(e){if(e.isDeduct)em+=Math.abs(Number(e.amount||0));else ep+=Number(e.amount||0)});
+      setText('sm-total','$'+(base+ep-em).toLocaleString());
+    }
+
+    function smSave(){
+      if(!gas())return warn('非正式環境');
+      var empId=((qs('sm-empId')||{}).value||'').trim();
+      if(!empId)return warn('請輸入員編');
+      loading('儲存中...');
+      google.script.run.withSuccessHandler(function(r){Swal.close();r&&r.ok?ok(r.message):err(r?r.message:'失敗')}).withFailureHandler(function(e){Swal.close();err(String(e))})
+        .saveSalaryManagement({userId:UID,token:UTOKEN,empId:empId,salaryType:(qs('sm-salaryType')||{}).value||'monthly',baseSalary:Number((qs('sm-baseSalary')||{}).value||0),restDays:Number((qs('sm-restDays')||{}).value||8),annualLeave:Number((qs('sm-annualLeave')||{}).value||7),publishDate:((qs('sm-publishDate')||{}).value||''),extras:smExtras.filter(function(e){return e.name||e.amount})});
+    }
+
+    function smExport(){
+      var empId=((qs('sm-empId')||{}).value||'').trim();
+      if(!empId)return warn('請輸入員編');
+      var base=Number((qs('sm-baseSalary')||{}).value||0);
+      var type=(qs('sm-salaryType')||{}).value||'monthly';
+      var laborIns=((qs('sm-labor-ins')||{}).innerText||'');
+      var healthIns=((qs('sm-health-ins')||{}).innerText||'');
+      var pension=((qs('sm-pension')||{}).innerText||'');
+      var lines=[];
+      lines.push('<b>員編：</b>'+esc(empId));
+      lines.push('<b>薪資類型：</b>'+(type==='hourly'?'時薪':'月薪'));
+      if(base)lines.push('<b>底薪：</b>$'+base.toLocaleString());
+      if(laborIns&&laborIns!=='—')lines.push('<b>勞保費：</b>'+esc(laborIns));
+      if(healthIns&&healthIns!=='—')lines.push('<b>健保費：</b>'+esc(healthIns));
+      if(pension&&pension!=='—')lines.push('<b>勞退提撥6%：</b>'+esc(pension));
+      smExtras.filter(function(e){return e.amount}).forEach(function(e){lines.push('<b>'+esc(e.type)+(e.name?' '+esc(e.name):'')+'：</b>'+(e.isDeduct?'-':'')+'$'+Math.abs(Number(e.amount||0)).toLocaleString())});
+      lines.push('<hr><b style="font-size:16px;color:var(--emp-deep)">合計：</b>'+((qs('sm-total')||{}).innerText||'$0'));
+      Swal.fire({title:'薪資表 — '+esc(empId),html:lines.join('<br>'),icon:'info',confirmButtonText:'關閉',width:360});
+    }
+
+    // ==================== 初始化 ====================
+
+    function applyEmployeeTheme(){
+      if(!UID)return;
+      var storedColors=localStorage.getItem('ang_theme_'+UID+'_colors');
+      var storedAngle=localStorage.getItem('ang_theme_'+UID+'_angle');
+      if(!storedColors)return;
+      try{
+        var colors=JSON.parse(storedColors);
+        if(!Array.isArray(colors)||colors.length<4)return;
+        function nh(hex,fb){var v=String(hex||'').trim();return(/^#([0-9a-f]{3}|[0-9a-f]{6})$/i.test(v))?v.toUpperCase():(fb||'#ff7a21')}
+        function h2r(hex){var h=nh(hex).replace('#','');var f=h.length===3?h.split('').map(function(x){return x+x}).join(''):h;var n=parseInt(f,16);return((n>>16)&255)+','+((n>>8)&255)+','+(n&255)}
+        var c=colors.map(function(col,i){return nh(col,['#ff882f','#ff6d1d','#ffac73','#ffd7a8'][i])});
+        var angle=storedAngle||'135deg';var root=document.documentElement;var rgb=h2r(c[0]);
+        root.style.setProperty('--emp',c[0]);root.style.setProperty('--emp-rgb',rgb);root.style.setProperty('--emp-angle',angle);
+        root.style.setProperty('--emp-1',c[0]);root.style.setProperty('--emp-2',c[1]);root.style.setProperty('--emp-3',c[2]);root.style.setProperty('--emp-4',c[3]);
+        root.style.setProperty('--emp-gradient','linear-gradient('+angle+','+c[0]+' 0%,'+c[1]+' 33%,'+c[2]+' 66%,'+c[3]+' 100%)');
+      }catch(e){}
+    }
+
+
+
+    /* ANG_0603_ADMIN_COMPANY_SWITCHER_AND_VERIFY_START */
+    function initCompanySwitcher(){
+      var MAX_COMPANIES=3;
+      var ACTIVE_COMPANY_KEY='ang_hr_active_company_id';
+      var COMPANY_LIST_KEYS=['ang_hr_company_list','ang_company_list','ang_employee_companies','ang_hr_employee_companies'];
+      var menuReady=false,menuEl=null,backdropEl=null;
+      function safeText(v){return String(v==null?'':v).trim();}
+      function safeUpper(v){return safeText(v).toUpperCase();}
+      function getParamLocal(name){try{return new URLSearchParams(window.location.search).get(name)||'';}catch(e){return'';}}
+      function escapeHtmlLocal(s){return safeText(s).replace(/&/g,'&amp;').replace(/</g,'&lt;').replace(/>/g,'&gt;').replace(/"/g,'&quot;').replace(/'/g,'&#39;');}
+      function getCurrentEmployeeId(){return safeUpper(getParamLocal('employee_id')||getParamLocal('id')||UID||CTX.id||localStorage.getItem('ang_hr_active_employee_id')||localStorage.getItem('ang_employee_id')||localStorage.getItem('employee_id')||localStorage.getItem('loginId')||'');}
+      function getCurrentToken(){return safeText(getParamLocal('session_token')||getParamLocal('loginToken')||getParamLocal('token')||UTOKEN||CTX.token||localStorage.getItem('ang_hr_active_login_token')||localStorage.getItem('session_token')||localStorage.getItem('loginToken')||localStorage.getItem('emp_login_token')||localStorage.getItem('ang_employee_token')||'');}
+      function getCurrentCompanyId(){return safeUpper(getParamLocal('company_id')||getParamLocal('company')||CTX.companyId||localStorage.getItem(ACTIVE_COMPANY_KEY)||localStorage.getItem('company_id')||localStorage.getItem('ang_company_id')||'MAIN');}
+      function getDeviceId(){return getDeviceIdForRoute();}
+      function companyInitial(name,id){var n=safeText(name||id||'ANG').replace(/\s+/g,'');if(/^[A-Za-z0-9]/.test(n))return n.slice(0,3).toUpperCase();return n.slice(0,2)||'ANG';}
+      function normalizeCompany(raw,idx){
+        raw=raw||{};if(typeof raw==='string')raw={id:raw,name:raw};
+        var id=safeUpper(raw.company_id||raw.companyId||raw.company||raw.id||raw.code||raw.key||raw.value||raw.spreadsheet_id||raw.spreadsheetId||'');
+        var name=safeText(raw.company_name||raw.companyName||raw.name||raw.label||raw.title||raw.display||'');
+        if(!id&&name)id=safeUpper(name);if(!id&&idx===0)id=getCurrentCompanyId();if(!name)name=id==='MAIN'?'目前公司':(id||'公司');
+        return {id:id||('COMPANY_'+(idx+1)),name:name,role:safeText(raw.role||raw.userRole||raw.permission||''),employee_id:safeUpper(raw.employee_id||raw.employeeId||raw.emp_id||raw.empId||getCurrentEmployeeId()),token:safeText(raw.token||raw.loginToken||raw.session_token||raw.employeeToken||getCurrentToken()),logo:safeText(raw.logo||raw.logo_url||raw.icon||''),primary:!!raw.primary};
+      }
+      function readStoredList(key){try{var raw=localStorage.getItem(key)||'';if(!raw)return[];var parsed=JSON.parse(raw);if(Array.isArray(parsed))return parsed;if(parsed&&Array.isArray(parsed.companies))return parsed.companies;if(parsed&&Array.isArray(parsed.items))return parsed.items;}catch(e){}return[];}
+      function collectSources(){
+        var out=[];
+        COMPANY_LIST_KEYS.forEach(function(k){out=out.concat(readStoredList(k));});
+        [currentTopProfile,currentTopSystem,CTX,mgrData,admData,crtData].forEach(function(x){
+          if(!x)return;
+          ['companies','company_memberships','companyMemberships','companyList','company_list','memberships'].forEach(function(k){if(Array.isArray(x[k]))out=out.concat(x[k]);});
+          if(x.company_id||x.companyId||x.company_name||x.companyName)out.push(x);
+        });
+        return out;
+      }
+      function getCompanies(){
+        var currentId=getCurrentCompanyId();
+        var currentName=safeText((currentTopSystem&&(currentTopSystem.company_name||currentTopSystem.companyName))||localStorage.getItem('ang_company_name')||'目前公司');
+        var list=collectSources().map(normalizeCompany).filter(function(c){return!!c.id;});
+        if(!list.some(function(c){return c.id===currentId;}))list.unshift(normalizeCompany({id:currentId,name:currentName,primary:true},0));
+        var seen={};
+        list=list.filter(function(c){if(!c||!c.id||seen[c.id])return false;seen[c.id]=true;return true;});
+        list.sort(function(a,b){if(a.id===currentId)return-1;if(b.id===currentId)return 1;if(a.primary&&!b.primary)return-1;if(b.primary&&!a.primary)return 1;return 0;});
+        return list.slice(0,MAX_COMPANIES);
+      }
+      function ensureMenu(){
+        if(menuReady)return;menuReady=true;
+        backdropEl=document.createElement('div');backdropEl.className='ang-company-switcher-backdrop';backdropEl.id='angCompanySwitcherBackdrop';backdropEl.addEventListener('click',closeMenu);
+        menuEl=document.createElement('div');menuEl.className='ang-company-switcher';menuEl.id='angCompanySwitcher';menuEl.setAttribute('aria-hidden','true');
+        document.body.appendChild(backdropEl);document.body.appendChild(menuEl);
+      }
+      function renderMenu(){
+        ensureMenu();
+        var companies=getCompanies();var active=getCurrentCompanyId();
+        var html='<div class="ang-company-panel" role="menu" aria-label="公司切換"><div class="ang-company-title">切換公司</div>';
+        companies.forEach(function(c){
+          var isActive=c.id===active;var mark=c.logo?'<img src="'+escapeHtmlLocal(c.logo)+'" alt="">':escapeHtmlLocal(companyInitial(c.name,c.id));
+          html+='<button type="button" class="ang-company-item'+(isActive?' active':'')+'" data-company-id="'+escapeHtmlLocal(c.id)+'"><span class="ang-company-mark">'+mark+'</span><span style="min-width:0"><span class="ang-company-name">'+escapeHtmlLocal(c.name)+'</span><span class="ang-company-meta">'+escapeHtmlLocal((isActive?'目前公司':'切換到員工主頁')+(c.role?'｜'+c.role:''))+'</span></span><span class="ang-company-check">'+(isActive?'✓':'›')+'</span></button>';
+        });
+        html+='<button type="button" class="ang-company-item ang-company-logout" data-company-action="logout"><span class="ang-company-mark"><i class="fa-solid fa-arrow-right-from-bracket"></i></span><span style="min-width:0"><span class="ang-company-name">登出</span><span class="ang-company-meta">清除本機登入資料</span></span><span class="ang-company-check">⌄</span></button></div>';
+        menuEl.innerHTML=html;
+        Array.prototype.forEach.call(menuEl.querySelectorAll('[data-company-id]'),function(btn){btn.addEventListener('click',function(){var id=btn.getAttribute('data-company-id')||'';var target=getCompanies().filter(function(c){return c.id===id;})[0];if(target)switchCompany(target);});});
+        var logoutBtn=menuEl.querySelector('[data-company-action="logout"]');if(logoutBtn)logoutBtn.addEventListener('click',logoutAll);
+      }
+      function openMenu(){renderMenu();if(backdropEl)backdropEl.classList.add('open');if(menuEl){menuEl.classList.add('open');menuEl.setAttribute('aria-hidden','false');}}
+      function closeMenu(){if(backdropEl)backdropEl.classList.remove('open');if(menuEl){menuEl.classList.remove('open');menuEl.setAttribute('aria-hidden','true');}}
+      function toggleMenu(evt){if(evt){evt.preventDefault();evt.stopPropagation();}ensureMenu();if(menuEl&&menuEl.classList.contains('open'))closeMenu();else openMenu();}
+      function saveCompanySession(c){
+        try{
+          localStorage.setItem(ACTIVE_COMPANY_KEY,c.id);localStorage.setItem('company_id',c.id);localStorage.setItem('ang_company_id',c.id);localStorage.setItem('ang_company_name',c.name||c.id);CTX.companyId=c.id;
+          if(c.employee_id){UID=c.employee_id;CTX.id=c.employee_id;localStorage.setItem('ang_hr_active_employee_id',c.employee_id);localStorage.setItem('ang_employee_id',c.employee_id);localStorage.setItem('employee_id',c.employee_id);localStorage.setItem('emp_logged_in',c.employee_id);localStorage.setItem('loginId',c.employee_id);}
+          if(c.token){UTOKEN=c.token;CTX.token=c.token;localStorage.setItem('ang_hr_active_login_token',c.token);localStorage.setItem('ang_employee_token',c.token);localStorage.setItem('session_token',c.token);localStorage.setItem('emp_login_token',c.token);localStorage.setItem('loginToken',c.token);}
+          localStorage.setItem('isLoggedIn','1');
+        }catch(e){}
+      }
+      function switchCompany(c){closeMenu();saveCompanySession(c);hardGo('employee');}
+      function logoutAll(){
+        closeMenu();
+        try{[
+          ACTIVE_COMPANY_KEY,'company_id','ang_company_id','ang_company_name','ang_hr_active_employee_id','ang_hr_active_login_token','ang_employee_id','employee_id','ang_employee_token','emp_logged_in','emp_login_token','loginToken','session_token','loginId','isLoggedIn','emp_name'
+        ].forEach(function(k){localStorage.removeItem(k);});}catch(e){}
+        var gasBase=getSameGasBaseUrl();
+        if(gasBase){try{window.location.replace(gasBase+'?page=index&_ts='+Date.now());}catch(e2){window.location.href=gasBase+'?page=index&_ts='+Date.now();}return;}
+        try{window.location.href='index.html';}catch(e3){window.location.reload();}
+      }
+      function handleBrandSlotClick(evt){
+        var expanded=(typeof isFabExpanded==='function')&&isFabExpanded();
+        if(expanded){
+          if(evt){evt.preventDefault();evt.stopPropagation();}
+          closeMenu();
+          setFabExpanded(false);
+          hardGo('employee');
+          return;
+        }
+        toggleMenu(evt);
+      }
+      var brandEl=qs('brandSlot');
+      if(brandEl&&!brandEl.getAttribute('data-company-switch-bound')){
+        brandEl.setAttribute('data-company-switch-bound','1');
+        brandEl.setAttribute('role','button');
+        brandEl.setAttribute('aria-label','開啟公司切換選單；導航展開時點擊可回員工端');
+        brandEl.addEventListener('click',handleBrandSlotClick,false);
+      }
+      var brandLogoEl=qs('brandLogo');
+      if(brandLogoEl){
+        brandLogoEl.setAttribute('aria-hidden','true');
+      }
+      document.addEventListener('keydown',function(evt){if(evt.key==='Escape')closeMenu();},false);
+      window.angOpenCompanySwitcher=openMenu;window.angCloseCompanySwitcher=closeMenu;window.angSwitchCompany=switchCompany;
+    }
+    /* ANG_0603_ADMIN_COMPANY_SWITCHER_AND_VERIFY_END */
+    function init(){
+      persistRouteSession();
+      initCompanySwitcher();
+      installFabAutoCollapse();
+      applyTopBrand({company_name:'ANG.lo',company_subtitle:'Humanized system technology',system_title:'ANG.lo Engine',system_name:'HR 系統',fallback_text:'ANG'});
+      applyEmployeeTheme();
+      setRuntimePermissions(USER_PERMISSIONS&&USER_PERMISSIONS.length?USER_PERMISSIONS:null);
+      initMonthSelects();
+      renderShiftRows();
+      // 初始化時隱藏所有 autohide card，等資料回來後才顯示
+      document.querySelectorAll('[data-autohide="1"]').forEach(function(c){c.style.display='none'});
+      var now=new Date();var ym=now.getFullYear()+'-'+String(now.getMonth()+1).padStart(2,'0');
+      if(qs('salaryMonth'))qs('salaryMonth').value=ym;
+      bootstrapPermission(function(){ setTimeout(loadAll,120); });
+    }
+
+    init();
+  </script>
+  <script src="ang-frontend-api.js"></script>
+
+  <script>
+    /* ANG_0603_ADMIN_DAY_NIGHT_AND_PERMISSION_PATCH */
+    (function(){
+      var THEME_KEY='ang-hr-theme';
+      var LEGACY_KEY='ang_99_hr_daynight_mode';
+
+      function normalizeTheme(value){
+        value=String(value||'').trim().toLowerCase();
+        if(value==='dark'||value==='night'||value==='暗夜')return'dark';
+        if(value==='light'||value==='day'||value==='日光')return'light';
+        return'';
+      }
+
+      function nativeBridge(){
+        return window.ANGNative||window.ANGHRApp||window.AndroidBridge||window.AndroidNative||window.WebAppInterface||null;
+      }
+
+      function applyNativeAppearance(mode,fullReplace){
+        var dayNight=mode==='dark'?'night':'day';
+        var payload={
+          mode:dayNight,
+          theme:mode,
+          fullReplace:!!fullReplace,
+          replaceAppIcon:!!fullReplace,
+          replaceOpeningVideo:!!fullReplace,
+          restartApp:!!fullReplace,
+          transitionVideo:mode==='light'?'night_to_day':'day_to_night'
+        };
+        var bridge=nativeBridge();
+        try{
+          if(bridge&&typeof bridge.applyAppearanceMode==='function'){bridge.applyAppearanceMode(dayNight,!!fullReplace);return true;}
+          if(bridge&&typeof bridge.applyDayNightMode==='function'){bridge.applyDayNightMode(JSON.stringify(payload));return true;}
+          if(window.webkit&&window.webkit.messageHandlers&&window.webkit.messageHandlers.ANGAppearance){window.webkit.messageHandlers.ANGAppearance.postMessage(payload);return true;}
+        }catch(e){}
+        try{window.dispatchEvent(new CustomEvent('ang-theme-full-replace',{detail:payload}));}catch(e2){}
+        return false;
+      }
+
+      function applyTheme(mode,save){
+        mode=normalizeTheme(mode)||'dark';
+        if(document.body)document.body.dataset.theme=mode;
+        var btn=document.getElementById('angDayNightToggle');
+        if(btn)btn.setAttribute('aria-pressed',String(mode==='dark'));
+        if(save){
+          try{
+            localStorage.setItem(THEME_KEY,mode);
+            localStorage.setItem(LEGACY_KEY,mode==='dark'?'night':'day');
+          }catch(e){}
+        }
+      }
+
+      function askFullReplace(nextMode){
+        var label=nextMode==='dark'?'暗夜':'日光';
+        if(window.Swal&&typeof Swal.fire==='function'){
+          return Swal.fire({
+            title:'完整更換嗎？',
+            text:'要切換成'+label+'模式，是否同步更換 App icon 與開場影片？',
+            icon:'question',
+            showCancelButton:true,
+            showDenyButton:true,
+            confirmButtonText:'完整更換',
+            denyButtonText:'只切頁面',
+            cancelButtonText:'取消'
+          }).then(function(res){
+            if(res.isConfirmed)return'full';
+            if(res.isDenied)return'page';
+            return'cancel';
+          });
+        }
+        return Promise.resolve(window.confirm('要完整更換 App icon 與開場影片嗎？')?'full':'page');
+      }
+
+      window.angApplyDayNight=function(mode,save){applyTheme(mode,save!==false);};
+      window.angToggleDayNight=function(){
+        var current=normalizeTheme((document.body&&document.body.dataset&&document.body.dataset.theme)||'')||normalizeTheme(localStorage.getItem(THEME_KEY))||'dark';
+        var next=current==='dark'?'light':'dark';
+        askFullReplace(next).then(function(choice){
+          if(choice==='cancel')return;
+          applyTheme(next,true);
+          if(choice==='full')applyNativeAppearance(next,true);
+        });
+      };
+
+      function roleLower(){
+        try{
+          var role=String(window.UROLE||localStorage.getItem('ang_user_role')||localStorage.getItem('ang_employee_role')||'').trim().toLowerCase();
+          if(!role && String(window.UID||'').trim().toUpperCase()==='ANG8963')role='creator';
+          if(role==='administrator'||role==='管理員'||role==='系統管理員')role='admin';
+          if(role==='主管'||role==='店長'||role==='經理')role='manager';
+          if(role==='創辦者'||role==='創建者'||role==='建立者'||role==='最高權限'||role==='platform_creator')role='creator';
+          return role;
+        }catch(e){return'';}
+      }
+
+      window.angHasManagerOrAbove=function(){
+        var r=roleLower();
+        return ['creator','admin','manager'].indexOf(r)>-1;
+      };
+
+      // 修正：若 bootstrap 之前角色還沒回來，不要永久卡在無權限；後端快照回來後會再套用。
+      var oldApplyVisibility=window.applyVisibility;
+      if(typeof oldApplyVisibility==='function'){
+        window.applyVisibility=function(){
+          try{return oldApplyVisibility.apply(this,arguments);}
+          finally{
+            try{
+              var r=roleLower();
+              if(r&&r!=='employee'){
+                var page=document.getElementById('page-noperm');
+                if(page&&page.classList.contains('active')&&typeof window.navTo==='function')window.navTo('home');
+              }
+            }catch(e){}
+          }
+        };
+      }
+
+      function init(){
+        var saved=normalizeTheme((new URLSearchParams(location.search)).get('theme'))||normalizeTheme(localStorage.getItem(THEME_KEY))||normalizeTheme(localStorage.getItem(LEGACY_KEY))||'dark';
+        applyTheme(saved,false);
+      }
+      if(document.readyState==='loading')document.addEventListener('DOMContentLoaded',init);
+      else init();
+    })();
+  </script>
+
+</body>
+</html>

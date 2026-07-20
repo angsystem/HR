@@ -1,0 +1,250 @@
+<!DOCTYPE html>
+<html lang="zh-Hant">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width,initial-scale=1.0,maximum-scale=1.0,user-scalable=no,viewport-fit=cover" />
+  <title>ANG HR SYSTEMS｜正式註冊</title>
+  <link rel="preload" as="image" href="https://pub-51476fa95e5148749c1b932e123dc797.r2.dev/ang-entry-bg-day.png?v=20260614-free-use" referrerpolicy="no-referrer" />
+  <link rel="preload" as="image" href="https://pub-51476fa95e5148749c1b932e123dc797.r2.dev/ang-entry-bg-night.png?v=20260614-free-use" referrerpolicy="no-referrer" />
+  <style>
+    :root{
+      --bg-day:url("https://pub-51476fa95e5148749c1b932e123dc797.r2.dev/ang-entry-bg-day.png?v=20260614-free-use");
+      --bg-night:url("https://pub-51476fa95e5148749c1b932e123dc797.r2.dev/ang-entry-bg-night.png?v=20260614-free-use");
+      --main:#0f172a;
+      --muted:#64748b;
+      --card:rgba(255,255,255,.94);
+      --line:rgba(226,232,240,.92);
+      --input:rgba(241,245,249,.94);
+      --input-border:rgba(226,232,240,.96);
+      --primary:linear-gradient(90deg,#00d9ff 0%,#7c3cff 58%,#b000ff 100%);
+      --shadow:0 18px 42px rgba(0,0,0,.22);
+    }
+    body[data-theme="dark"]{
+      --main:#fff;
+      --muted:#cbd5e1;
+      --card:rgba(18,25,42,.88);
+      --line:rgba(255,255,255,.10);
+      --input:rgba(255,255,255,.07);
+      --input-border:rgba(255,255,255,.12);
+    }
+    *{box-sizing:border-box;-webkit-tap-highlight-color:transparent;}
+    html,body{margin:0;min-height:100%;}
+    body{
+      min-height:100vh;
+      display:flex;
+      justify-content:center;
+      background:#000;
+      color:var(--main);
+      font-family:"PingFang TC","Noto Sans TC","Microsoft JhengHei",-apple-system,BlinkMacSystemFont,"Segoe UI",sans-serif;
+      -webkit-font-smoothing:antialiased;
+      text-rendering:optimizeLegibility;
+    }
+    .screen{
+      position:relative;
+      width:100%;
+      max-width:430px;
+      min-height:100vh;
+      overflow:hidden;
+      background:linear-gradient(180deg,#eef7ff 0%,#dff3ff 45%,#f3e7ff 100%);
+    }
+    body[data-theme="dark"] .screen{background:radial-gradient(circle at 50% 0%,#203b74 0%,#111a3b 42%,#050816 100%);}
+    .screen::before{content:"";position:absolute;inset:0;background-image:var(--bg-day);background-size:cover;background-position:center top;opacity:1;}
+    body[data-theme="dark"] .screen::before{background-image:var(--bg-night);}
+    .screen::after{content:"";position:absolute;inset:0;background:linear-gradient(180deg,rgba(0,0,0,.05),rgba(0,0,0,.24));pointer-events:none;}
+    .wrap{position:relative;z-index:2;min-height:100vh;padding:calc(22px + env(safe-area-inset-top)) 18px calc(22px + env(safe-area-inset-bottom));display:flex;flex-direction:column;justify-content:flex-end;}
+    .card{background:var(--card);border:1px solid var(--line);border-radius:30px;padding:22px;box-shadow:var(--shadow);backdrop-filter:blur(24px);-webkit-backdrop-filter:blur(24px);}
+    .top-row{display:flex;align-items:center;justify-content:space-between;gap:12px;margin-bottom:14px;}
+    .brand{font-size:13px;font-weight:1000;letter-spacing:.12em;color:var(--muted);}
+    .back{height:38px;border:1px solid var(--line);background:rgba(255,255,255,.18);color:var(--main);border-radius:999px;padding:0 14px;font-size:14px;font-weight:1000;}
+    h1{margin:0;font-size:28px;line-height:1.12;font-weight:1000;letter-spacing:.01em;}
+    .sub{margin:10px 0 16px;color:var(--muted);font-size:14px;line-height:1.55;font-weight:850;}
+    .badge-row{display:grid;grid-template-columns:1fr 1fr;gap:10px;margin:14px 0 16px;}
+    .badge{border:1px solid var(--line);background:rgba(255,255,255,.12);border-radius:18px;padding:12px;text-align:center;}
+    .badge b{display:block;font-size:18px;line-height:1.1;font-weight:1000;}
+    .badge span{display:block;margin-top:5px;color:var(--muted);font-size:12px;font-weight:900;}
+    .form{display:grid;gap:12px;margin-top:12px;}
+    label{display:grid;gap:6px;color:var(--main);font-size:13px;font-weight:1000;}
+    input,select{width:100%;min-height:52px;border:1px solid var(--input-border);border-radius:18px;background:var(--input);color:var(--main);padding:12px 14px;font-size:16px;font-weight:900;outline:none;}
+    input::placeholder{color:var(--muted);opacity:.78;font-size:14px;}
+    .btn{width:100%;min-height:58px;border:0;border-radius:19px;background:var(--primary);color:#fff;font-size:17px;font-weight:1000;letter-spacing:.025em;box-shadow:0 10px 26px rgba(124,60,255,.28);display:flex;align-items:center;justify-content:center;gap:9px;}
+    .btn.secondary{margin-top:10px;background:rgba(255,255,255,.16);color:var(--main);border:1px solid var(--line);box-shadow:none;}
+    .status{display:none;margin-top:12px;padding:12px;border-radius:16px;font-size:13px;line-height:1.5;font-weight:900;text-align:center;}
+    .status.show{display:block;}
+    .status.info{background:rgba(59,130,246,.14);color:#bfdbfe;border:1px solid rgba(59,130,246,.18);}
+    .status.success{background:rgba(16,185,129,.14);color:#a7f3d0;border:1px solid rgba(16,185,129,.18);}
+    .status.error{background:rgba(239,68,68,.14);color:#fecaca;border:1px solid rgba(239,68,68,.18);}
+    body:not([data-theme="dark"]) .status.info{color:#2563eb;}body:not([data-theme="dark"]) .status.success{color:#059669;}body:not([data-theme="dark"]) .status.error{color:#dc2626;}
+    .fine{margin:12px 0 0;color:var(--muted);font-size:12px;line-height:1.55;font-weight:800;text-align:center;}
+  </style>
+</head>
+<body data-theme="dark">
+  <main class="screen">
+    <div class="wrap">
+      <section class="card">
+        <div class="top-row">
+          <div class="brand">ANG HR SYSTEMS</div>
+          <button class="back" type="button" onclick="goBack()">返回</button>
+        </div>
+        <h1>正式註冊<br>先免費使用</h1>
+        <p class="sub">這不是建立體驗公司。送出後建立正式公司資料，首期直接免費使用，可選 30 天或 15 天。</p>
+        <div class="badge-row">
+          <div class="badge"><b id="planName">Basic</b><span>正式方案</span></div>
+          <div class="badge"><b id="freeDaysText">30 天</b><span>首期免費</span></div>
+        </div>
+        <div class="form">
+          <label>方案
+            <select id="planSelect" onchange="syncPlan()">
+              <option value="basic">Basic</option>
+              <option value="plus">Plus</option>
+              <option value="premium">Premium</option>
+            </select>
+          </label>
+          <label>免費使用期
+            <select id="freeDays" onchange="syncFreeDays()">
+              <option value="30">免費使用 30 天</option>
+              <option value="15">免費使用 15 天</option>
+            </select>
+          </label>
+          <label>管理員 Email
+            <input id="adminEmail" type="email" inputmode="email" autocomplete="email" placeholder="name@company.com" />
+          </label>
+          <label>公司名稱
+            <input id="companyName" type="text" autocomplete="organization" placeholder="請輸入公司名稱" />
+          </label>
+          <label>負責人姓名
+            <input id="adminName" type="text" autocomplete="name" placeholder="請輸入負責人姓名" />
+          </label>
+          <label>聯絡電話
+            <input id="phone" type="tel" inputmode="tel" autocomplete="tel" placeholder="請輸入聯絡電話" />
+          </label>
+          <button class="btn" type="button" onclick="submitFreeUse('email')">驗證 Email 並建立正式公司</button>
+          <button class="btn secondary" type="button" onclick="submitFreeUse('google')">使用 Google 驗證並建立</button>
+          <div id="status" class="status"></div>
+          <p class="fine">免費期結束後再依選擇方案轉為付費或 Free 限制方案；後端請以 billing_status=first_period_free 與 free_days 判斷。</p>
+        </div>
+      </section>
+    </div>
+  </main>
+
+  <script>
+    const APP_STATE = { deviceId:'' };
+
+    function getRootPath(){
+      const path = window.location.pathname || '/';
+      return window.location.origin + path.replace(/[^\/]*$/, '');
+    }
+
+    function buildFileUrl(file, params){
+      const url = new URL(file, getRootPath());
+      Object.keys(params || {}).forEach(function(key){
+        const value = params[key];
+        if (value !== undefined && value !== null && String(value).trim() !== '') url.searchParams.set(key, String(value).trim());
+      });
+      return url.href;
+    }
+
+    function goBack(){ window.location.href = buildFileUrl('index.html', {}); }
+
+    function getParams(){ const sp = new URLSearchParams(window.location.search); const obj = {}; sp.forEach(function(v,k){ obj[k] = String(v || '').trim(); }); return obj; }
+    function getOrCreateDeviceId(){ const key='ang_hr_device_id'; let id=localStorage.getItem(key); if(!id){ id='DEV-'+Date.now().toString(36).toUpperCase()+'-'+Math.random().toString(36).slice(2,10).toUpperCase(); localStorage.setItem(key,id); } return id; }
+    function normalizePlan(plan){ const p=String(plan||'').trim().toLowerCase(); return ['basic','plus','premium'].indexOf(p)>=0?p:'basic'; }
+    function planLabel(plan){ plan=normalizePlan(plan); return plan.charAt(0).toUpperCase()+plan.slice(1); }
+    function isValidEmail(email){ return /^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(String(email||'').trim()); }
+
+    function setStatus(type,message){ const box=document.getElementById('status'); if(!box) return; box.className='status'; if(!message){ box.innerText=''; return; } box.classList.add('show', type || 'info'); box.innerText=message; }
+    function syncPlan(){ const plan=document.getElementById('planSelect').value; document.getElementById('planName').innerText=planLabel(plan); }
+    function syncFreeDays(){ const days=document.getElementById('freeDays').value === '15' ? '15' : '30'; document.getElementById('freeDaysText').innerText=days + ' 天'; }
+
+    function collectPayload(verify){
+      const plan=normalizePlan(document.getElementById('planSelect').value);
+      const freeDays=document.getElementById('freeDays').value === '15' ? 15 : 30;
+      return {
+        mode:'free_use_signup',
+        plan:plan,
+        verify:verify || 'email',
+        free_days:freeDays,
+        billing_status:'first_period_free',
+        payment_status:'first_period_free',
+        admin_email:String(document.getElementById('adminEmail').value || '').trim().toLowerCase(),
+        company_name:String(document.getElementById('companyName').value || '').trim(),
+        admin_name:String(document.getElementById('adminName').value || '').trim(),
+        phone:String(document.getElementById('phone').value || '').trim(),
+        device_id:APP_STATE.deviceId,
+        source:'register_html'
+      };
+    }
+
+    function submitFreeUse(verify){
+      const payload=collectPayload(verify);
+      if(!isValidEmail(payload.admin_email)){ setStatus('error','請輸入正確的管理員 Email'); return; }
+      if(!payload.company_name){ setStatus('error','請輸入公司名稱'); return; }
+      if(!payload.admin_name){ setStatus('error','請輸入負責人姓名'); return; }
+      setStatus('info','正在建立正式公司與免費使用期...');
+
+      if (verify === 'google' && window.isAngHrNativeApp && window.isAngHrNativeApp() && window.startAppNativeGoogleLogin) {
+        const started = window.startAppNativeGoogleLogin({
+          mode:'plan_signup',
+          plan:payload.plan,
+          freeDays:String(payload.free_days),
+          email:payload.admin_email,
+          statusId:'status'
+        });
+        if (started) return;
+      }
+
+      if (window.google && google.script && google.script.run) {
+        const runner = google.script.run
+          .withSuccessHandler(function(res){ handleResult(res, payload); })
+          .withFailureHandler(function(err){ setStatus('error', err && err.message ? err.message : '建立失敗'); });
+        if (typeof runner.startFreeUseCompany === 'function') {
+          runner.startFreeUseCompany(payload);
+          return;
+        }
+        if (typeof runner.startFreeTrial === 'function') {
+          runner.startFreeTrial(payload);
+          return;
+        }
+      }
+
+      fetch(buildFileUrl('api', { action:'startFreeUseCompany' }), {
+        method:'POST',
+        headers:{ 'Content-Type':'text/plain;charset=utf-8' },
+        body:JSON.stringify(payload)
+      }).then(function(r){ return r.json(); })
+      .then(function(res){ handleResult(res, payload); })
+      .catch(function(){
+        localStorage.setItem('ang_hr_pending_free_use_signup', JSON.stringify(payload));
+        setStatus('success','資料已暫存。請確認 GAS API / register 後端已接 startFreeUseCompany。');
+      });
+    }
+
+    function handleResult(res, payload){
+      if (!res || res.ok === false) {
+        setStatus('error', (res && (res.message || res.msg)) || '建立失敗');
+        return;
+      }
+      if (res.companyCode) localStorage.setItem('company_code', String(res.companyCode));
+      if (res.loginToken) localStorage.setItem('admin_login_token', String(res.loginToken));
+      setStatus('success', (res.message || res.msg) || '正式公司已建立，免費使用期已啟用');
+      const nextUrl = res.nextUrl || res.redirectUrl || res.url || '';
+      if (nextUrl) { setTimeout(function(){ window.location.href = nextUrl; }, 650); return; }
+      setTimeout(function(){ window.location.href = buildFileUrl('login.html', { tab:'login', role:'admin', company:res.companyCode || '', email:payload.admin_email }); }, 900);
+    }
+
+    function init(){
+      const params=getParams();
+      APP_STATE.deviceId=getOrCreateDeviceId();
+      const theme=params.theme || localStorage.getItem('ang-hr-theme') || 'dark';
+      document.body.dataset.theme = (theme === 'light' || theme === 'day') ? 'light' : 'dark';
+      document.getElementById('planSelect').value = normalizePlan(params.plan);
+      document.getElementById('freeDays').value = String(params.free_days || params.freeDays || '') === '15' ? '15' : '30';
+      if (params.email) document.getElementById('adminEmail').value = params.email;
+      syncPlan();
+      syncFreeDays();
+      if (params.verify === 'google') submitFreeUse('google');
+    }
+    window.addEventListener('load', init);
+  </script>
+  <script src="native-google-bridge.js?v=20260614-free-use"></script>
+</body>
+</html>

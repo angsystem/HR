@@ -1,15 +1,25 @@
-ANG HR ONLINE v0.6.0
+ANG HR ONLINE v0.6.0 完整前端版
+
 建置日期：2026-07-21
-部署方式：GitHub Pages／本機預覽伺服器
-入口：index.html
+部署目標：GitHub Pages
+主要入口：index.html
 
-本包為分開檔案正式版，包含：
-- index.html
-- assets/ 編譯後 CSS 與 JavaScript
-- 日間／夜間背景圖片
-- 兩支開場影片
-- .nojekyll
+此完整前端包包含：
+- v0.6.0 React 入口與方案展示／測試介面
+- employee.html 員工端
+- admin.html 管理端
+- creator.html 平台 Creator 頁
+- personal.html Personal 頁
+- register.html 註冊／驗證頁
+- app.html WebView／App 共用殼層
+- NFC 打卡與管理頁面
+- 所有前端 JS、CSS、背景圖片與開場影片
 
-本機預覽：雙擊「預覽網站.bat」，不要直接雙擊 index.html。
-GitHub Pages：將本資料夾內所有檔案放到 Repository 根目錄。
-GAS：可由多套前端共用同一個 Web App 網址；本包未替換 GAS 網址。
+GAS：
+- 所有前端維持使用同一個 GAS Web App URL。
+- GAS 後端原始碼不應公開放在 GitHub Pages 前端 Repository。
+- GAS v0.6.0 必須另外在 Apps Script 部署。
+
+注意：
+- React 入口目前仍包含固定測試帳號／示範資料。
+- 正式 Token、公司隔離、方案權限與資料同步必須由 GAS 後端驗證。

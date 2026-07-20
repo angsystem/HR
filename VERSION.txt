@@ -1,1 +1,2 @@
-v0.6.0
+ANG HR ONLINE v0.6.0
+Build date: 2026-07-21
