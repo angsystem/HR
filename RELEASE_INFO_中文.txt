@@ -1,0 +1,15 @@
+ANG HR ONLINE v0.6.0
+建置日期：2026-07-21
+部署方式：GitHub Pages／本機預覽伺服器
+入口：index.html
+
+本包為分開檔案正式版，包含：
+- index.html
+- assets/ 編譯後 CSS 與 JavaScript
+- 日間／夜間背景圖片
+- 兩支開場影片
+- .nojekyll
+
+本機預覽：雙擊「預覽網站.bat」，不要直接雙擊 index.html。
+GitHub Pages：將本資料夾內所有檔案放到 Repository 根目錄。
+GAS：可由多套前端共用同一個 Web App 網址；本包未替換 GAS 網址。
