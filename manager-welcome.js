@@ -1,4 +1,84 @@
 (function () {
+  var googleOAuthClientId = '466961332869-vrmkuerdbi4m68ep7dc17202b0ucsjoo.apps.googleusercontent.com';
+  var googleTokenClient = null;
+
+  function setGoogleLoginStatus(message, isError) {
+    var card = document.querySelector('.manager-card.login-unified');
+    var button = card && card.querySelector('.google-login');
+    if (!button) return;
+    button.classList.toggle('google-login-error', !!isError);
+    button.setAttribute('title', message || '');
+    var label = button.querySelector('span');
+    if (label && message) label.textContent = message;
+  }
+
+  function applyVerifiedGoogleAccount(profile) {
+    if (!profile || !profile.email) return;
+    var email = String(profile.email).trim().toLowerCase();
+    if (validLoginIdentifiers.indexOf(email) === -1) validLoginIdentifiers.push(email);
+    var card = document.querySelector('.manager-card.login-unified');
+    var input = card && card.querySelector('input[aria-label="Email、帳號或公司代號"], input[aria-label="Email或使用者代號"], input[aria-label="Email或帳號"]');
+    if (input) {
+      var setter = Object.getOwnPropertyDescriptor(HTMLInputElement.prototype, 'value').set;
+      setter.call(input, email);
+      input.dispatchEvent(new Event('input', { bubbles: true }));
+      input.dispatchEvent(new Event('change', { bubbles: true }));
+    }
+    try { sessionStorage.setItem('ang.google.profile', JSON.stringify({ email: email, name: profile.name || '', picture: profile.picture || '' })); } catch (_) {}
+    setGoogleLoginStatus('已驗證', false);
+    syncLoginVerificationState(true);
+  }
+
+  function handleGoogleToken(response) {
+    if (!response || response.error || !response.access_token) {
+      setGoogleLoginStatus('重試', true);
+      return;
+    }
+    fetch('https://www.googleapis.com/oauth2/v3/userinfo', {
+      headers: { Authorization: 'Bearer ' + response.access_token }
+    }).then(function (result) {
+      if (!result.ok) throw new Error('Google profile request failed');
+      return result.json();
+    }).then(applyVerifiedGoogleAccount).catch(function () {
+      setGoogleLoginStatus('重試', true);
+    });
+  }
+
+  function loadGoogleIdentity() {
+    if (window.google && google.accounts && google.accounts.oauth2) return Promise.resolve();
+    if (window.__angGoogleIdentityPromise) return window.__angGoogleIdentityPromise;
+    window.__angGoogleIdentityPromise = new Promise(function (resolve, reject) {
+      var script = document.createElement('script');
+      script.src = 'https://accounts.google.com/gsi/client';
+      script.async = true;
+      script.defer = true;
+      script.onload = resolve;
+      script.onerror = reject;
+      document.head.appendChild(script);
+    });
+    return window.__angGoogleIdentityPromise;
+  }
+
+  function startGoogleLogin(event) {
+    if (event) {
+      event.preventDefault();
+      event.stopPropagation();
+    }
+    setGoogleLoginStatus('連線中', false);
+    loadGoogleIdentity().then(function () {
+      if (!googleTokenClient) {
+        googleTokenClient = google.accounts.oauth2.initTokenClient({
+          client_id: googleOAuthClientId,
+          scope: 'openid email profile',
+          callback: handleGoogleToken
+        });
+      }
+      googleTokenClient.requestAccessToken({ prompt: 'select_account' });
+    }).catch(function () {
+      setGoogleLoginStatus('重試', true);
+    });
+  }
+
   var validLoginIdentifiers = [
     'ang-beta-basic', 'basic@ang-beta.test',
     'ang-beta-pro', 'pro@ang-beta.test',
@@ -83,6 +163,8 @@
         '<button type="button" class="apple-login" aria-label="使用 Apple 登入"><svg class="provider-icon" viewBox="0 0 24 24" aria-hidden="true"><path fill="currentColor" d="M18.71 19.5c-.83 1.24-1.71 2.45-3.05 2.47-1.34.03-1.77-.79-3.29-.79-1.53 0-2 .77-3.27.82-1.31.05-2.3-1.32-3.14-2.53C4.25 17 2.94 12.45 4.7 9.39c.87-1.52 2.43-2.48 4.12-2.51 1.28-.02 2.5.87 3.29.87.78 0 2.26-1.07 3.81-.91.65.03 2.47.26 3.64 1.98-.09.06-2.17 1.28-2.15 3.81.03 3.02 2.65 4.03 2.68 4.04-.03.07-.42 1.44-1.38 2.83M15.95 6.07c.56-.69.94-1.65.84-2.61-.83.04-1.84.55-2.43 1.24-.52.6-.98 1.58-.85 2.52.93.07 1.88-.47 2.44-1.15z"/></svg><span>Apple</span></button>'
       ].join('');
       body.appendChild(socialRow);
+      var googleButton = socialRow.querySelector('.google-login');
+      if (googleButton) googleButton.addEventListener('click', startGoogleLogin);
     }
 
     if (!body.querySelector('.email-verification-guide')) {
