@@ -9,6 +9,118 @@
     'free-business-lite', 'business-lite@ang-beta.test'
   ];
 
+  function getGasApiUrl() {
+    return String((window.ANG_HR_CONFIG && (window.ANG_HR_CONFIG.gasApiUrl || window.ANG_HR_CONFIG.apiBaseUrl)) || '').trim();
+  }
+
+  function getDeviceId() {
+    var saved = localStorage.getItem('ang_hr_device_id') || localStorage.getItem('ang_device_id');
+    if (!saved) saved = 'DEV-' + Date.now().toString(36).toUpperCase() + '-' + Math.random().toString(36).slice(2, 10).toUpperCase();
+    localStorage.setItem('ang_hr_device_id', saved);
+    localStorage.setItem('ang_device_id', saved);
+    return saved;
+  }
+
+  function callGasApi(action, payload, timeoutMs) {
+    var gasUrl = getGasApiUrl();
+    if (!gasUrl) return Promise.reject(new Error('尚未設定驗證 API'));
+    return new Promise(function (resolve, reject) {
+      var callbackName = 'angEntryAuth_' + Date.now().toString(36) + '_' + Math.random().toString(36).slice(2, 8);
+      var script = document.createElement('script');
+      var done = false;
+      function cleanup() {
+        try { delete window[callbackName]; } catch (err) { window[callbackName] = undefined; }
+        if (script.parentNode) script.parentNode.removeChild(script);
+      }
+      var timer = setTimeout(function () {
+        if (done) return;
+        done = true;
+        cleanup();
+        reject(new Error('驗證連線逾時'));
+      }, timeoutMs || 20000);
+      window[callbackName] = function (response) {
+        if (done) return;
+        done = true;
+        clearTimeout(timer);
+        cleanup();
+        resolve(response || {});
+      };
+      script.onerror = function () {
+        if (done) return;
+        done = true;
+        clearTimeout(timer);
+        cleanup();
+        reject(new Error('無法連線驗證服務'));
+      };
+      var url = new URL(gasUrl, window.location.href);
+      var body = Object.assign({}, payload || {}, { action: action });
+      url.searchParams.set('action', action);
+      url.searchParams.set('callback', callbackName);
+      url.searchParams.set('payload', JSON.stringify(body));
+      script.src = url.toString();
+      document.head.appendChild(script);
+    });
+  }
+
+  function setLoginAuthStatus(card, type, message) {
+    if (!card) return;
+    var status = card.querySelector('.login-auth-status');
+    if (!status) {
+      status = document.createElement('div');
+      status.className = 'login-auth-status';
+      status.setAttribute('aria-live', 'polite');
+      card.querySelector('.unified-login-body').appendChild(status);
+    }
+    status.className = 'login-auth-status ' + (type || 'info');
+    status.textContent = message || '';
+  }
+
+  function startOAuth(provider, event) {
+    if (event) { event.preventDefault(); event.stopPropagation(); }
+    var card = document.querySelector('.manager-card.login-unified');
+    var gasUrl = getGasApiUrl();
+    if (!gasUrl) { setLoginAuthStatus(card, 'error', '驗證服務尚未設定'); return; }
+    var actionMap = { google: 'requestGoogleAuth', line: 'requestLineAuth', apple: 'requestAppleAuth' };
+    var returnUrl = new URL(window.location.href);
+    returnUrl.search = '';
+    returnUrl.hash = '';
+    returnUrl.searchParams.set('auth_done', '1');
+    returnUrl.searchParams.set('provider', provider);
+    returnUrl.searchParams.set('flow', 'admin_login');
+    var body = {
+      action: actionMap[provider], provider: provider, flow: 'admin_login',
+      device_id: getDeviceId(), deviceId: getDeviceId(), source: 'current_entry_login',
+      returnUrl: returnUrl.toString(), return_url: returnUrl.toString(),
+      redirectUri: returnUrl.toString(), redirect_uri: returnUrl.toString(),
+      callbackUrl: returnUrl.toString(), callback_url: returnUrl.toString(), direct: '1'
+    };
+    localStorage.setItem('ang_pending_auth', JSON.stringify({ provider: provider, flow: 'admin_login', savedAt: Date.now() }));
+    setLoginAuthStatus(card, 'info', '正在開啟 ' + provider.toUpperCase() + ' 安全驗證…');
+    var url = new URL(gasUrl, window.location.href);
+    Object.keys(body).forEach(function (key) { if (body[key] !== '') url.searchParams.set(key, String(body[key])); });
+    window.location.href = url.toString();
+  }
+
+  function handleAuthCallback() {
+    var params = new URLSearchParams(window.location.search);
+    if (params.get('auth_done') !== '1') return;
+    ['verify_token', 'token', 'session_token', 'email', 'employee_id', 'company_id', 'role'].forEach(function (key) {
+      var value = params.get(key);
+      if (value) localStorage.setItem('ang_' + key, value);
+    });
+    localStorage.removeItem('ang_pending_auth');
+    setTimeout(function () {
+      var card = document.querySelector('.manager-card.login-unified');
+      if (!card) return;
+      card.classList.add('login-identifier-valid');
+      setLoginAuthStatus(card, 'success', '驗證成功，登入狀態已接收');
+      if (card.classList.contains('collapsed')) {
+        var toggle = card.querySelector('.manager-card-toggle');
+        if (toggle) toggle.click();
+      }
+    }, 250);
+  }
+
   function syncLoginVerificationState(allowExpand) {
     var card = document.querySelector('.manager-card.login-unified');
     var input = card && card.querySelector('input[aria-label="Email、帳號或公司代號"], input[aria-label="Email或使用者代號"], input[aria-label="Email或帳號"]');
@@ -26,7 +138,7 @@
     return true;
   }
 
-  function handleLoginVerification(event) {
+  async function handleLoginVerification(event) {
     if (event) {
       event.preventDefault();
       event.stopPropagation();
@@ -48,16 +160,31 @@
     }
 
     input.removeAttribute('aria-invalid');
-    var isValid = validLoginIdentifiers.indexOf(value.toLowerCase()) !== -1;
-    if (!isValid) {
+    var verifyButton = card.querySelector('.login-verify-button');
+    if (verifyButton) verifyButton.disabled = true;
+    setLoginAuthStatus(card, 'info', '正在寄出驗證碼…');
+    try {
+      var response = await callGasApi('requestEmailCode', {
+        email: value, identifier: value, account: value, flow: 'admin_login',
+        device_id: getDeviceId(), source: 'current_entry_login'
+      });
+      if (!response || response.ok === false) throw new Error((response && (response.message || response.msg)) || '驗證碼寄送失敗');
+      if (guide) guide.hidden = false;
+      card.classList.add('login-identifier-valid');
+      setLoginAuthStatus(card, 'success', (response.message || response.msg) || '驗證碼已寄出，請查看信箱');
+      if (card.classList.contains('collapsed')) {
+        var toggle = card.querySelector('.manager-card-toggle');
+        if (toggle) toggle.click();
+      }
+      return true;
+    } catch (err) {
       card.classList.add('login-verification-missing');
       if (guide) guide.hidden = true;
+      setLoginAuthStatus(card, 'error', err && err.message ? err.message : '驗證服務連線失敗');
       return false;
+    } finally {
+      if (verifyButton) verifyButton.disabled = false;
     }
-
-    if (guide) guide.hidden = false;
-    syncLoginVerificationState(true);
-    return true;
   }
 
   function addLoginActions() {
@@ -84,6 +211,13 @@
       ].join('');
       body.appendChild(socialRow);
     }
+
+    var googleButton = body.querySelector('.google-login');
+    var lineButton = body.querySelector('.line-login');
+    var appleButton = body.querySelector('.apple-login');
+    if (googleButton && !googleButton.__angAuthBound) { googleButton.__angAuthBound = true; googleButton.addEventListener('click', function (event) { startOAuth('google', event); }); }
+    if (lineButton && !lineButton.__angAuthBound) { lineButton.__angAuthBound = true; lineButton.addEventListener('click', function (event) { startOAuth('line', event); }); }
+    if (appleButton && !appleButton.__angAuthBound) { appleButton.__angAuthBound = true; appleButton.addEventListener('click', function (event) { startOAuth('apple', event); }); }
 
     if (!body.querySelector('.email-verification-guide')) {
       var guide = document.createElement('section');
@@ -205,6 +339,6 @@
     }, 0);
   });
 
-  if (document.readyState === 'loading') document.addEventListener('DOMContentLoaded', observeUntilReady);
-  else observeUntilReady();
+  if (document.readyState === 'loading') document.addEventListener('DOMContentLoaded', function () { observeUntilReady(); handleAuthCallback(); });
+  else { observeUntilReady(); handleAuthCallback(); }
 }());

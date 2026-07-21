@@ -1111,3 +1111,18 @@
 .manager-card.login-unified .login-email { grid-row: 6; }
 .manager-card.login-unified .beta-auth-error { grid-row: 7; }
 .manager-card.login-unified .card-main-action { grid-row: 8; }
+
+.manager-card.login-unified .login-auth-status {
+  grid-column: 1 / -1;
+  grid-row: 9;
+  min-height: 18px;
+  margin-top: 7px;
+  font-size: 10px;
+  font-weight: 800;
+  text-align: center;
+}
+
+.manager-card.login-unified .login-auth-status.info { color: #8fe7ff; }
+.manager-card.login-unified .login-auth-status.success { color: #82e6ad; }
+.manager-card.login-unified .login-auth-status.error { color: #ffabab; }
+.manager-card.login-unified .login-verify-button:disabled { opacity: .58; cursor: wait; }
