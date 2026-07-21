@@ -70,7 +70,8 @@
     facebookAppId: FACEBOOK_APP_ID,
     facebookPermissions: ['public_profile', 'email'],
     facebookRedirectUri: joinUrl(frontendBaseUrl, 'facebook-callback.html'),
-    // 伺服器端 code exchange API；App Secret 不可放在 GitHub Pages。
+    // 必須是能在伺服器端以 App Secret 交換 authorization code 的 HTTPS API。
+    // App Secret 絕對不可寫在此檔或任何 GitHub Pages 資源中。
     facebookTokenExchangeUrl: '',
 
     themeColors: ['#FF87E0', '#CCA4FF', '#8089FF', '#59DDFF'],
