@@ -6,20 +6,264 @@
     <meta name="theme-color" content="#f7f4fb" />
     <meta name="description" content="ANG HR 人力資源管理系統" />
     <title>ANG HR</title>
-    <script src="./config.js?v=20260722-facebook"></script>
-<<<<<<< HEAD
-    <script src="./facebook-auth.js?v=20260722-glfa"></script>
-=======
-    <script src="./facebook-auth.js?v=20260722-facebook"></script>
->>>>>>> ed9dfc860d1949036dff35946aaaef4fa7d9c0bd
+
+    <script src="./config.js?v=20260722-facebook-force3"></script>
     <script type="module" crossorigin src="./assets/index-DwNMzswZ.js"></script>
-    <link rel="stylesheet" crossorigin href="./assets/index-C1fEYMkG.css">
-    <link rel="stylesheet" href="./manager-welcome.css?v=20260721-pull-cue-reversed">
-    <link rel="stylesheet" href="./social-login-providers.css?v=20260722-glfa">
+    <link rel="stylesheet" crossorigin href="./assets/index-C1fEYMkG.css" />
+    <link rel="stylesheet" href="./manager-welcome.css?v=20260721-pull-cue-reversed" />
+    <link rel="stylesheet" href="./social-login-providers.css?v=20260722-facebook-force3" />
+
+    <style>
+      [data-ang-facebook-login],
+      .facebook-login {
+        display: inline-flex !important;
+        visibility: visible !important;
+        opacity: 1 !important;
+        width: 44px !important;
+        min-width: 44px !important;
+        max-width: 44px !important;
+        height: 44px !important;
+        min-height: 44px !important;
+        padding: 0 !important;
+        border-radius: 50% !important;
+        align-items: center !important;
+        justify-content: center !important;
+        color: #fff !important;
+        background: #0866ff !important;
+        border: 1px solid #0866ff !important;
+        position: relative !important;
+        z-index: 20 !important;
+        overflow: hidden !important;
+      }
+
+      [data-ang-facebook-login] .provider-icon,
+      .facebook-login .provider-icon {
+        display: block !important;
+        width: 27px !important;
+        height: 27px !important;
+      }
+
+      [data-ang-facebook-login] .provider-label,
+      .facebook-login .provider-label {
+        position: absolute !important;
+        width: 1px !important;
+        height: 1px !important;
+        overflow: hidden !important;
+        clip: rect(0, 0, 0, 0) !important;
+        white-space: nowrap !important;
+      }
+    </style>
   </head>
+
   <body>
     <div id="root"></div>
     <script defer src="./manager-welcome.js?v=20260721-email-verification-guide"></script>
 
+    <script>
+      (function (window, document) {
+        'use strict';
+
+        var installPending = false;
+        var STATE_KEY = 'ang_facebook_oauth_state';
+
+        function describe(element) {
+          if (!element) return '';
+          return [
+            element.className,
+            element.getAttribute('aria-label'),
+            element.getAttribute('title'),
+            element.getAttribute('data-provider'),
+            element.getAttribute('data-auth-provider'),
+            element.textContent
+          ].filter(Boolean).join(' ').toLowerCase();
+        }
+
+        function matches(element, provider) {
+          var value = describe(element);
+          if (provider === 'facebook') {
+            return value.indexOf('facebook') !== -1 || value.indexOf('臉書') !== -1;
+          }
+          return value.indexOf(provider) !== -1;
+        }
+
+        function clickables(root) {
+          return Array.prototype.slice.call((root || document).querySelectorAll(
+            'button, [role="button"], a, input[type="button"], input[type="submit"]'
+          ));
+        }
+
+        function findProvider(root, provider) {
+          var list = clickables(root);
+          for (var i = 0; i < list.length; i += 1) {
+            if (matches(list[i], provider)) return list[i];
+          }
+          return null;
+        }
+
+        function findRow() {
+          var rows = document.querySelectorAll(
+            '.social-login-row, .social-login-providers, .social-auth-row, [data-social-login], [data-auth-providers]'
+          );
+
+          for (var i = 0; i < rows.length; i += 1) {
+            var count = 0;
+            if (findProvider(rows[i], 'google')) count += 1;
+            if (findProvider(rows[i], 'line')) count += 1;
+            if (findProvider(rows[i], 'apple')) count += 1;
+            if (count >= 2) return rows[i];
+          }
+
+          var google = findProvider(document, 'google');
+          var line = findProvider(document, 'line');
+          var apple = findProvider(document, 'apple');
+          var providers = [google, line, apple].filter(Boolean);
+
+          for (var j = 0; j < providers.length; j += 1) {
+            var parent = providers[j].parentElement;
+            for (var depth = 0; parent && depth < 5; depth += 1, parent = parent.parentElement) {
+              var matched = 0;
+              if (google && parent.contains(google)) matched += 1;
+              if (line && parent.contains(line)) matched += 1;
+              if (apple && parent.contains(apple)) matched += 1;
+              if (matched >= 2) return parent;
+            }
+          }
+
+          return null;
+        }
+
+        function facebookMarkup() {
+          return [
+            '<svg class="provider-icon" viewBox="0 0 24 24" aria-hidden="true" focusable="false">',
+            '<path fill="currentColor" d="M13.6 22v-9h3l.45-3.5H13.6V7.27c0-1.01.28-1.7 1.74-1.7h1.86V2.44c-.32-.04-1.43-.14-2.72-.14-2.69 0-4.53 1.64-4.53 4.66V9.5H6.9V13h3.05v9h3.65z"/>',
+            '</svg>',
+            '<span class="provider-label">Facebook</span>'
+          ].join('');
+        }
+
+        function createFacebookButton(template) {
+          var button = template ? template.cloneNode(false) : document.createElement('button');
+
+          if (button.tagName === 'BUTTON') button.type = 'button';
+          if (button.tagName === 'A') {
+            button.removeAttribute('href');
+            button.setAttribute('role', 'button');
+          }
+
+          button.removeAttribute('id');
+          button.className = String(button.className || '')
+            .split(/\s+/)
+            .filter(Boolean)
+            .filter(function (name) {
+              return !/(google|line|apple|facebook)/i.test(name);
+            })
+            .concat(['facebook-login'])
+            .join(' ');
+
+          button.setAttribute('data-ang-facebook-login', 'true');
+          button.setAttribute('data-provider', 'facebook');
+          button.setAttribute('aria-label', '使用 Facebook 登入');
+          button.setAttribute('title', 'Facebook');
+          button.innerHTML = facebookMarkup();
+          return button;
+        }
+
+        function installFacebook() {
+          installPending = false;
+
+          var row = findRow();
+          if (!row) return;
+
+          var existing = row.querySelector('[data-ang-facebook-login], .facebook-login');
+          if (existing) return;
+
+          var google = findProvider(row, 'google');
+          var line = findProvider(row, 'line');
+          var apple = findProvider(row, 'apple');
+          var facebook = createFacebookButton(line || apple || google);
+
+          if (apple && apple.parentNode === row) {
+            row.insertBefore(facebook, apple);
+          } else if (line && line.parentNode === row) {
+            line.insertAdjacentElement('afterend', facebook);
+          } else {
+            row.appendChild(facebook);
+          }
+
+          row.setAttribute('data-provider-order', 'google-line-facebook-apple');
+          row.style.setProperty('grid-template-columns', 'repeat(4, minmax(0, 1fr))', 'important');
+          row.style.setProperty('overflow', 'visible', 'important');
+        }
+
+        function queueInstall() {
+          if (installPending) return;
+          installPending = true;
+          window.requestAnimationFrame(installFacebook);
+        }
+
+        function randomState() {
+          var bytes = new Uint8Array(24);
+          window.crypto.getRandomValues(bytes);
+          return Array.prototype.map.call(bytes, function (value) {
+            return value.toString(16).padStart(2, '0');
+          }).join('');
+        }
+
+        function startFacebook() {
+          if (window.ANGHRApp && typeof window.ANGHRApp.startFacebookLogin === 'function') {
+            window.ANGHRApp.startFacebookLogin();
+            return;
+          }
+
+          var config = window.ANG_HR_CONFIG || {};
+          if (!config.facebookAppId || !config.facebookRedirectUri) {
+            window.dispatchEvent(new CustomEvent('ANG_HR_AUTH_FAILED', {
+              detail: {
+                provider: 'facebook',
+                message: 'Facebook 登入尚未完成設定'
+              }
+            }));
+            return;
+          }
+
+          var state = randomState();
+          sessionStorage.setItem(STATE_KEY, state);
+
+          var query = new URLSearchParams({
+            client_id: config.facebookAppId,
+            redirect_uri: config.facebookRedirectUri,
+            response_type: 'code',
+            scope: (config.facebookPermissions || ['public_profile', 'email']).join(','),
+            state: state
+          });
+
+          window.location.assign('https://www.facebook.com/v23.0/dialog/oauth?' + query.toString());
+        }
+
+        var observer = new MutationObserver(queueInstall);
+        observer.observe(document.documentElement, {
+          childList: true,
+          subtree: true
+        });
+
+        document.addEventListener('DOMContentLoaded', queueInstall);
+        window.addEventListener('load', queueInstall);
+        setTimeout(queueInstall, 50);
+        setTimeout(queueInstall, 250);
+        setTimeout(queueInstall, 750);
+        setTimeout(queueInstall, 1500);
+        setTimeout(queueInstall, 3000);
+
+        document.addEventListener('click', function (event) {
+          var button = event.target && event.target.closest
+            ? event.target.closest('[data-ang-facebook-login], .facebook-login')
+            : null;
+          if (!button) return;
+          event.preventDefault();
+          event.stopPropagation();
+          startFacebook();
+        }, true);
+      })(window, document);
+    </script>
   </body>
 </html>
