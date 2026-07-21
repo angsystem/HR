@@ -1,0 +1,1113 @@
+.manager-card.collapsed.intro .intro-card-content {
+  padding-top: 0;
+}
+
+.manager-welcome-message {
+  color: inherit;
+  width: 100%;
+  margin: 0;
+  font-weight: 900;
+  text-align: center;
+}
+
+.manager-welcome-title {
+  display: block;
+  height: 60px;
+  font-size: 25px;
+  letter-spacing: 1px;
+  line-height: 60px;
+}
+
+.manager-welcome-prompt {
+  display: grid;
+  min-height: 29px;
+  margin: 0 8px;
+  padding: 0;
+  place-items: center;
+  font-size: 13px;
+  letter-spacing: 1.8px;
+  line-height: 1.2;
+  color: #fff;
+  border-top: 1px solid rgba(255,255,255,.42);
+  border-bottom: 1px solid rgba(255,255,255,.42);
+  text-shadow: 0 1px 4px rgba(0,0,0,.42);
+}
+
+.manager-card.collapsed.intro .encouragement-message {
+  min-height: 0;
+  margin: 3px 8px 0;
+  padding: 6px 0;
+  border-top: 1px solid currentColor;
+  border-bottom: 1px solid currentColor;
+  line-height: 1.15;
+  opacity: .68;
+}
+
+.manager-card.intro .encouragement-message {
+  display: none !important;
+}
+
+.manager-logo-encouragement {
+  position: absolute;
+  top: 38%;
+  left: 92px;
+  right: 92px;
+  z-index: 3;
+  display: grid;
+  min-height: 28px;
+  place-items: center;
+  padding: 6px 0;
+  color: #fff;
+  border-top: 1px solid rgba(255,255,255,.72);
+  border-bottom: 1px solid rgba(255,255,255,.72);
+  font-size: 11px;
+  font-weight: 900;
+  letter-spacing: .35px;
+  line-height: 1.15;
+  opacity: .76;
+  pointer-events: none;
+  text-align: center;
+  white-space: nowrap;
+}
+
+.manager-card.collapsed.intro .gesture-directions .swipe-direction {
+  min-height: 56px;
+}
+
+.manager-card.collapsed.intro .gesture-directions {
+  margin-top: 0;
+}
+
+.manager-card.collapsed.intro .gesture-directions .neon-swipe {
+  height: 46px;
+  margin-bottom: 0;
+  opacity: .52;
+}
+
+.landing-shade,
+.landing::before,
+.landing::after {
+  background: none !important;
+  -webkit-mask-image: none !important;
+  mask-image: none !important;
+  filter: none !important;
+  box-shadow: none !important;
+}
+
+.landing-top .brand,
+.landing-top .beta-version {
+  display: none !important;
+}
+
+.landing-top-actions {
+  margin-left: auto;
+  justify-content: flex-end;
+}
+
+.landing-top-actions .icon-button {
+  width: 18px;
+  min-width: 18px;
+  height: 18px;
+  min-height: 18px;
+  padding: 0;
+  color: rgba(255,255,255,.86);
+  background: transparent;
+  border: 0;
+  border-radius: 4px;
+  box-shadow: none;
+  font-size: 13px;
+  line-height: 18px;
+}
+
+.manager-card.collapsed.intro .gesture-directions .swipe-direction > em {
+  border-top: 1px solid currentColor;
+  padding-top: 6px;
+}
+
+.landing:has(.manager-card.expanded.intro) .manager-logo-encouragement {
+  transform: translateY(-96px);
+}
+
+/* 任一卡片展開後，鼓勵詞貼齊畫面上方安全區 */
+.landing:has(.manager-card.expanded) .manager-logo-encouragement {
+  position: fixed;
+  top: calc(env(safe-area-inset-top) + 5px);
+  left: 50%;
+  right: auto;
+  z-index: 80;
+  width: min(250px, calc(100vw - 170px));
+  transform: translateX(-50%);
+}
+
+.manager-card.collapsed :is(.lite-option, .personal-option, .business-option) {
+  height: 72px;
+  min-height: 72px;
+  max-height: 72px;
+  padding: 6px 8px;
+  border-radius: 12px;
+  overflow: hidden;
+  -webkit-backdrop-filter: blur(12px);
+  backdrop-filter: blur(12px);
+}
+
+.manager-card.collapsed :is(.lite-options, .personal-options) {
+  grid-template-columns: repeat(2, minmax(0, 1fr));
+  justify-content: stretch;
+  gap: 8px;
+}
+
+.manager-card.collapsed :is(.lite-option, .personal-option) {
+  width: 112px;
+  justify-self: center;
+}
+
+/* 銀：入門方案 */
+.manager-card.collapsed :is(.personal-lite, .solo-option, .pro-option) {
+  color: #fff;
+  background: rgba(209,220,231,.16);
+  border-color: rgba(255,255,255,.62);
+  box-shadow: inset 0 1px 0 rgba(255,255,255,.3), 0 0 12px rgba(222,231,240,.18);
+}
+
+.manager-card.collapsed :is(.personal-lite, .solo-option, .pro-option) :is(strong, b) {
+  color: #eaf2fa;
+}
+
+/* 金：進階方案 */
+.manager-card.collapsed :is(.business-lite, .performance-option, .premium-option) {
+  color: #fff8d1;
+  background: rgba(216,162,35,.2);
+  border-color: rgba(255,232,154,.72);
+  box-shadow: inset 0 1px 0 rgba(255,248,208,.3), 0 0 12px rgba(255,201,66,.26);
+}
+
+.manager-card.collapsed :is(.business-lite, .performance-option, .premium-option) :is(strong, b) {
+  color: #ffe28b;
+}
+
+/* 銅：Business 基礎方案 */
+.manager-card.collapsed .basic-option {
+  color: #fff4df;
+  background: rgba(196,112,45,.2);
+  border-color: rgba(255,208,154,.68);
+  box-shadow: inset 0 1px 0 rgba(255,239,210,.3), 0 0 12px rgba(226,142,66,.24);
+}
+
+.manager-card.collapsed .basic-option :is(strong, b) {
+  color: #ffd19a;
+}
+
+/* 所有尚未展開的卡片維持一致高度 */
+.manager-carousel article.manager-card.collapsed {
+  height: 196px !important;
+  min-height: 196px !important;
+  max-height: 196px !important;
+}
+
+/* 登入玻璃卡：帳號尚未確認時為黃色 */
+.manager-card.login-unified .login-card-body {
+  --login-state-rgb: 235, 177, 61;
+  -webkit-backdrop-filter: blur(20px) saturate(1.18);
+  backdrop-filter: blur(20px) saturate(1.18);
+  background: linear-gradient(135deg, rgba(255, 222, 118, .12), rgba(171, 112, 26, .055)) !important;
+  border-color: rgba(255, 211, 92, .94) !important;
+  box-shadow: inset 0 1px 0 rgba(255, 255, 255, .24), inset 0 0 30px rgba(var(--login-state-rgb), .08), 0 0 22px rgba(var(--login-state-rgb), .38) !important;
+}
+
+/* 帳號存在：轉為綠色並維持玻璃質感 */
+.manager-card.login-unified.login-identifier-valid .login-card-body {
+  --login-state-rgb: 49, 190, 112;
+  background: linear-gradient(135deg, rgba(99, 225, 151, .28), rgba(20, 125, 73, .18)) !important;
+  border-color: rgba(102, 231, 157, .96) !important;
+  box-shadow: inset 0 1px 0 rgba(255, 255, 255, .32), inset 0 0 32px rgba(var(--login-state-rgb), .16), 0 0 24px rgba(var(--login-state-rgb), .48) !important;
+}
+
+/* 登入欄位名稱放在「登入系統」標題後方 */
+.manager-card.login-unified .login-card-title {
+  display: flex;
+  align-items: baseline;
+  flex-wrap: nowrap;
+  gap: 5px 10px;
+  white-space: nowrap;
+}
+
+.manager-card.login-unified .login-card-title h2 {
+  order: 1;
+  flex: 0 0 auto;
+}
+
+.manager-card.login-unified .login-card-title::after {
+  content: "輸入Email或帳號";
+  order: 2;
+  flex: 0 0 auto;
+  font-size: 14px;
+  line-height: 1.2;
+  font-weight: 900;
+  letter-spacing: .2px;
+}
+
+.manager-card.login-unified .login-card-title small {
+  order: 3;
+  flex: 0 0 auto;
+}
+
+.manager-card.login-unified .access-code > span {
+  display: none !important;
+}
+
+/* 帳號欄右側驗證，下一列為 Google／LINE／Apple */
+.manager-card.login-unified .unified-login-body {
+  display: grid !important;
+  grid-template-columns: minmax(0, 1fr) 72px;
+  grid-auto-rows: auto;
+  column-gap: 8px;
+  align-content: start;
+}
+
+.manager-card.login-unified .login-card-title {
+  grid-column: 1 / -1;
+  grid-row: 1;
+}
+
+.manager-card.login-unified .login-description {
+  grid-column: 1 / -1;
+  grid-row: 2;
+}
+
+.manager-card.login-unified .access-code {
+  grid-column: 1;
+  grid-row: 3;
+  min-width: 0;
+}
+
+.manager-card.login-unified .login-verify-button {
+  grid-column: 2;
+  grid-row: 3;
+  align-self: end;
+  height: 39px;
+  color: #fff;
+  background: linear-gradient(135deg, #ff87e0, #817fff 65%, #59ddff);
+  border: 1px solid rgba(255, 255, 255, .34);
+  border-radius: 13px;
+  padding: 0 12px;
+  font-size: 12px;
+  font-weight: 1000;
+  box-shadow: 0 8px 18px rgba(104, 89, 210, .34);
+}
+
+.manager-card.login-unified.login-identifier-valid .login-verify-button {
+  color: #063c20;
+  background: linear-gradient(135deg, rgba(116, 235, 166, .96), rgba(48, 184, 105, .92));
+  border-color: rgba(132, 244, 180, .98);
+}
+
+.manager-card.login-unified .social-login-row {
+  grid-column: 1 / -1;
+  grid-row: 4;
+  display: grid;
+  grid-template-columns: 1.3fr 1fr 1fr;
+  gap: 6px;
+  margin-top: 8px;
+}
+
+.manager-card.login-unified .social-login-row button {
+  min-width: 0;
+  height: 38px;
+  color: #1f1f1f;
+  background: #fff;
+  border: 1px solid #747775;
+  border-radius: 11px;
+  align-items: center;
+  justify-content: center;
+  gap: 4px;
+  padding: 0 6px;
+  font-size: 11px;
+  font-weight: 900;
+  display: flex;
+}
+
+.manager-card.login-unified .social-login-row .line-login {
+  color: #fff;
+  background: #06c755;
+  border-color: #06c755;
+}
+
+.manager-card.login-unified .social-login-row .apple-login {
+  color: #fff;
+  background: #000;
+  border-color: #000;
+}
+
+.manager-card.login-unified .provider-icon {
+  flex: 0 0 16px;
+  width: 16px;
+  height: 16px;
+  display: block;
+}
+
+.manager-card.login-unified .login-email {
+  grid-column: 1 / -1;
+  grid-row: 5;
+}
+
+.manager-card.login-unified .beta-auth-error {
+  grid-column: 1 / -1;
+  grid-row: 6;
+}
+
+.manager-card.login-unified .card-main-action {
+  grid-column: 1 / -1;
+  grid-row: 7;
+}
+
+.manager-card.collapsed.login-unified .card-main-action {
+  display: none !important;
+}
+
+/* 未展開方案卡可直接點選；展開後完整顯示，不在卡片內形成第二層捲動 */
+.manager-card.collapsed:is(.free, .personal, .business) {
+  cursor: pointer;
+}
+
+.manager-card.expanded:is(.free, .personal, .business) {
+  height: auto;
+  min-height: min(86dvh, 620px);
+  max-height: none;
+  overflow-y: visible;
+}
+
+/* 日光版：全入口頁高對比調整 */
+.landing.day {
+  color: #101a35;
+}
+
+.landing.day .landing-shade {
+  background: linear-gradient(rgba(255, 255, 255, .04), rgba(222, 231, 255, .12) 42%, rgba(28, 45, 83, .22));
+}
+
+.landing.day .brand strong,
+.landing.day .brand small {
+  color: #0d1935;
+  opacity: 1;
+  text-shadow: 0 1px 2px rgba(255, 255, 255, .75);
+}
+
+.landing.day .feedback-link,
+.landing.day .icon-button {
+  color: #172442;
+  background: rgba(255, 255, 255, .72);
+  border-color: rgba(43, 61, 101, .24);
+  box-shadow: 0 5px 16px rgba(35, 54, 96, .16);
+}
+
+.landing.day .manager-logo-encouragement {
+  color: #14213d;
+  background: rgba(255, 255, 255, .7);
+  border: 1px solid rgba(50, 68, 108, .22);
+  border-radius: 999px;
+  padding: 5px 12px;
+  opacity: 1;
+  text-shadow: none;
+  box-shadow: 0 6px 18px rgba(42, 61, 105, .18);
+  -webkit-backdrop-filter: blur(12px) saturate(1.1);
+  backdrop-filter: blur(12px) saturate(1.1);
+}
+
+.landing.day .manager-swipe-caption,
+.landing.day .manager-pull-cue > span {
+  color: #172442;
+  opacity: 1;
+  text-shadow: 0 1px 2px rgba(255, 255, 255, .8);
+}
+
+/* 左右滑動箭頭各減少一個，避免最外側被裁切 */
+.gesture-directions .neon-swipe i:last-child {
+  display: none;
+}
+
+.landing .manager-card.collapsed.intro .gesture-directions .swipe-direction {
+  background: transparent !important;
+  border: 0 !important;
+  border-radius: 0 !important;
+  box-shadow: none !important;
+}
+
+/* 所有版本：卡片展開後頂部仍保持圓弧 */
+.landing .manager-card.expanded {
+  border-top-left-radius: 30px !important;
+  border-top-right-radius: 30px !important;
+}
+
+.landing .manager-card.expanded .manager-card-toggle {
+  border-top-left-radius: 29px !important;
+  border-top-right-radius: 29px !important;
+  overflow: hidden;
+}
+
+/* 日光版歡迎詞與鼓勵詞使用滑動提示同款質感金 */
+.landing.day .manager-welcome-title,
+.landing.day .manager-logo-encouragement > span {
+  color: #88611b !important;
+  background: none;
+  -webkit-background-clip: border-box;
+  background-clip: border-box;
+  -webkit-text-fill-color: #88611b;
+  text-shadow: 0 1px 0 rgba(255, 244, 190, .92), 0 2px 5px rgba(89, 52, 0, .24) !important;
+  font-weight: 1000;
+}
+
+/* 指定區域回到系統預設粉紫藍青渲染色 */
+.landing .manager-logo-encouragement > span,
+.landing .manager-welcome-title,
+.landing .manager-welcome-prompt,
+.landing .encouragement-message,
+.landing .manager-card.collapsed.intro .gesture-directions .swipe-direction > em {
+  color: transparent !important;
+  background: linear-gradient(90deg, var(--emp-4, #59ddff), var(--emp-3, #8089ff) 48%, var(--emp-1, #ff87e0));
+  -webkit-background-clip: text;
+  background-clip: text;
+  -webkit-text-fill-color: transparent;
+  text-shadow: none !important;
+}
+
+.gesture-directions .neon-swipe i {
+  color: var(--emp-3, #8089ff);
+  border-color: currentColor;
+}
+
+.gesture-directions .neon-swipe i:nth-child(3n + 1) {
+  color: var(--emp-4, #59ddff);
+}
+
+.gesture-directions .neon-swipe i:nth-child(3n + 2) {
+  color: var(--emp-3, #8089ff);
+}
+
+.gesture-directions .neon-swipe i:nth-child(3n) {
+  color: var(--emp-1, #ff87e0);
+}
+
+.landing.day .manager-card:not(.login-unified) :is(.lite-option, .personal-option, .business-option),
+.landing.day .manager-card:not(.login-unified) :is(.lite-option, .personal-option, .business-option) :is(strong, b) {
+  color: #26314c;
+  text-shadow: none;
+}
+
+.landing.day .manager-card .personal-lite b,
+.landing.day .manager-card .solo-option b,
+.landing.day .manager-card .basic-option b {
+  color: #258cab;
+}
+
+.landing.day .manager-card .business-lite b,
+.landing.day .manager-card .performance-option b {
+  color: #b44e91;
+}
+
+.landing.day .manager-card .pro-option b {
+  color: #7259bc;
+}
+
+.landing.day .manager-card .premium-option b {
+  color: #916312;
+}
+
+/* 展開提示改為兩個閃現箭頭，不顯示文字 */
+.manager-pull-cue > span {
+  display: none !important;
+}
+
+.manager-pull-cue i:nth-of-type(n + 3) {
+  display: none !important;
+}
+
+.manager-pull-cue i {
+  animation: manager-cue-blink 1.25s ease-in-out infinite !important;
+}
+
+.manager-pull-cue i:nth-of-type(1) {
+  animation-delay: .24s !important;
+}
+
+.manager-pull-cue i:nth-of-type(2) {
+  animation-delay: 0s !important;
+}
+
+@keyframes manager-cue-blink {
+  0%, 100% { opacity: .16; filter: brightness(.8); }
+  48% { opacity: 1; filter: brightness(1.55); }
+}
+
+/* 暗夜版歡迎標題：白／淡灰夜光 */
+.landing.night .manager-welcome-title {
+  color: #f2f3f7 !important;
+  background: none !important;
+  -webkit-background-clip: border-box;
+  background-clip: border-box;
+  -webkit-text-fill-color: #f2f3f7 !important;
+  text-shadow: 0 0 5px rgba(255, 255, 255, .52), 0 0 14px rgba(210, 218, 239, .34) !important;
+}
+
+/* 暗夜版首頁卡第二行與底部滑動文字改為金色 */
+.landing.night .manager-welcome-prompt,
+.landing.night .manager-card.collapsed.intro .gesture-directions .swipe-direction > em {
+  color: #a87522 !important;
+  background: none !important;
+  -webkit-background-clip: border-box;
+  background-clip: border-box;
+  -webkit-text-fill-color: #a87522 !important;
+  text-shadow: 0 0 4px rgba(218, 164, 65, .28), 0 0 10px rgba(117, 73, 8, .26) !important;
+}
+
+/* 日光版入口指定文字統一為深金色 */
+.landing.day .manager-welcome-title,
+.landing.day .manager-welcome-prompt,
+.landing.day .manager-card.collapsed.intro .gesture-directions .swipe-direction > em {
+  color: #88611b !important;
+  background: none !important;
+  -webkit-background-clip: border-box;
+  background-clip: border-box;
+  -webkit-text-fill-color: #88611b !important;
+  text-shadow: 0 1px 0 rgba(255, 244, 190, .92), 0 2px 5px rgba(89, 52, 0, .24) !important;
+}
+
+
+.landing.day .manager-pull-cue > span {
+  background: rgba(255, 183, 72, .32);
+  border: 1px solid rgba(189, 105, 14, .4);
+  box-shadow: inset 0 0 14px rgba(255, 139, 48, .18), 0 4px 12px rgba(109, 70, 20, .12);
+}
+
+.landing.day .manager-card {
+  border-color: rgba(67, 83, 123, .25);
+  box-shadow: 0 18px 42px rgba(42, 61, 105, .28);
+}
+
+.landing.day .manager-card.active {
+  border-color: rgba(61, 79, 124, .38);
+  box-shadow: 0 20px 48px rgba(34, 53, 96, .34);
+}
+
+.landing.day .manager-card-toggle {
+  color: #34415e;
+  border-bottom-color: rgba(61, 76, 113, .2);
+}
+
+.landing.day .manager-card-toggle .pull-bar {
+  background: #78849e;
+}
+
+.landing.day .manager-card :is(h2, h3, label, strong, b) {
+  text-shadow: none;
+}
+
+.landing.day .manager-card p,
+.landing.day .manager-card small,
+.landing.day .login-card-title small {
+  color: #59647c;
+  opacity: 1;
+}
+
+.landing.day .manager-welcome-message,
+.landing.day .manager-welcome-title,
+.landing.day .manager-welcome-prompt,
+.landing.day .encouragement-message {
+  color: #263653 !important;
+  opacity: 1 !important;
+  text-shadow: none !important;
+}
+
+.landing.day .manager-welcome-prompt {
+  background: rgba(255, 255, 255, .58);
+  border: 1px solid rgba(54, 72, 112, .18);
+  border-radius: 999px;
+  padding: 4px 10px;
+}
+
+.landing.day .manager-card input {
+  color: #111c36;
+  background: rgba(255, 255, 255, .84);
+  border-color: rgba(58, 76, 117, .32);
+  box-shadow: inset 0 1px 3px rgba(35, 50, 84, .08);
+}
+
+.landing.day .manager-card input::placeholder {
+  color: #667189;
+  opacity: 1;
+}
+
+.landing.day .manager-card.collapsed :is(.lite-option, .personal-option, .business-option) {
+  color: #1d2944;
+}
+
+.landing.day .manager-card.collapsed :is(.lite-option, .personal-option, .business-option) :is(strong, b) {
+  color: #17223d;
+}
+
+.landing.day .manager-card.collapsed .basic-option {
+  color: #5c3512;
+  background: rgba(205, 126, 52, .2);
+  border-color: rgba(157, 82, 20, .5);
+}
+
+.landing.day .manager-card.collapsed .pro-option,
+.landing.day .manager-card.collapsed :is(.personal-lite, .solo-option) {
+  color: #30394c;
+  background: rgba(137, 151, 171, .2);
+  border-color: rgba(87, 101, 124, .46);
+}
+
+.landing.day .manager-card.collapsed :is(.business-lite, .performance-option, .premium-option) {
+  color: #5b4204;
+  background: rgba(218, 169, 41, .22);
+  border-color: rgba(154, 108, 12, .48);
+}
+
+/* 日光版文字改為質感金；登入黑玻璃維持白字 */
+.landing.day .manager-logo-encouragement,
+.landing.day .manager-welcome-title,
+.landing.day .manager-welcome-prompt,
+.landing.day .manager-swipe-caption,
+.landing.day .manager-card.collapsed.intro .gesture-directions .swipe-direction > em,
+.landing.day .manager-pull-cue > span {
+  color: #88611b !important;
+  text-shadow: 0 1px 0 rgba(255, 244, 190, .92), 0 2px 5px rgba(89, 52, 0, .24) !important;
+}
+
+.landing.day .manager-card:not(.login-unified) h2,
+.landing.day .manager-card:not(.login-unified) h3,
+.landing.day .manager-card:not(.login-unified) .manager-price,
+.landing.day .manager-card:not(.login-unified) .plan-card-top b {
+  color: #8b6015;
+  text-shadow: 0 1px 0 rgba(255, 247, 207, .94), 0 2px 6px rgba(101, 62, 3, .2);
+}
+
+.landing.day .manager-card:not(.login-unified) p,
+.landing.day .manager-card:not(.login-unified) small,
+.landing.day .manager-card:not(.login-unified) label,
+.landing.day footer {
+  color: #685633;
+}
+
+.landing.day .manager-card:not(.login-unified) :is(.lite-option, .personal-option, .business-option) strong,
+.landing.day .manager-card:not(.login-unified) :is(.lite-option, .personal-option, .business-option) b {
+  color: #8d621b;
+  text-shadow: 0 1px 0 rgba(255, 244, 194, .78);
+}
+
+.landing.day .manager-pull-cue > span {
+  background: linear-gradient(135deg, rgba(255, 231, 158, .5), rgba(210, 153, 46, .3));
+  border-color: rgba(158, 103, 15, .46);
+}
+
+.landing.day .manager-card.collapsed :is(.basic-option, .pro-option, .personal-lite, .solo-option, .business-lite, .performance-option, .premium-option) :is(strong, b) {
+  color: inherit;
+}
+
+.landing.day .manager-card.collapsed.intro .gesture-directions .swipe-direction {
+  color: #172442;
+  background: rgba(255, 255, 255, .38);
+  border: 1px solid rgba(53, 72, 113, .2);
+  border-radius: 16px;
+}
+
+.landing.day .manager-card.collapsed.intro .gesture-directions .swipe-direction > em {
+  color: #16223e;
+  opacity: 1;
+  text-shadow: none;
+}
+
+.landing.day footer {
+  color: #283651;
+  opacity: .76;
+  text-shadow: 0 1px 2px rgba(255, 255, 255, .75);
+}
+
+/* 登入卡固定採用暗夜黑玻璃，不受日光模式洗白 */
+.landing .manager-card.login-unified {
+  color: #fff;
+  background: linear-gradient(155deg, rgba(5, 8, 18, .95), rgba(15, 9, 30, .91)) !important;
+  border-color: rgba(177, 190, 224, .28) !important;
+  box-shadow: 0 20px 48px rgba(1, 3, 12, .58) !important;
+}
+
+.landing .manager-card.login-unified .login-card-body {
+  --login-state-rgb: 129, 112, 196;
+  color: #fff;
+  background: linear-gradient(135deg, rgba(32, 35, 52, .58), rgba(9, 10, 20, .42)) !important;
+  border-color: rgba(204, 211, 235, .36) !important;
+  box-shadow: inset 0 1px 0 rgba(255, 255, 255, .14), inset 0 0 32px rgba(113, 91, 173, .12), 0 0 22px rgba(1, 3, 12, .48) !important;
+}
+
+.landing .manager-card.login-unified :is(h2, h3, label, strong, b),
+.landing.day .manager-card.login-unified :is(h2, h3, label, strong, b) {
+  color: #fff;
+}
+
+.landing .manager-card.login-unified :is(p, small),
+.landing.day .manager-card.login-unified :is(p, small),
+.landing .manager-card.login-unified .login-card-title::after {
+  color: rgba(235, 239, 255, .86);
+}
+
+.landing .manager-card.login-unified input,
+.landing.day .manager-card.login-unified input {
+  color: #fff;
+  background: rgba(255, 255, 255, .1);
+  border-color: rgba(207, 216, 242, .28);
+  box-shadow: inset 0 1px 4px rgba(0, 0, 0, .28);
+}
+
+.landing .manager-card.login-unified input::placeholder,
+.landing.day .manager-card.login-unified input::placeholder {
+  color: rgba(225, 231, 249, .62);
+}
+
+.landing .manager-card.login-unified.login-identifier-valid .login-card-body {
+  --login-state-rgb: 49, 190, 112;
+  background: linear-gradient(135deg, rgba(35, 126, 76, .48), rgba(7, 42, 25, .42)) !important;
+  border-color: rgba(102, 231, 157, .96) !important;
+  box-shadow: inset 0 1px 0 rgba(255, 255, 255, .2), inset 0 0 32px rgba(var(--login-state-rgb), .16), 0 0 24px rgba(var(--login-state-rgb), .44) !important;
+}
+
+/* 日光版視覺統一：珍珠白、淡紫、霧藍冷色玻璃 */
+.landing.day .landing-shade {
+  background: linear-gradient(180deg, rgba(247, 245, 255, .03), rgba(226, 232, 255, .08) 46%, rgba(43, 57, 103, .16));
+}
+
+.landing.day .manager-logo-encouragement {
+  color: #2a3264;
+  background: linear-gradient(135deg, rgba(255, 255, 255, .74), rgba(232, 229, 255, .66));
+  border-color: rgba(111, 104, 190, .28);
+  box-shadow: 0 8px 22px rgba(75, 72, 139, .18);
+}
+
+.landing.day .feedback-link,
+.landing.day .icon-button {
+  color: #303862;
+  background: linear-gradient(135deg, rgba(255, 255, 255, .78), rgba(237, 237, 255, .7));
+  border-color: rgba(100, 104, 164, .24);
+}
+
+.landing.day .manager-pull-cue > span {
+  color: #fff;
+  background: linear-gradient(135deg, rgba(112, 103, 226, .9), rgba(78, 181, 218, .88));
+  border-color: rgba(255, 255, 255, .42);
+  text-shadow: none;
+  box-shadow: 0 7px 18px rgba(85, 92, 183, .28);
+}
+
+.landing.day .manager-card.intro,
+.landing.day .manager-card.free {
+  background: linear-gradient(155deg, rgba(255, 255, 255, .9), rgba(226, 240, 255, .82));
+  border-color: rgba(101, 137, 190, .34);
+}
+
+.landing.day .manager-card.personal {
+  background: linear-gradient(155deg, rgba(255, 250, 255, .92), rgba(233, 225, 255, .84));
+  border-color: rgba(153, 112, 198, .34);
+}
+
+.landing.day .manager-card.business {
+  background: linear-gradient(155deg, rgba(246, 252, 255, .92), rgba(220, 230, 255, .84));
+  border-color: rgba(91, 116, 186, .36);
+}
+
+.landing.day .manager-card.collapsed:is(.intro, .free, .personal, .business) .manager-card-body,
+.landing.day .manager-card.collapsed.intro .intro-card-content {
+  background: linear-gradient(135deg, rgba(255, 255, 255, .58), rgba(230, 234, 255, .36));
+  border-color: rgba(99, 111, 170, .22);
+  box-shadow: inset 0 1px 0 rgba(255, 255, 255, .65), 0 12px 30px rgba(62, 76, 132, .14) !important;
+}
+
+.landing.day .manager-card.collapsed.intro .gesture-directions .swipe-direction {
+  background: linear-gradient(145deg, rgba(255, 255, 255, .58), rgba(230, 232, 255, .42));
+  border-color: rgba(104, 107, 174, .22);
+  box-shadow: 0 6px 16px rgba(74, 77, 139, .1);
+}
+
+.landing.day .manager-welcome-prompt {
+  color: #3b4270 !important;
+  background: rgba(241, 240, 255, .66);
+  border-color: rgba(107, 104, 177, .2);
+}
+
+.landing.day .manager-card.collapsed .basic-option {
+  color: #69442b;
+  background: linear-gradient(145deg, rgba(215, 151, 92, .2), rgba(255, 255, 255, .38));
+  border-color: rgba(160, 101, 50, .38);
+}
+
+.landing.day .manager-card.collapsed .pro-option,
+.landing.day .manager-card.collapsed :is(.personal-lite, .solo-option) {
+  color: #424a62;
+  background: linear-gradient(145deg, rgba(184, 194, 213, .25), rgba(255, 255, 255, .42));
+  border-color: rgba(101, 113, 139, .34);
+}
+
+.landing.day .manager-card.collapsed :is(.business-lite, .performance-option, .premium-option) {
+  color: #65501d;
+  background: linear-gradient(145deg, rgba(231, 192, 92, .22), rgba(255, 255, 255, .4));
+  border-color: rgba(170, 130, 36, .36);
+}
+
+/* 日光版維持原配色，只加深文字與必要邊界 */
+.landing.day .manager-pull-cue > span {
+  color: #8a4500;
+  background: rgba(255, 139, 48, .18);
+  border-color: rgba(190, 89, 10, .34);
+  text-shadow: none;
+  box-shadow: inset 0 0 14px rgba(255, 139, 48, .12), 0 5px 14px rgba(116, 64, 18, .14);
+}
+
+.landing.day .manager-card.intro,
+.landing.day .manager-card.free {
+  background: linear-gradient(155deg, #ffffffe0, #e2eeffc7);
+}
+
+.landing.day .manager-card.personal {
+  background: linear-gradient(155deg, #fff6fde6, #ebe8ffcc);
+}
+
+.landing.day .manager-card.business {
+  background: linear-gradient(155deg, #f5fcffe8, #e1f0ffcc);
+}
+
+.landing.day .manager-card.collapsed:is(.intro, .free, .personal, .business) .manager-card-body,
+.landing.day .manager-card.collapsed.intro .intro-card-content {
+  background: linear-gradient(135deg, #ffffffab, #e7f1ff8a);
+}
+
+.landing.day .manager-logo-encouragement,
+.landing.day .manager-welcome-message,
+.landing.day .manager-welcome-title,
+.landing.day .manager-welcome-prompt,
+.landing.day .encouragement-message {
+  color: #263653 !important;
+}
+
+.landing.day .manager-card p,
+.landing.day .manager-card small,
+.landing.day .login-card-title small {
+  color: #56627b;
+}
+
+.landing.day .manager-swipe-caption,
+.landing.day .manager-card.collapsed.intro .gesture-directions .swipe-direction > em {
+  color: #253654;
+}
+
+.landing.day .manager-card.collapsed .basic-option {
+  color: #6b3f1e;
+  background: rgba(196, 112, 45, .2);
+  border-color: rgba(163, 88, 28, .44);
+}
+
+.landing.day .manager-card.collapsed .pro-option,
+.landing.day .manager-card.collapsed :is(.personal-lite, .solo-option) {
+  color: #3f495e;
+  background: rgba(209, 220, 231, .25);
+  border-color: rgba(102, 115, 134, .4);
+}
+
+.landing.day .manager-card.collapsed :is(.business-lite, .performance-option, .premium-option) {
+  color: #66500d;
+  background: rgba(216, 162, 35, .2);
+  border-color: rgba(167, 121, 21, .42);
+}
+
+/* 展開後一次顯示完整內容，不在卡片內捲動 */
+.manager-carousel article.manager-card.expanded {
+  height: auto !important;
+  min-height: 0 !important;
+  max-height: none !important;
+  overflow: visible !important;
+}
+
+.manager-carousel-wrap.has-expanded,
+.manager-carousel-wrap.has-expanded .manager-carousel {
+  overflow-y: visible !important;
+}
+
+.landing:has(.manager-card.expanded) {
+  height: auto;
+  overflow-x: hidden;
+  overflow-y: visible;
+}
+
+.manager-card.expanded .feature-modal-inline {
+  height: auto !important;
+  max-height: none !important;
+  overflow: visible !important;
+}
+
+/* 最終入口配色：日光版指定文字深金，鼓勵詞維持系統渲染色 */
+.landing.day .manager-welcome-title,
+.landing.day .manager-welcome-prompt,
+.landing.day .manager-card.collapsed.intro .gesture-directions .swipe-direction > em {
+  color: #88611b !important;
+  background: none !important;
+  -webkit-background-clip: border-box;
+  background-clip: border-box;
+  -webkit-text-fill-color: #88611b !important;
+}
+
+.landing.day .manager-logo-encouragement > span,
+.landing.day .encouragement-message {
+  color: transparent !important;
+  background: linear-gradient(90deg, var(--emp-4, #59ddff), var(--emp-3, #8089ff) 48%, var(--emp-1, #ff87e0)) !important;
+  -webkit-background-clip: text !important;
+  background-clip: text !important;
+  -webkit-text-fill-color: transparent !important;
+  text-shadow: none !important;
+}
+
+/* 日光版鼓勵詞框只留上下線，避免左右超出畫面 */
+.landing.day .manager-logo-encouragement {
+  border-left: 0 !important;
+  border-right: 0 !important;
+  border-top: 1px solid rgba(111, 104, 190, .28) !important;
+  border-bottom: 1px solid rgba(111, 104, 190, .28) !important;
+  border-radius: 0 !important;
+  max-width: calc(100vw - 24px);
+}
+
+/* 暗夜版滑動提示恢復系統渲染色 */
+.landing.night .manager-welcome-prompt {
+  color: transparent !important;
+  background: linear-gradient(90deg, var(--emp-4, #59ddff), var(--emp-3, #8089ff) 48%, var(--emp-1, #ff87e0)) !important;
+  -webkit-background-clip: text !important;
+  background-clip: text !important;
+  -webkit-text-fill-color: transparent !important;
+  text-shadow: none !important;
+}
+
+/* 向上雙箭頭貼近收合卡片上緣，橘色 50% 透明 */
+.manager-pull-cue {
+  bottom: 194px !important;
+  height: 48px !important;
+  justify-content: flex-end !important;
+  opacity: 1 !important;
+  filter: drop-shadow(0 0 5px rgba(237, 126, 43, .24)) !important;
+}
+
+.manager-pull-cue i {
+  border-top-color: rgba(242, 145, 58, .5) !important;
+  border-left-color: rgba(224, 104, 29, .5) !important;
+  animation: manager-cue-orange-blink 1.25s ease-in-out infinite !important;
+}
+
+.manager-pull-cue i:nth-of-type(2) {
+  animation-delay: .24s !important;
+}
+
+@keyframes manager-cue-orange-blink {
+  0%, 100% { opacity: .18; filter: brightness(.9); }
+  48% { opacity: .5; filter: brightness(1.2); }
+}
+
+/* 暗夜版歡迎標題取消光暈，降低亮度 */
+.landing.night .manager-welcome-title {
+  color: #d7d9e0 !important;
+  background: none !important;
+  -webkit-background-clip: border-box !important;
+  background-clip: border-box !important;
+  -webkit-text-fill-color: #d7d9e0 !important;
+  text-shadow: none !important;
+  filter: none !important;
+}
+
+/* Email 驗證引導：空白時不展開，成功送出後顯示圖文步驟 */
+.manager-card.login-unified.login-verification-empty .access-code input {
+  border-color: rgba(255, 126, 126, .9) !important;
+  box-shadow: 0 0 0 3px rgba(255, 92, 92, .16) !important;
+}
+
+.manager-card.login-unified.login-verification-empty .access-code::after,
+.manager-card.login-unified.login-verification-missing .access-code::after {
+  color: #ffb2b2;
+  content: "請先輸入 Email 或帳號";
+  margin-top: 5px;
+  font-size: 10px;
+  font-weight: 800;
+  display: block;
+}
+
+.manager-card.login-unified.login-verification-missing .access-code::after {
+  content: "找不到這個帳號，請確認後再試";
+}
+
+.manager-card.login-unified .email-verification-guide {
+  grid-column: 1 / -1;
+  grid-row: 5;
+  color: #fff;
+  background: linear-gradient(135deg, rgba(49, 61, 91, .7), rgba(20, 27, 48, .58));
+  border: 1px solid rgba(128, 217, 255, .34);
+  border-radius: 16px;
+  margin-top: 10px;
+  padding: 11px;
+  backdrop-filter: blur(12px);
+}
+
+.manager-card.login-unified .email-verification-guide[hidden] {
+  display: none !important;
+}
+
+.email-verification-guide > strong,
+.email-verification-guide > small {
+  display: block;
+}
+
+.email-verification-guide > strong {
+  font-size: 12px;
+}
+
+.email-verification-guide > small {
+  color: rgba(235, 240, 255, .68);
+  margin-top: 8px;
+  font-size: 9px;
+}
+
+.verification-guide-steps {
+  grid-template-columns: repeat(3, minmax(0, 1fr));
+  gap: 6px;
+  margin-top: 9px;
+  display: grid;
+}
+
+.verification-guide-steps > span {
+  text-align: center;
+  background: rgba(255, 255, 255, .08);
+  border-radius: 11px;
+  min-width: 0;
+  padding: 8px 4px;
+}
+
+.verification-guide-steps i,
+.verification-guide-steps b,
+.verification-guide-steps em {
+  display: block;
+}
+
+.verification-guide-steps i {
+  color: #69dfff;
+  font-size: 20px;
+  font-style: normal;
+}
+
+.verification-guide-steps b {
+  color: #ff91dd;
+  margin: 3px 0 2px;
+  font-size: 8px;
+}
+
+.verification-guide-steps em {
+  color: rgba(255, 255, 255, .84);
+  font-size: 8px;
+  font-style: normal;
+  line-height: 1.35;
+}
+
+.manager-card.login-unified .login-email { grid-row: 6; }
+.manager-card.login-unified .beta-auth-error { grid-row: 7; }
+.manager-card.login-unified .card-main-action { grid-row: 8; }
