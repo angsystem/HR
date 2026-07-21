@@ -39,6 +39,32 @@
 
   window.ANG_FACEBOOK_AUTH = { start: start };
 
+  function installButton() {
+    if (document.querySelector('[data-ang-facebook-login]')) return;
+    var buttons = document.querySelectorAll('button');
+    var template = null;
+    for (var i = 0; i < buttons.length; i += 1) {
+      var label = String(buttons[i].textContent || '').trim().toLowerCase();
+      if (label.indexOf('facebook') !== -1) {
+        buttons[i].setAttribute('data-ang-facebook-login', 'true');
+        return;
+      }
+      if (label.indexOf('line') !== -1 || label.indexOf('apple') !== -1) template = buttons[i];
+    }
+    if (!template || !template.parentNode) return;
+    var button = template.cloneNode(true);
+    button.setAttribute('data-ang-facebook-login', 'true');
+    button.setAttribute('aria-label', '使用 Facebook 登入');
+    var textNode = button.querySelector('span') || button;
+    textNode.textContent = 'Facebook';
+    template.parentNode.appendChild(button);
+  }
+
+  var observer = new MutationObserver(installButton);
+  observer.observe(document.documentElement, { childList: true, subtree: true });
+  document.addEventListener('DOMContentLoaded', installButton);
+  installButton();
+
   document.addEventListener('click', function (event) {
     var button = event.target && event.target.closest ? event.target.closest('button,[role="button"],a') : null;
     if (!button) return;
