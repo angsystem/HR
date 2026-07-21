@@ -19,6 +19,10 @@
   var GAS_API_URL = 'https://script.google.com/macros/s/AKfycbzNycUTGQG0gqgb8B6F7tndEhRXU7GAiKFFWZr0e8sDwL2kXU5tBGLlJR_iBdX7SCnH/exec';
   var GOOGLE_CLIENT_ID = '660707205594-74rvsq9s1h87v1s5pi9nvtms1e4qipat.apps.googleusercontent.com';
   var LINE_CHANNEL_ID = '2010402308';
+<<<<<<< HEAD
+=======
+  var FACEBOOK_APP_ID = '1053775314267018';
+>>>>>>> ed9dfc860d1949036dff35946aaaef4fa7d9c0bd
   var BUILD_VERSION = 'v0.6.0-20260721';
 
   function cleanBase(url){

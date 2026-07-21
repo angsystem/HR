@@ -19,6 +19,7 @@
   var GAS_API_URL = 'https://script.google.com/macros/s/AKfycbzNycUTGQG0gqgb8B6F7tndEhRXU7GAiKFFWZr0e8sDwL2kXU5tBGLlJR_iBdX7SCnH/exec';
   var GOOGLE_CLIENT_ID = '660707205594-74rvsq9s1h87v1s5pi9nvtms1e4qipat.apps.googleusercontent.com';
   var LINE_CHANNEL_ID = '2010402308';
+  var FACEBOOK_APP_ID = '1053775314267018';
   var BUILD_VERSION = 'v0.6.0-20260721';
 
   function cleanBase(url){
@@ -66,6 +67,11 @@
     googleClientId: GOOGLE_CLIENT_ID,
     googleWebClientId: GOOGLE_CLIENT_ID,
     lineChannelId: LINE_CHANNEL_ID,
+    facebookAppId: FACEBOOK_APP_ID,
+    facebookPermissions: ['public_profile', 'email'],
+    facebookRedirectUri: joinUrl(frontendBaseUrl, 'facebook-callback.html'),
+    // 伺服器端 code exchange API；App Secret 不可放在 GitHub Pages。
+    facebookTokenExchangeUrl: '',
 
     themeColors: ['#FF87E0', '#CCA4FF', '#8089FF', '#59DDFF'],
     defaultCompanyId: '',

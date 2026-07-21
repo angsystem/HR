@@ -7,9 +7,13 @@
   function randomState() {
     var bytes = new Uint8Array(24);
     window.crypto.getRandomValues(bytes);
+<<<<<<< HEAD
     return Array.prototype.map.call(bytes, function (b) {
       return b.toString(16).padStart(2, '0');
     }).join('');
+=======
+    return Array.prototype.map.call(bytes, function (b) { return b.toString(16).padStart(2, '0'); }).join('');
+>>>>>>> ed9dfc860d1949036dff35946aaaef4fa7d9c0bd
   }
 
   function isAndroidApp() {
@@ -17,6 +21,7 @@
   }
 
   function startWebLogin() {
+<<<<<<< HEAD
     if (!config.facebookAppId || !config.facebookRedirectUri) {
       throw new Error('Facebook 登入尚未完成設定');
     }
@@ -24,6 +29,11 @@
     var state = randomState();
     sessionStorage.setItem(STATE_KEY, state);
 
+=======
+    if (!config.facebookAppId || !config.facebookRedirectUri) throw new Error('Facebook 登入尚未完成設定');
+    var state = randomState();
+    sessionStorage.setItem(STATE_KEY, state);
+>>>>>>> ed9dfc860d1949036dff35946aaaef4fa7d9c0bd
     var query = new URLSearchParams({
       client_id: config.facebookAppId,
       redirect_uri: config.facebookRedirectUri,
@@ -31,7 +41,10 @@
       scope: (config.facebookPermissions || ['public_profile', 'email']).join(','),
       state: state
     });
+<<<<<<< HEAD
 
+=======
+>>>>>>> ed9dfc860d1949036dff35946aaaef4fa7d9c0bd
     window.location.assign('https://www.facebook.com/v23.0/dialog/oauth?' + query.toString());
   }
 
@@ -40,17 +53,22 @@
       if (isAndroidApp()) window.ANGHRApp.startFacebookLogin();
       else startWebLogin();
     } catch (error) {
+<<<<<<< HEAD
       window.dispatchEvent(new CustomEvent('ANG_HR_AUTH_FAILED', {
         detail: {
           provider: 'facebook',
           message: error.message
         }
       }));
+=======
+      window.dispatchEvent(new CustomEvent('ANG_HR_AUTH_FAILED', { detail: { provider: 'facebook', message: error.message } }));
+>>>>>>> ed9dfc860d1949036dff35946aaaef4fa7d9c0bd
     }
   }
 
   window.ANG_FACEBOOK_AUTH = { start: start };
 
+<<<<<<< HEAD
   function facebookMarkup() {
     return [
       '<svg class="provider-icon" viewBox="0 0 24 24" aria-hidden="true">',
@@ -115,6 +133,39 @@
 
     if (!button) return;
 
+=======
+  function installButton() {
+    if (document.querySelector('[data-ang-facebook-login]')) return;
+    var buttons = document.querySelectorAll('button');
+    var template = null;
+    for (var i = 0; i < buttons.length; i += 1) {
+      var label = String(buttons[i].textContent || '').trim().toLowerCase();
+      if (label.indexOf('facebook') !== -1) {
+        buttons[i].setAttribute('data-ang-facebook-login', 'true');
+        return;
+      }
+      if (label.indexOf('line') !== -1 || label.indexOf('apple') !== -1) template = buttons[i];
+    }
+    if (!template || !template.parentNode) return;
+    var button = template.cloneNode(true);
+    button.setAttribute('data-ang-facebook-login', 'true');
+    button.setAttribute('aria-label', '使用 Facebook 登入');
+    var textNode = button.querySelector('span') || button;
+    textNode.textContent = 'Facebook';
+    template.parentNode.appendChild(button);
+  }
+
+  var observer = new MutationObserver(installButton);
+  observer.observe(document.documentElement, { childList: true, subtree: true });
+  document.addEventListener('DOMContentLoaded', installButton);
+  installButton();
+
+  document.addEventListener('click', function (event) {
+    var button = event.target && event.target.closest ? event.target.closest('button,[role="button"],a') : null;
+    if (!button) return;
+    var text = String(button.textContent || '').trim().toLowerCase();
+    if (text.indexOf('facebook') === -1) return;
+>>>>>>> ed9dfc860d1949036dff35946aaaef4fa7d9c0bd
     event.preventDefault();
     event.stopPropagation();
     start();
