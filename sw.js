@@ -1,7 +1,7 @@
-/* ANG HR PWA cache — 2026-07-22 10:05 後最終整合版 */
+/* ANG HR PWA cache — 2026-07-22 index card rules */
 'use strict';
 
-const CACHE_VERSION = 'ang-hr-v0.7.0-20260722-glass-detail-v3';
+const CACHE_VERSION = 'ang-hr-v0.7.0-20260722-index-card-rules-v1';
 const SHELL_CACHE = CACHE_VERSION + '-shell';
 const RUNTIME_CACHE = CACHE_VERSION + '-runtime';
 const APP_SHELL = [
@@ -12,6 +12,8 @@ const APP_SHELL = [
   './manager-welcome.js',
   './manager-welcome.css',
   './social-login-providers.css',
+  './index-card-rules.js',
+  './index-card-rules.css',
   './manifest.webmanifest',
   './assets/index-DwNMzswZ.js',
   './assets/index-C1fEYMkG.css',

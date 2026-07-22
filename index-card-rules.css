@@ -1,0 +1,142 @@
+/* ANG HR｜index 卡片手勢、方案雙色與帳號不存在流程｜2026-07-22 */
+
+.manager-card.login-unified {
+  --login-metal: #ff8a24;
+  --login-main: #ff8a24;
+  --login-metal-rgb: 255, 138, 36;
+  --login-main-rgb: 255, 138, 36;
+}
+
+.manager-card.login-unified.login-from-plan:not(.login-system-confirmed) {
+  border: 2px solid transparent !important;
+  background:
+    linear-gradient(155deg, rgba(15, 17, 28, 0.74), rgba(15, 17, 28, 0.54)) padding-box,
+    linear-gradient(105deg, var(--login-metal) 0%, var(--login-metal) 49.7%, var(--login-main) 50.3%, var(--login-main) 100%) border-box !important;
+  box-shadow:
+    -15px 0 36px rgba(var(--login-metal-rgb), 0.34),
+    15px 0 38px rgba(var(--login-main-rgb), 0.38),
+    0 22px 56px rgba(0, 0, 0, 0.28) !important;
+}
+
+.manager-card.login-unified.login-from-plan:not(.login-system-confirmed) .unified-login-body {
+  position: relative;
+  isolation: isolate;
+  overflow: hidden;
+  border-radius: inherit;
+}
+
+.manager-card.login-unified.login-from-plan:not(.login-system-confirmed) .unified-login-body::before {
+  content: '';
+  position: absolute;
+  inset: -24px;
+  z-index: -1;
+  pointer-events: none;
+  background:
+    linear-gradient(105deg,
+      rgba(var(--login-metal-rgb), 0.20) 0%,
+      rgba(var(--login-metal-rgb), 0.08) 49.6%,
+      rgba(var(--login-main-rgb), 0.08) 50.4%,
+      rgba(var(--login-main-rgb), 0.22) 100%);
+  filter: saturate(1.06);
+}
+
+.manager-card.login-unified.login-from-plan:not(.login-system-confirmed) .login-card-title h2,
+.manager-card.login-unified.login-from-plan:not(.login-system-confirmed) .login-card-title small {
+  text-shadow:
+    -4px 0 18px rgba(var(--login-metal-rgb), 0.28),
+    4px 0 18px rgba(var(--login-main-rgb), 0.32);
+}
+
+.manager-card.login-unified.login-from-plan:not(.login-system-confirmed) .login-verify-button,
+.manager-card.login-unified.login-from-plan:not(.login-system-confirmed) .card-main-action {
+  border-color: rgba(var(--login-main-rgb), 0.62) !important;
+  background:
+    linear-gradient(100deg,
+      rgba(var(--login-metal-rgb), 0.86) 0 49.5%,
+      rgba(var(--login-main-rgb), 0.90) 50.5% 100%) !important;
+  color: #fff !important;
+  box-shadow:
+    -7px 0 22px rgba(var(--login-metal-rgb), 0.26),
+    7px 0 22px rgba(var(--login-main-rgb), 0.30) !important;
+}
+
+/* 驗證成功仍以深、半透明、接近黑色的綠色為最高優先。 */
+.manager-card.login-unified.login-system-confirmed {
+  border-color: rgba(28, 105, 75, 0.84) !important;
+  background: rgba(5, 24, 18, 0.78) !important;
+  box-shadow: 0 18px 54px rgba(0, 32, 22, 0.42), 0 0 28px rgba(35, 156, 105, 0.18) !important;
+}
+
+.manager-card.login-unified.login-system-confirmed .unified-login-body::before {
+  opacity: 0 !important;
+}
+
+/* 一般登入查無帳號才使用紅色，方案入口不套用此狀態。 */
+.manager-card.login-unified.login-account-missing:not(.login-from-plan) {
+  border-color: rgba(255, 73, 91, 0.92) !important;
+  box-shadow: 0 18px 52px rgba(86, 8, 20, 0.38), 0 0 30px rgba(255, 73, 91, 0.32) !important;
+}
+
+.ang-account-missing-panel {
+  display: grid;
+  gap: 8px;
+  margin-top: 12px;
+  padding: 14px;
+  border: 1px solid rgba(255, 103, 118, 0.58);
+  border-radius: 16px;
+  background: linear-gradient(145deg, rgba(91, 12, 24, 0.72), rgba(37, 8, 16, 0.72));
+  color: #fff;
+  box-shadow: inset 0 1px 0 rgba(255, 255, 255, 0.08), 0 12px 28px rgba(52, 3, 12, 0.25);
+}
+
+.ang-account-missing-panel strong {
+  font-size: 0.98rem;
+  letter-spacing: 0.01em;
+}
+
+.ang-account-missing-panel p {
+  margin: 0;
+  color: rgba(255, 240, 243, 0.84);
+  font-size: 0.84rem;
+}
+
+.ang-account-missing-actions {
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  gap: 9px;
+  margin-top: 4px;
+}
+
+.ang-account-missing-actions button {
+  min-height: 42px;
+  border: 1px solid rgba(255, 255, 255, 0.18);
+  border-radius: 12px;
+  background: rgba(255, 255, 255, 0.09);
+  color: #fff;
+  font: inherit;
+  font-weight: 750;
+  cursor: pointer;
+}
+
+.ang-account-missing-actions button[data-account-action='plans'] {
+  border-color: rgba(255, 100, 116, 0.65);
+  background: linear-gradient(135deg, rgba(230, 48, 72, 0.94), rgba(157, 28, 68, 0.94));
+}
+
+.ang-account-missing-actions button:active {
+  transform: translateY(1px) scale(0.99);
+}
+
+/* 從方案卡來時，即使後端回傳「查無帳號」，也不閃紅。 */
+.manager-card.login-unified.login-from-plan .login-auth-status.error,
+.manager-card.login-unified.login-from-plan .beta-auth-error:empty {
+  color: rgba(255, 255, 255, 0.78) !important;
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .manager-carousel,
+  .manager-card {
+    scroll-behavior: auto !important;
+    transition-duration: 0.01ms !important;
+  }
+}
