@@ -363,6 +363,7 @@
   position:relative !important; bottom:auto !important; margin-top:10px !important; min-height:44px !important;
   flex:0 0 auto !important; visibility:visible !important;
 }
+<<<<<<< HEAD
 
 /* ANG HR 2026-07-22｜Web／PWA／App 全域視窗與鍵盤鎖定 */
 :root {
@@ -445,3 +446,5 @@ html.ang-input-focused .manager-card {
 .manager-card :is(.card-main-action,.personal-select-action,.business-select-action,button[type='submit'],.login-verify-button) {
   flex-shrink: 0 !important;
 }
+=======
+>>>>>>> 9f93af02cb1b58d08ce5b61abac68f4b43b5347e

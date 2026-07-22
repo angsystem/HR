@@ -456,6 +456,10 @@
     });
   }
 
+<<<<<<< HEAD
+=======
+
+>>>>>>> 9f93af02cb1b58d08ce5b61abac68f4b43b5347e
   function installConstructionProviders() {
     var card = getLoginCard();
     if (!card) return;

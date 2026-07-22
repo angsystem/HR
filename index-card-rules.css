@@ -144,6 +144,7 @@
 /* ANG HR｜2026-07-22 主卡視覺與穩定性定稿 */
 :root {
   --ang-mayhem-orange: #ff7a1a;
+<<<<<<< HEAD
 
   /* 日光版：淡藍、淡粉、淡紫 */
   --ang-day-basic: 174, 207, 255;
@@ -232,6 +233,34 @@
   box-shadow:
     0 0 16px rgba(var(--ang-night-premium), 0.13),
     0 20px 48px rgba(0, 0, 0, 0.52) !important;
+=======
+  --ang-basic-blue: #2f73d9;
+  --ang-pro-pink: #e94e9b;
+  --ang-premium-purple: #48207a;
+}
+
+/* 主卡顏色：Basic 藍、Pro 桃紅、Premium 深紫；登入 MAYHEM 橘。 */
+.manager-card.business[data-plan='basic'],
+.manager-card.basic,
+.manager-card:has(.basic-option) {
+  --ang-main-card-rgb: 47, 115, 217;
+  border-color: rgba(47,115,217,.88) !important;
+  box-shadow: 0 0 28px rgba(47,115,217,.28), 0 22px 56px rgba(0,0,0,.28) !important;
+}
+.manager-card.business[data-plan='pro'],
+.manager-card.pro,
+.manager-card:has(.pro-option) {
+  --ang-main-card-rgb: 233, 78, 155;
+  border-color: rgba(233,78,155,.9) !important;
+  box-shadow: 0 0 28px rgba(233,78,155,.3), 0 22px 56px rgba(0,0,0,.28) !important;
+}
+.manager-card.business[data-plan='premium'],
+.manager-card.premium,
+.manager-card:has(.premium-option) {
+  --ang-main-card-rgb: 72, 32, 122;
+  border-color: rgba(112,66,190,.92) !important;
+  box-shadow: 0 0 30px rgba(72,32,122,.4), 0 22px 56px rgba(0,0,0,.3) !important;
+>>>>>>> 9f93af02cb1b58d08ce5b61abac68f4b43b5347e
 }
 
 .landing .manager-card.login-unified:not(.login-system-confirmed) {
@@ -255,12 +284,19 @@
 .landing .manager-card.login-unified.login-system-confirmed,
 .manager-card.login-unified.login-system-confirmed {
   color: #eafff3 !important;
+<<<<<<< HEAD
   border-color: rgba(35, 126, 87, 0.72) !important;
   background: rgba(2, 15, 10, 0.9) !important;
   background-image: linear-gradient(155deg, rgba(4, 24, 16, 0.9), rgba(0, 8, 6, 0.88)) !important;
   box-shadow:
     0 20px 54px rgba(0, 18, 12, 0.58),
     0 0 18px rgba(31, 134, 89, 0.11) !important;
+=======
+  border-color: rgba(32,112,76,.76) !important;
+  background: rgba(2,15,10,.86) !important;
+  background-image: linear-gradient(155deg, rgba(4,24,16,.86), rgba(0,10,7,.8)) !important;
+  box-shadow: 0 20px 54px rgba(0,18,12,.56), 0 0 26px rgba(31,134,89,.16) !important;
+>>>>>>> 9f93af02cb1b58d08ce5b61abac68f4b43b5347e
 }
 .landing .manager-card.login-unified.login-system-confirmed .login-card-body {
   color: #eafff3 !important;
@@ -286,7 +322,11 @@
 /* 金／銀／銅只作用於方案內容按鈕。 */
 .manager-card :is(.premium-option,.performance-option,.business-lite) {
   --ang-plan-metal: 216,173,67;
+<<<<<<< HEAD
   background-color: rgba(216, 173, 67, 0.14) !important;
+=======
+  background-color: rgba(216,173,67,.13) !important;
+>>>>>>> 9f93af02cb1b58d08ce5b61abac68f4b43b5347e
   color: #ffe8a0 !important;
 }
 .manager-card :is(.pro-option,.solo-option,.personal-lite) {
@@ -307,7 +347,11 @@
 /* 展開與滑動穩定：只允許單一主卡對齊，不保留半格。 */
 .manager-carousel {
   scroll-snap-type: x mandatory !important;
+<<<<<<< HEAD
   scroll-behavior: smooth !important;
+=======
+  scroll-behavior: smooth;
+>>>>>>> 9f93af02cb1b58d08ce5b61abac68f4b43b5347e
   overscroll-behavior-x: contain;
 }
 .manager-carousel > .manager-card,
@@ -340,6 +384,7 @@
   justify-content: center;
 }
 
+<<<<<<< HEAD
 /* 日光版內層：淡色玻璃，不使用黑底。 */
 .landing:not(.night) .manager-card .manager-card-body,
 .landing:not(.night) .manager-card .login-card-body,
@@ -363,11 +408,22 @@
   -webkit-backdrop-filter: blur(20px) saturate(0.78) !important;
 }
 
+=======
+/* ANG HR 2026-07-22｜暗夜金屬透明卡片最終覆寫 */
+.landing.night .manager-card {
+  background: linear-gradient(155deg, rgba(4,7,14,.72), rgba(0,0,0,.48)) !important;
+  border: 1px solid rgba(196,202,214,.62) !important;
+  box-shadow: inset 0 1px 0 rgba(255,255,255,.12), 0 18px 48px rgba(0,0,0,.46) !important;
+  backdrop-filter: blur(20px) saturate(.82) !important;
+  -webkit-backdrop-filter: blur(20px) saturate(.82) !important;
+}
+>>>>>>> 9f93af02cb1b58d08ce5b61abac68f4b43b5347e
 .landing.night .manager-card .manager-card-body,
 .landing.night .manager-card .login-card-body,
 .landing.night .manager-card .free-card-body,
 .landing.night .manager-card .personal-card-body,
 .landing.night .manager-card .business-card-body {
+<<<<<<< HEAD
   background: rgba(0, 0, 0, 0.34) !important;
   box-shadow: inset 0 1px 0 rgba(255, 255, 255, 0.045) !important;
   backdrop-filter: blur(14px) !important;
@@ -377,6 +433,18 @@
 .landing.night .manager-card.login-unified:not(.login-system-confirmed) {
   border-color: rgba(255, 122, 26, 0.86) !important;
 }
+=======
+  background: rgba(0,0,0,.24) !important;
+  box-shadow: inset 0 1px 0 rgba(255,255,255,.05) !important;
+  backdrop-filter: blur(14px) !important;
+  -webkit-backdrop-filter: blur(14px) !important;
+}
+/* 主方案卡仍保留各自主色，內部維持透明黑。 */
+.landing.night .manager-card.business[data-plan='basic'] { border-color: rgba(47,115,217,.92) !important; }
+.landing.night .manager-card.business[data-plan='pro'] { border-color: rgba(233,78,155,.94) !important; }
+.landing.night .manager-card.business[data-plan='premium'] { border-color: rgba(92,42,150,.96) !important; }
+.landing.night .manager-card.login-unified:not(.login-system-confirmed) { border-color: rgba(255,122,26,.94) !important; }
+>>>>>>> 9f93af02cb1b58d08ce5b61abac68f4b43b5347e
 
 /* 移除方案內的大型圖文介紹框，入口卡直接承載介紹，騰出下方格子空間。 */
 .manager-card .ang-plan-detail-v2 { display:none !important; }
@@ -434,11 +502,18 @@
 .manager-card.login-unified .social-login-row .line-login .provider-icon { width:27px !important;height:27px !important;color:#fff !important; }
 
 /* 卡片不漂移、不停半格。 */
+<<<<<<< HEAD
 .manager-card { scroll-snap-align:center !important; scroll-snap-stop:always !important; }
+=======
+.manager-carousel { scroll-snap-type:x mandatory !important; scroll-behavior:smooth !important; }
+.manager-card { scroll-snap-align:center !important; scroll-snap-stop:always !important; }
+.manager-card.expanded { transform:none !important; animation:none !important; }
+>>>>>>> 9f93af02cb1b58d08ce5b61abac68f4b43b5347e
 .manager-card :is(.card-main-action,.personal-select-action,.business-select-action,.confirm-button,[data-confirm]) {
   position:relative !important; bottom:auto !important; margin-top:10px !important; min-height:44px !important;
   flex:0 0 auto !important; visibility:visible !important;
 }
+<<<<<<< HEAD
 
 /* ANG HR 2026-07-22｜Web／PWA／App 全域視窗與鍵盤鎖定 */
 html,
@@ -584,3 +659,5 @@ html.ang-input-focused .manager-card {
 .landing:not(.night) .manager-card.business[data-plan="premium"] {
   border-color: rgba(203, 183, 235, 0.92) !important;
 }
+=======
+>>>>>>> 9f93af02cb1b58d08ce5b61abac68f4b43b5347e

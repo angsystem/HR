@@ -1,7 +1,11 @@
 /* ANG HR PWA cache — 2026-07-22 10:05 後最終整合版 */
 'use strict';
 
+<<<<<<< HEAD
 const CACHE_VERSION = 'ang-hr-v0.7.0-20260722-viewport-lock-v1';
+=======
+const CACHE_VERSION = 'ang-hr-v0.7.0-20260722-card-visual-final-v2';
+>>>>>>> 9f93af02cb1b58d08ce5b61abac68f4b43b5347e
 const SHELL_CACHE = CACHE_VERSION + '-shell';
 const RUNTIME_CACHE = CACHE_VERSION + '-runtime';
 const APP_SHELL = [
