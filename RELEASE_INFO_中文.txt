@@ -1,25 +1,16 @@
-ANG HR ONLINE v0.6.0 完整前端版
+ANG HR v0.6.0｜2026-07-22 10:05 後整合修正版
 
-建置日期：2026-07-21
-部署目標：GitHub Pages
-主要入口：index.html
-
-此完整前端包包含：
-- v0.6.0 React 入口與方案展示／測試介面
-- employee.html 員工端
-- admin.html 管理端
-- creator.html 平台 Creator 頁
-- personal.html Personal 頁
-- register.html 註冊／驗證頁
-- app.html WebView／App 共用殼層
-- NFC 打卡與管理頁面
-- 所有前端 JS、CSS、背景圖片與開場影片
-
-GAS：
-- 所有前端維持使用同一個 GAS Web App URL。
-- GAS 後端原始碼不應公開放在 GitHub Pages 前端 Repository。
-- GAS v0.6.0 必須另外在 Apps Script 部署。
+本版已完成：
+1. Facebook 登入按鈕固定顯示，順序為 Google、LINE、Facebook、Apple。
+2. 清除專案內 Git 合併衝突符號。
+3. 日光方案卡改為淡紫色半透明玻璃，內文與功能文字加深。
+4. 登入卡未驗證／驗證中維持淡黃色半透明；僅後端確認帳號存在後轉綠。
+5. Email 驗證入口改為信箱連結流程，畫面不再要求輸入驗證碼。
+6. Lite 類別顯示：方案類別 Lite、價格 Free、詳細方案 Personal／Business。
+7. Personal 選 Solo 時維持 Performance 的展開高度，不再縮短。
+8. 補齊 manifest、Service Worker、favicon、Apple Touch Icon、Android PWA 與 maskable icons。
+9. 網頁／PWA 固定於視窗內，降低加入主畫面後白屏、空白圖示與舊快取問題。
 
 注意：
-- React 入口目前仍包含固定測試帳號／示範資料。
-- 正式 Token、公司隔離、方案權限與資料同步必須由 GAS 後端驗證。
+- 登入卡綠燈依 GAS 後端驗證回覆；前端不再用寫死測試帳號自行判定。
+- 本壓縮包包含網站與 app/ 網頁資產；未包含可直接重建原生 APK 的完整 Android Studio Gradle 專案。

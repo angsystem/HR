@@ -1,13 +1,9 @@
 (function () {
   'use strict';
 
-<<<<<<< HEAD
-  var ANG_NATIVE_BRIDGE_VERSION = '2026-06-17-native-gas-auto-verify';
-=======
   var ANG_NATIVE_BRIDGE_VERSION = '2026-06-18-task10-auth-admin-register';
   if (window.__ANG_NATIVE_BRIDGE_VERSION === ANG_NATIVE_BRIDGE_VERSION) return;
   window.__ANG_NATIVE_BRIDGE_VERSION = ANG_NATIVE_BRIDGE_VERSION;
->>>>>>> 963afab45774e7c1639b63cee23c8a0ac597dcac
 
   var DEFAULT_GAS_URL = 'https://script.google.com/macros/s/AKfycbzNycUTGQG0gqgb8B6F7tndEhRXU7GAiKFFWZr0e8sDwL2kXU5tBGLlJR_iBdX7SCnH/exec';
 
@@ -27,17 +23,6 @@
     } catch (e) {}
   }
 
-<<<<<<< HEAD
-  function error() {
-    try {
-      var args = Array.prototype.slice.call(arguments);
-      args.unshift('[ANG Native Bridge]');
-      console.error.apply(console, args);
-    } catch (e) {}
-  }
-
-=======
->>>>>>> 963afab45774e7c1639b63cee23c8a0ac597dcac
   function safeJsonParse(value, fallback) {
     try {
       if (value === null || value === undefined || value === '') return fallback || {};
@@ -64,10 +49,6 @@
     }
   }
 
-<<<<<<< HEAD
-  function getGasUrl() {
-    try {
-=======
   function safeSessionSet(key, value) {
     try {
       sessionStorage.setItem(key, typeof value === 'string' ? value : JSON.stringify(value));
@@ -83,7 +64,6 @@
   function getGasUrl() {
     try {
       if (window.ANG_DATA_URLS && window.ANG_DATA_URLS.gasApiUrl) return String(window.ANG_DATA_URLS.gasApiUrl);
->>>>>>> 963afab45774e7c1639b63cee23c8a0ac597dcac
       if (window.ANG_CONFIG && window.ANG_CONFIG.gasApiUrl) return String(window.ANG_CONFIG.gasApiUrl);
       if (window.CONFIG && window.CONFIG.gasApiUrl) return String(window.CONFIG.gasApiUrl);
       if (window.APP_CONFIG && window.APP_CONFIG.gasApiUrl) return String(window.APP_CONFIG.gasApiUrl);
@@ -93,17 +73,10 @@
   }
 
   function getDeviceId() {
-<<<<<<< HEAD
-    var saved = safeGetStorage('ang_device_id', '');
-    if (saved) return saved;
-
-    var id = 'web_' + Date.now().toString(36) + '_' + Math.random().toString(36).slice(2, 10);
-=======
     var saved = safeGetStorage('ang_hr_device_id', '') || safeGetStorage('ang_device_id', '') || safeGetStorage('device_id', '');
     if (saved) return saved;
     var id = 'DEV-' + Date.now().toString(36).toUpperCase() + '-' + Math.random().toString(36).slice(2, 10).toUpperCase();
     safeSetStorage('ang_hr_device_id', id);
->>>>>>> 963afab45774e7c1639b63cee23c8a0ac597dcac
     safeSetStorage('ang_device_id', id);
     return id;
   }
@@ -123,11 +96,8 @@
     }
   }
 
-<<<<<<< HEAD
-=======
   window.encodeUtf8Base64Text = window.encodeUtf8Base64Text || utf8ToBase64;
 
->>>>>>> 963afab45774e7c1639b63cee23c8a0ac597dcac
   function decodeJwtPayload(token) {
     try {
       token = String(token || '');
@@ -144,30 +114,6 @@
     }
   }
 
-<<<<<<< HEAD
-  function normalizeProvider(raw) {
-    raw = raw || {};
-    var p = String(raw.provider || raw.method || raw.auth_provider || '').toLowerCase();
-    if (p) return p;
-
-    if (raw.line_user_id || raw.line_sub) return 'line';
-    if (raw.google_user_id || raw.google_sub || raw.credential || raw.id_token || raw.token) return 'google';
-
-    return 'google';
-  }
-
-  function getToken(raw) {
-    raw = raw || {};
-    return String(
-      raw.id_token ||
-      raw.credential ||
-      raw.loginToken ||
-      raw.token ||
-      raw.google_id_token ||
-      raw.line_id_token ||
-      ''
-    ).trim();
-=======
   function getToken(raw) {
     raw = raw || {};
     return String(raw.id_token || raw.credential || raw.loginToken || raw.token || raw.google_id_token || raw.line_id_token || '').trim();
@@ -180,164 +126,15 @@
     if (raw.line_user_id || raw.line_sub || raw.user_id) return 'line';
     if (raw.google_user_id || raw.google_sub || raw.credential || raw.id_token || raw.loginToken || raw.token) return 'google';
     return 'google';
->>>>>>> 963afab45774e7c1639b63cee23c8a0ac597dcac
   }
 
   function getPendingAuth() {
     return safeJsonParse(
-<<<<<<< HEAD
-      safeGetStorage('ang_pending_auth', '') ||
-      safeGetStorage('pending_auth', '') ||
-      safeGetStorage('entry_pending_auth', ''),
-=======
       safeGetStorage('ang_pending_auth', '') || safeGetStorage('pending_auth', '') || safeGetStorage('entry_pending_auth', ''),
->>>>>>> 963afab45774e7c1639b63cee23c8a0ac597dcac
       {}
     );
   }
 
-<<<<<<< HEAD
-  function buildGasPayload(raw) {
-    raw = raw || {};
-
-    var pending = raw.pending_auth || getPendingAuth();
-    var provider = normalizeProvider(raw);
-    var token = getToken(raw);
-
-    var jwt = raw.jwt_payload || decodeJwtPayload(token);
-
-    var payload = {};
-    Object.keys(raw).forEach(function (k) {
-      if (k === 'gas_response') return;
-      payload[k] = raw[k];
-    });
-
-    payload.provider = provider;
-    payload.action = provider === 'line' ? 'verifyNativeLineIdToken' : 'verifyNativeGoogleIdToken';
-
-    if (token) {
-      payload.id_token = token;
-      payload.credential = token;
-      payload.token = token;
-    }
-
-    payload.email = raw.email || jwt.email || '';
-    payload.profile_name = raw.profile_name || jwt.name || raw.name || '';
-    payload.google_user_id = raw.google_user_id || raw.google_sub || (provider === 'google' ? jwt.sub || '' : '');
-    payload.line_user_id = raw.line_user_id || raw.line_sub || (provider === 'line' ? jwt.sub || '' : '');
-
-    payload.flow = raw.flow || pending.flow || 'company_signup';
-    payload.plan = raw.plan || pending.plan || '';
-    payload.statusId = raw.statusId || pending.statusId || '';
-    payload.company_id = raw.company_id || pending.company_id || pending.company || '';
-    payload.device_id = raw.device_id || getDeviceId();
-    payload.source = 'frontend_native_google_bridge';
-    payload.bridge_version = ANG_NATIVE_BRIDGE_VERSION;
-
-    return payload;
-  }
-
-  function normalizeAuthFromGas(raw) {
-    raw = raw || {};
-
-    var gas = raw.gas_response || raw.auth || raw.data || raw;
-
-    if (gas && gas.gas_response) gas = gas.gas_response;
-
-    var auth = {};
-    Object.keys(gas || {}).forEach(function (k) {
-      auth[k] = gas[k];
-    });
-
-    auth.ok = auth.ok === true || auth.success === true || auth.status === 'verified' || auth.status === 'success';
-    auth.auth_passed = auth.auth_passed === true || auth.verified === true || auth.status === 'verified' || auth.ok === true;
-
-    auth.provider = auth.provider || raw.provider || '';
-    auth.email = auth.email || raw.email || '';
-    auth.profile_name = auth.profile_name || auth.name || raw.profile_name || raw.name || '';
-    auth.name = auth.name || auth.profile_name || '';
-    auth.company_id = auth.company_id || auth.company || '';
-    auth.employee_id = auth.employee_id || auth.emp_id || auth.id || '';
-    auth.role = auth.role || '';
-
-    return auth;
-  }
-
-  function saveAuthState(auth, raw) {
-    auth = auth || {};
-    raw = raw || {};
-
-    safeSetStorage('ang_last_gas_response', raw);
-    safeSetStorage('ang_last_auth_raw', raw);
-
-    if (auth.auth_passed !== true) {
-      safeSetStorage('ang_auth_failed', auth);
-      return false;
-    }
-
-    safeSetStorage('ang_auth_state', auth);
-    safeSetStorage('isLoggedIn', 'true');
-
-    if (auth.provider) safeSetStorage('ang_auth_provider', auth.provider);
-    if (auth.email) safeSetStorage('loginEmail', auth.email);
-    if (auth.company_id) safeSetStorage('ang_company_id', auth.company_id);
-    if (auth.role) safeSetStorage('ang_role', auth.role);
-
-    if (auth.employee_id) {
-      safeSetStorage('emp_logged_in', String(auth.employee_id).toUpperCase());
-      safeSetStorage('loginId', String(auth.employee_id).toUpperCase());
-    }
-
-    if (auth.name || auth.profile_name) {
-      safeSetStorage('emp_name', auth.name || auth.profile_name);
-    }
-
-    return true;
-  }
-
-  function dispatchAuthEvent(name, detail) {
-    try {
-      window.dispatchEvent(new CustomEvent(name, { detail: detail || {} }));
-    } catch (e) {}
-  }
-
-  function receiveGasResult(result) {
-    result = result || {};
-
-    safeSetStorage('ang_last_native_gas_result', result);
-
-    var auth = normalizeAuthFromGas(result);
-    var saved = saveAuthState(auth, result);
-
-    window.__ANG_LAST_GAS_RESPONSE = result;
-    window.__ANG_AUTH_STATE = auth;
-
-    if (saved) {
-      dispatchAuthEvent('ANG_HR_AUTH_PASSED', auth);
-      log('GAS 驗證成功', auth);
-    } else {
-      dispatchAuthEvent('ANG_HR_AUTH_FAILED', auth);
-      warn('GAS 驗證未通過', auth);
-    }
-
-    return auth;
-  }
-
-  function verifyByAndroidNative(payload) {
-    payload = payload || {};
-
-    var text = JSON.stringify(payload);
-    var b64 = utf8ToBase64(text);
-
-    if (window.ANGHRApp && typeof window.ANGHRApp.verifyNativeAuthWithGas === 'function') {
-      window.ANGHRApp.verifyNativeAuthWithGas(b64);
-      return true;
-    }
-
-    if (window.AndroidBridge && typeof window.AndroidBridge.verifyNativeAuthWithGas === 'function') {
-      window.AndroidBridge.verifyNativeAuthWithGas(b64);
-      return true;
-=======
   function resolveStatusId(raw) {
     raw = raw || {};
     var pending = raw.pending_auth || getPendingAuth() || {};
@@ -487,103 +284,11 @@
         bridge.verifyNativeAuthWithGas(b64);
         return true;
       }
->>>>>>> 963afab45774e7c1639b63cee23c8a0ac597dcac
     }
 
     return false;
   }
 
-<<<<<<< HEAD
-  function verifyByJsonp(payload) {
-    return new Promise(function (resolve) {
-      var callbackName = 'ANG_JSONP_' + Date.now() + '_' + Math.random().toString(36).slice(2, 8);
-      var script = document.createElement('script');
-
-      var gasUrl = getGasUrl();
-      var params = [
-        'action=' + encodeURIComponent(payload.action || 'verifyNativeGoogleIdToken'),
-        'payload=' + encodeURIComponent(JSON.stringify(payload)),
-        'callback=' + encodeURIComponent(callbackName)
-      ];
-
-      window[callbackName] = function (res) {
-        try {
-          delete window[callbackName];
-        } catch (e) {
-          window[callbackName] = undefined;
-        }
-
-        try {
-          if (script && script.parentNode) script.parentNode.removeChild(script);
-        } catch (e2) {}
-
-        resolve(res || {});
-      };
-
-      script.onerror = function () {
-        try {
-          delete window[callbackName];
-        } catch (e) {
-          window[callbackName] = undefined;
-        }
-
-        resolve({
-          ok: false,
-          message: 'JSONP 呼叫 GAS 失敗',
-          source: 'native-google-bridge'
-        });
-      };
-
-      script.src = gasUrl + (gasUrl.indexOf('?') >= 0 ? '&' : '?') + params.join('&');
-      document.head.appendChild(script);
-    });
-  }
-
-  function verifyNativeAuthWithGas(raw) {
-    raw = raw || {};
-
-    safeSetStorage('ang_last_native_auth_result', raw);
-    window.__ANG_LAST_NATIVE_AUTH_RESULT = raw;
-
-    if (raw.gas_response) {
-      return receiveGasResult(raw);
-    }
-
-    var payload = buildGasPayload(raw);
-
-    safeSetStorage('ang_last_gas_payload', payload);
-    window.__ANG_LAST_GAS_PAYLOAD = payload;
-
-    log('準備送 GAS 驗證', {
-      provider: payload.provider,
-      action: payload.action,
-      email: payload.email,
-      flow: payload.flow,
-      plan: payload.plan,
-      token_exists: !!getToken(payload)
-    });
-
-    var calledNative = verifyByAndroidNative(payload);
-
-    if (calledNative) {
-      safeSetStorage('ang_gas_verify_status', {
-        ok: true,
-        mode: 'android_native_http',
-        message: '已交給 Android 原生 HTTP 呼叫 GAS',
-        savedAt: Date.now()
-      });
-      return null;
-    }
-
-    verifyByJsonp(payload).then(function (res) {
-      receiveGasResult({
-        ok: true,
-        provider: payload.provider,
-        action: payload.action,
-        gas_response: res,
-        source: 'frontend_jsonp_gas'
-      });
-=======
   function saveVerifyAuth(gas) {
     gas = gas || {};
     safeSetStorage('ang_last_gas_response', gas);
@@ -996,46 +701,11 @@
       receiveGasResult({ ok: true, provider: payload.provider, action: payload.action, gas_response: res, source: 'frontend_jsonp_gas' });
     }).catch(function (err) {
       setStatusSafe(statusId, 'error', err && err.message ? err.message : 'GAS 驗證通訊失敗');
->>>>>>> 963afab45774e7c1639b63cee23c8a0ac597dcac
     });
 
     return null;
   }
 
-<<<<<<< HEAD
-  window.ANG_NATIVE_GAS_RESULT_RECEIVER = function (res) {
-    return receiveGasResult(res || {});
-  };
-
-  window.ANG_DEEP_LINK_AUTH_RECEIVER = function (auth, raw) {
-    return receiveGasResult(raw || auth || {});
-  };
-
-  window.handleNativeAuthResult = function (res) {
-    return verifyNativeAuthWithGas(res || {});
-  };
-
-  window.ANG_NATIVE_LOGIN_RECEIVER = function (res) {
-    return verifyNativeAuthWithGas(res || {});
-  };
-
-  window.handleAppNativeLogin = function (idToken) {
-    return verifyNativeAuthWithGas({
-      provider: 'google',
-      id_token: idToken,
-      credential: idToken,
-      token: idToken,
-      source: 'handleAppNativeLogin'
-    });
-  };
-
-  window.ANG_VERIFY_NATIVE_AUTH_WITH_GAS = verifyNativeAuthWithGas;
-
-  window.addEventListener('ANG_HR_NATIVE_AUTH', function (event) {
-    verifyNativeAuthWithGas((event && event.detail) || {});
-  });
-
-=======
   window.ANG_NATIVE_GAS_RESULT_RECEIVER = function (res) { return receiveGasResult(res || {}); };
   window.ANG_DEEP_LINK_AUTH_RECEIVER = function (auth, raw) { return receiveGasResult(raw || auth || {}); };
   window.ANG_NATIVE_LOGIN_RECEIVER = function (res) { return verifyNativeAuthWithGas(res || {}); };
@@ -1065,29 +735,12 @@
 
 
   window.addEventListener('ANG_HR_NATIVE_AUTH', function (event) { verifyNativeAuthWithGas((event && event.detail) || {}); });
->>>>>>> 963afab45774e7c1639b63cee23c8a0ac597dcac
   window.addEventListener('ANG_HR_DEEP_LINK_AUTH', function (event) {
     var detail = (event && event.detail) || {};
     receiveGasResult(detail.raw || detail.auth || detail || {});
   });
 
   setTimeout(function () {
-<<<<<<< HEAD
-    var lastNative = safeJsonParse(safeGetStorage('ang_last_native_auth_result', ''), {});
-    var lastGas = safeJsonParse(safeGetStorage('ang_last_native_gas_result', ''), {});
-
-    if (lastGas && lastGas.gas_response) {
-      receiveGasResult(lastGas);
-      return;
-    }
-
-    if (lastNative && (lastNative.token_exists || lastNative.credential || lastNative.id_token || lastNative.token)) {
-      if (!lastNative.gas_response) {
-        verifyNativeAuthWithGas(lastNative);
-      }
-    }
-  }, 500);
-=======
     closeDebugPanel();
     var lastGas = safeJsonParse(safeGetStorage('ang_last_native_gas_result', ''), {});
     if (lastGas && (lastGas.gas_response || lastGas.gasResponse || lastGas.verify_token)) {
@@ -1099,7 +752,6 @@
       if (!lastNative.gas_response && !lastNative.gasResponse) verifyNativeAuthWithGas(lastNative);
     }
   }, 700);
->>>>>>> 963afab45774e7c1639b63cee23c8a0ac597dcac
 
   log('已載入', ANG_NATIVE_BRIDGE_VERSION);
 })();

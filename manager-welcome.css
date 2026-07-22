@@ -1126,3 +1126,300 @@
 .manager-card.login-unified .login-auth-status.success { color: #82e6ad; }
 .manager-card.login-unified .login-auth-status.error { color: #ffabab; }
 .manager-card.login-unified .login-verify-button:disabled { opacity: .58; cursor: wait; }
+
+/* ========================================================================
+   2026-07-22 10:05 後入口修正
+   - 方案卡：淡紫半透明＋文字高對比
+   - 登入卡：未確認淡黃；系統確認帳號後才轉綠
+   - Personal：Solo／Performance 固定同高
+   - PWA／Web App：鎖定整頁，避免拖出空白背景
+   ======================================================================== */
+
+html,
+body,
+#root {
+  width: 100%;
+  height: 100%;
+  min-height: 100%;
+  margin: 0;
+  overflow: hidden !important;
+  overscroll-behavior: none;
+  -webkit-overflow-scrolling: auto;
+}
+
+.landing {
+  width: 100%;
+  height: 100dvh !important;
+  min-height: 100dvh !important;
+  max-height: 100dvh !important;
+  overflow: hidden !important;
+  overscroll-behavior: none;
+}
+
+/* 日光方案卡：以淡紫色玻璃為主，不再讓天空背景吃掉文字。 */
+.landing.day .manager-card:is(.free, .personal, .business) {
+  color: #202943 !important;
+  background:
+    linear-gradient(155deg, rgba(250, 246, 255, .91), rgba(226, 215, 249, .82)) !important;
+  border-color: rgba(124, 96, 176, .42) !important;
+  box-shadow:
+    inset 0 1px 0 rgba(255, 255, 255, .78),
+    0 20px 48px rgba(71, 54, 116, .28) !important;
+  -webkit-backdrop-filter: blur(24px) saturate(1.12);
+  backdrop-filter: blur(24px) saturate(1.12);
+}
+
+.landing.day .manager-card:is(.free, .personal, .business) .manager-card-body {
+  color: #202943 !important;
+  background:
+    linear-gradient(135deg, rgba(255, 253, 255, .76), rgba(233, 224, 250, .64)) !important;
+  border-color: rgba(115, 91, 159, .28) !important;
+  box-shadow:
+    inset 0 1px 0 rgba(255, 255, 255, .76),
+    0 12px 30px rgba(70, 54, 111, .14) !important;
+}
+
+.landing.day .manager-card:is(.free, .personal, .business) :is(h2, h3, strong, b, label) {
+  color: #202943 !important;
+  opacity: 1 !important;
+  text-shadow: none !important;
+}
+
+.landing.day .manager-card:is(.free, .personal, .business) :is(p, small, span, em) {
+  color: #4a526a !important;
+  opacity: 1 !important;
+  text-shadow: none !important;
+}
+
+.landing.day .manager-card:is(.free, .personal, .business) .plan-card-top > span {
+  color: #596078 !important;
+  font-weight: 800;
+}
+
+.landing.day .manager-card:is(.free, .personal, .business) .plan-card-top > b {
+  color: #714c12 !important;
+  background: rgba(255, 231, 160, .72) !important;
+  border: 1px solid rgba(166, 111, 24, .26);
+}
+
+/* 底部功能清單不再使用看不清楚的淡粉字。 */
+.landing.day .manager-card:is(.personal, .business) .feature-area-heading strong {
+  color: #202943 !important;
+}
+
+.landing.day .manager-card:is(.personal, .business) .feature-area-heading small {
+  color: #5d536f !important;
+}
+
+.landing.day .manager-card:is(.personal, .business) :is(.performance-feature, .business-feature) {
+  color: #343b54 !important;
+  opacity: 1 !important;
+}
+
+.landing.day .manager-card:is(.personal, .business) :is(.performance-feature, .business-feature).dimmed {
+  color: #687087 !important;
+  opacity: .9 !important;
+  background: rgba(255, 255, 255, .18) !important;
+}
+
+.landing.day .manager-card:is(.personal, .business) :is(.performance-feature, .business-feature).included span {
+  color: #313750 !important;
+  font-weight: 750;
+}
+
+/* Lite 類別下方詳細方案仍保留兩張卡，但畫面名稱簡化為 Personal／Business。 */
+.landing.day .manager-card.free :is(.personal-lite, .business-lite) {
+  color: #293149 !important;
+  background: rgba(255, 255, 255, .53) !important;
+  border-color: rgba(112, 91, 151, .26) !important;
+}
+
+.landing.day .manager-card.free :is(.personal-lite, .business-lite) strong {
+  color: #6f4a15 !important;
+}
+
+/* 登入卡：未驗證及驗證中一律維持淡黃色半透明。 */
+.landing .manager-card.login-unified,
+.landing .manager-card.login-unified.login-identifier-valid:not(.login-system-confirmed),
+.landing .manager-card.login-unified.login-verifying {
+  color: #392b0d !important;
+  background:
+    linear-gradient(155deg, rgba(255, 248, 207, .88), rgba(238, 203, 111, .72)) !important;
+  border-color: rgba(197, 143, 32, .72) !important;
+  box-shadow:
+    inset 0 1px 0 rgba(255, 255, 255, .72),
+    0 18px 44px rgba(91, 62, 8, .31) !important;
+  -webkit-backdrop-filter: blur(24px) saturate(1.12);
+  backdrop-filter: blur(24px) saturate(1.12);
+}
+
+.landing .manager-card.login-unified .login-card-body,
+.landing .manager-card.login-unified.login-identifier-valid:not(.login-system-confirmed) .login-card-body,
+.landing .manager-card.login-unified.login-verifying .login-card-body {
+  --login-state-rgb: 224, 169, 49;
+  color: #392b0d !important;
+  background:
+    linear-gradient(135deg, rgba(255, 250, 217, .68), rgba(237, 194, 83, .42)) !important;
+  border-color: rgba(207, 151, 33, .68) !important;
+  box-shadow:
+    inset 0 1px 0 rgba(255, 255, 255, .72),
+    inset 0 0 30px rgba(var(--login-state-rgb), .10),
+    0 0 22px rgba(var(--login-state-rgb), .25) !important;
+}
+
+.landing .manager-card.login-unified :is(h2, h3, label, strong, b),
+.landing.day .manager-card.login-unified :is(h2, h3, label, strong, b),
+.landing .manager-card.login-unified .login-card-title::after {
+  color: #33260d !important;
+  opacity: 1 !important;
+  text-shadow: none !important;
+}
+
+.landing .manager-card.login-unified :is(p, small),
+.landing.day .manager-card.login-unified :is(p, small) {
+  color: #5d4b25 !important;
+  opacity: 1 !important;
+}
+
+.landing .manager-card.login-unified input,
+.landing.day .manager-card.login-unified input {
+  color: #2d250f !important;
+  background: rgba(255, 255, 255, .66) !important;
+  border-color: rgba(126, 91, 23, .34) !important;
+  box-shadow: inset 0 1px 4px rgba(93, 62, 8, .10) !important;
+}
+
+.landing .manager-card.login-unified input::placeholder,
+.landing.day .manager-card.login-unified input::placeholder {
+  color: #75684d !important;
+  opacity: 1 !important;
+}
+
+/* 綠燈只能由 manager-welcome.js 在後端確認帳號後加入此 class。 */
+.landing .manager-card.login-unified.login-system-confirmed {
+  color: #0c3b22 !important;
+  background:
+    linear-gradient(155deg, rgba(208, 255, 224, .90), rgba(93, 210, 139, .74)) !important;
+  border-color: rgba(55, 174, 105, .84) !important;
+  box-shadow:
+    inset 0 1px 0 rgba(255, 255, 255, .72),
+    0 18px 46px rgba(22, 119, 67, .34) !important;
+}
+
+.landing .manager-card.login-unified.login-system-confirmed .login-card-body {
+  --login-state-rgb: 49, 190, 112;
+  color: #0c3b22 !important;
+  background:
+    linear-gradient(135deg, rgba(218, 255, 231, .72), rgba(75, 198, 122, .48)) !important;
+  border-color: rgba(61, 184, 111, .88) !important;
+  box-shadow:
+    inset 0 1px 0 rgba(255, 255, 255, .72),
+    inset 0 0 32px rgba(var(--login-state-rgb), .14),
+    0 0 25px rgba(var(--login-state-rgb), .39) !important;
+}
+
+.landing .manager-card.login-unified.login-system-confirmed :is(h2, h3, label, strong, b, p, small),
+.landing .manager-card.login-unified.login-system-confirmed .login-card-title::after {
+  color: #0c3b22 !important;
+}
+
+.landing .manager-card.login-unified.login-system-confirmed .login-verify-button {
+  color: #07341d !important;
+  background: linear-gradient(135deg, rgba(143, 244, 184, .98), rgba(54, 187, 109, .94)) !important;
+  border-color: rgba(65, 178, 108, .92) !important;
+}
+
+.manager-card.login-unified .login-auth-status {
+  grid-column: 1 / -1;
+  grid-row: 5;
+  min-height: 17px;
+  margin-top: 6px;
+  font-size: 10px;
+  font-weight: 850;
+  line-height: 1.45;
+}
+
+.manager-card.login-unified .login-auth-status.info {
+  color: #66501c !important;
+}
+
+.manager-card.login-unified .login-auth-status.success {
+  color: #0b5d30 !important;
+}
+
+.manager-card.login-unified .login-auth-status.error {
+  color: #8b2020 !important;
+}
+
+.manager-card.login-unified .email-verification-guide {
+  grid-column: 1 / -1;
+  grid-row: 6;
+  color: #3d341d;
+  background: rgba(255, 255, 255, .43);
+  border: 1px solid rgba(92, 75, 36, .18);
+  border-radius: 13px;
+  margin-top: 7px;
+  padding: 9px;
+}
+
+.manager-card.login-unified .email-verification-guide[hidden] {
+  display: none !important;
+}
+
+.manager-card.login-unified .verification-guide-steps {
+  display: grid;
+  grid-template-columns: repeat(3, minmax(0, 1fr));
+  gap: 5px;
+  margin: 7px 0 4px;
+}
+
+.manager-card.login-unified .verification-guide-steps span {
+  min-width: 0;
+  text-align: center;
+  font-size: 8px;
+}
+
+.manager-card.login-unified .verification-guide-steps :is(i, b, em) {
+  display: block;
+  font-style: normal;
+}
+
+.manager-card.login-unified .login-email {
+  grid-row: 7;
+}
+
+.manager-card.login-unified .beta-auth-error {
+  grid-row: 8;
+}
+
+.manager-card.login-unified .card-main-action {
+  grid-row: 9;
+}
+
+/* 社群登入固定 G → L → F → A。 */
+.manager-card.login-unified .social-login-row {
+  grid-template-columns: repeat(4, minmax(0, 1fr)) !important;
+  justify-items: center;
+  overflow: visible !important;
+}
+
+/* Personal 展開卡永遠採 Performance 高度；切到 Solo 不再縮短。 */
+.manager-carousel article.manager-card.personal.expanded {
+  height: min(86dvh, 620px) !important;
+  min-height: min(86dvh, 620px) !important;
+  max-height: min(86dvh, 620px) !important;
+  overflow: visible !important;
+}
+
+.manager-card.personal.expanded,
+.manager-card.personal.expanded * {
+  transition-property: color, background, border-color, box-shadow, opacity, transform !important;
+}
+
+@media (max-height: 700px) {
+  .manager-carousel article.manager-card.personal.expanded {
+    height: 86dvh !important;
+    min-height: 86dvh !important;
+    max-height: 86dvh !important;
+  }
+}

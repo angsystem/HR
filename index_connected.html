@@ -1298,10 +1298,7 @@
     function getRouteConfig(params){
       const route = {
         entry: normalizeUrl(getFirstParam(params,['entry_url','entryUrl']) || getStoredUrl('ang_entry_url') || ANG_DATA_URLS.entry),
-<<<<<<< HEAD
         gasApiUrl: normalizeUrl(ANG_DATA_URLS.gasApiUrl),
-=======
->>>>>>> 963afab45774e7c1639b63cee23c8a0ac597dcac
         employeeHome: normalizeUrl(getFirstParam(params,['employee_url','employeeUrl','employee_home_url','employeeHomeUrl','frontend_url','frontendUrl']) || getStoredUrl('ang_employee_home_url') || ANG_DATA_URLS.employeeHome),
         employeeQr: normalizeUrl(getFirstParam(params,['employee_qr_url','employeeQrUrl','qr_url','qrUrl']) || getStoredUrl('ang_employee_qr_url') || ANG_DATA_URLS.employeeQr),
         adminLogin: normalizeUrl(getFirstParam(params,['admin_url','adminUrl','admin_login_url','adminLoginUrl','login_url','loginUrl']) || getStoredUrl('ang_admin_login_url') || ANG_DATA_URLS.adminLogin),
@@ -1387,7 +1384,6 @@
       window.location.href = normalizeUrl(url);
     }
 
-<<<<<<< HEAD
     function getGasApiUrl(){
       forceCorrectGasApiUrl();
       return normalizeUrl(ANG_DATA_URLS.gasApiUrl || '');
@@ -1815,8 +1811,6 @@
     }
 
 
-=======
->>>>>>> 963afab45774e7c1639b63cee23c8a0ac597dcac
     function submitActivationCode(){
       const input = document.getElementById('activationCode');
       const code = normalizeCode(input ? input.value : '');

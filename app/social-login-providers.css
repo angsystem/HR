@@ -1,0 +1,106 @@
+/* ANG HR 社群登入按鈕：Google → LINE → Facebook → Apple */
+.manager-card.login-unified .social-login-row {
+  grid-template-columns: repeat(4, minmax(0, 1fr)) !important;
+  align-items: center;
+  justify-items: center;
+  gap: 8px !important;
+}
+
+.manager-card.login-unified .social-login-row button {
+  position: relative;
+  width: 44px;
+  min-width: 44px;
+  max-width: 44px;
+  height: 44px;
+  min-height: 44px;
+  padding: 0;
+  border-radius: 50%;
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  overflow: hidden;
+  box-shadow:
+    0 5px 14px rgba(0, 0, 0, .20),
+    inset 0 1px 0 rgba(255, 255, 255, .32);
+  transition:
+    transform .16s ease,
+    box-shadow .16s ease,
+    filter .16s ease;
+}
+
+.manager-card.login-unified .social-login-row button:active {
+  transform: scale(.93);
+}
+
+.manager-card.login-unified .social-login-row button:focus-visible {
+  outline: 3px solid rgba(130, 215, 255, .72);
+  outline-offset: 3px;
+}
+
+.manager-card.login-unified .social-login-row button > span {
+  position: absolute !important;
+  width: 1px !important;
+  height: 1px !important;
+  padding: 0 !important;
+  margin: -1px !important;
+  overflow: hidden !important;
+  clip: rect(0, 0, 0, 0) !important;
+  white-space: nowrap !important;
+  border: 0 !important;
+}
+
+.manager-card.login-unified .social-login-row .provider-icon {
+  flex: 0 0 25px;
+  width: 25px;
+  height: 25px;
+}
+
+.manager-card.login-unified .social-login-row .google-login {
+  color: #1f1f1f;
+  background: #fff;
+  border-color: rgba(116, 119, 117, .8);
+}
+
+.manager-card.login-unified .social-login-row .line-login {
+  color: #fff;
+  background: #06c755;
+  border-color: #06c755;
+}
+
+.manager-card.login-unified .social-login-row .facebook-login {
+  color: #fff;
+  background: #0866ff;
+  border-color: #0866ff;
+}
+
+.manager-card.login-unified .social-login-row .facebook-login .provider-icon {
+  width: 27px;
+  height: 27px;
+}
+
+.manager-card.login-unified .social-login-row .apple-login {
+  color: #000;
+  background: #fff;
+  border-color: rgba(0, 0, 0, .2);
+}
+
+html[data-theme="dark"] .manager-card.login-unified .social-login-row .apple-login,
+body.dark .manager-card.login-unified .social-login-row .apple-login,
+.dark-theme .manager-card.login-unified .social-login-row .apple-login {
+  color: #000;
+  background: #fff;
+}
+
+@media (max-width: 380px) {
+  .manager-card.login-unified .social-login-row {
+    gap: 5px !important;
+  }
+
+  .manager-card.login-unified .social-login-row button {
+    width: 41px;
+    min-width: 41px;
+    max-width: 41px;
+    height: 41px;
+    min-height: 41px;
+  }
+}
