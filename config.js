@@ -16,11 +16,13 @@
   }
 
   var FRONTEND_BASE_URL = detectFrontendBase();
+  // OAuth callback 必須使用公開 HTTPS 網址，Android file:// 不可直接作第三方登入回呼。
+  var OAUTH_CALLBACK_BASE_URL = 'https://angsystem.github.io/HR';
   var GAS_API_URL = 'https://script.google.com/macros/s/AKfycbzNycUTGQG0gqgb8B6F7tndEhRXU7GAiKFFWZr0e8sDwL2kXU5tBGLlJR_iBdX7SCnH/exec';
   var GOOGLE_CLIENT_ID = '660707205594-74rvsq9s1h87v1s5pi9nvtms1e4qipat.apps.googleusercontent.com';
   var LINE_CHANNEL_ID = '2010402308';
   var FACEBOOK_APP_ID = '1053775314267018';
-  var BUILD_VERSION = 'v0.7.0-20260722-integrated';
+  var BUILD_VERSION = 'v0.6.0-20260722-1005';
 
   function cleanBase(url){
     return String(url || '').trim().replace(/\/+$/, '');
@@ -69,9 +71,10 @@
     lineChannelId: LINE_CHANNEL_ID,
     facebookAppId: FACEBOOK_APP_ID,
     facebookPermissions: ['public_profile', 'email'],
-    facebookRedirectUri: joinUrl(frontendBaseUrl, 'facebook-callback.html'),
+    oauthCallbackBaseUrl: cleanBase(OAUTH_CALLBACK_BASE_URL),
+    facebookRedirectUri: joinUrl(OAUTH_CALLBACK_BASE_URL, 'facebook-callback.html'),
     // 伺服器端 code exchange API；App Secret 不可放在 GitHub Pages。
-    facebookTokenExchangeUrl: '',
+    facebookTokenExchangeUrl: GAS_API_URL + '?action=facebookOAuthExchange',
 
     // Email 驗證採信箱連結回到 ANG HR，不在入口輸入驗證碼。
     emailVerificationMode: 'link',
