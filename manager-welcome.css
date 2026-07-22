@@ -1870,3 +1870,207 @@ body,
   .manager-card.expanded :is(.performance-feature,.business-feature) { min-height:24px !important; }
   .manager-card.expanded :is(.performance-feature,.business-feature) span { font-size:8.2px !important; }
 }
+
+
+/* ========================================================================
+   ANG HR v0.7.0｜低飽和玻璃＋互動式圖文方案介紹（2026-07-22）
+   ======================================================================== */
+
+/* 日光登入：外卡墨綠、內卡淡黃／綠／紅，全部降低飽和與實色感。 */
+.landing.day .manager-card.login-unified {
+  background-color: rgba(18, 78, 61, .29) !important;
+  background-image: linear-gradient(155deg, rgba(65, 133, 107, .26), rgba(7, 54, 42, .34)), linear-gradient(30deg, rgba(255,255,255,.08), transparent 55%) !important;
+  border-color: rgba(116, 190, 159, .36) !important;
+  box-shadow: inset 0 1px 0 rgba(238,255,246,.30), 0 18px 44px rgba(15,55,43,.20) !important;
+  -webkit-backdrop-filter: blur(25px) saturate(.82) !important;
+  backdrop-filter: blur(25px) saturate(.82) !important;
+}
+.landing.day .manager-card.login-unified:not(.login-system-confirmed):not(.login-system-failed) .login-card-body {
+  background: linear-gradient(140deg, rgba(255, 242, 176, .40), rgba(214, 170, 63, .27)), rgba(255,255,255,.08) !important;
+  border-color: rgba(215, 166, 48, .69) !important;
+  box-shadow: inset 0 1px 0 rgba(255,255,255,.55), 0 0 18px rgba(170,119,21,.16) !important;
+  -webkit-backdrop-filter: blur(22px) saturate(.84) !important;
+  backdrop-filter: blur(22px) saturate(.84) !important;
+}
+.landing.day .manager-card.login-unified.login-system-confirmed .login-card-body {
+  background: linear-gradient(140deg, rgba(178, 236, 196, .41), rgba(61, 174, 104, .28)), rgba(255,255,255,.08) !important;
+  border-color: rgba(45, 181, 98, .78) !important;
+  box-shadow: inset 0 1px 0 rgba(255,255,255,.52), 0 0 21px rgba(39,154,88,.22) !important;
+  -webkit-backdrop-filter: blur(22px) saturate(.86) !important;
+  backdrop-filter: blur(22px) saturate(.86) !important;
+}
+.landing.day .manager-card.login-unified.login-system-failed .login-card-body {
+  background: linear-gradient(140deg, rgba(249, 193, 193, .41), rgba(194, 73, 80, .27)), rgba(255,255,255,.08) !important;
+  border-color: rgba(205, 62, 70, .78) !important;
+  box-shadow: inset 0 1px 0 rgba(255,255,255,.50), 0 0 21px rgba(176,48,57,.20) !important;
+  -webkit-backdrop-filter: blur(22px) saturate(.84) !important;
+  backdrop-filter: blur(22px) saturate(.84) !important;
+}
+
+/* 未展開不放額外說明；展開後才在四個方塊按鈕下顯示。 */
+.manager-card.login-unified .email-verification-hint { display: none !important; }
+.manager-card.login-unified .email-verification-guide { display: none !important; }
+.manager-card.login-unified.expanded.login-system-confirmed .email-verification-guide:not([hidden]) {
+  grid-column: 1 / -1 !important;
+  grid-row: 5 !important;
+  display: block !important;
+  margin: 10px 0 0 !important;
+  padding: 11px 12px !important;
+  color: inherit !important;
+  background: rgba(255,255,255,.15) !important;
+  border: 1px solid rgba(255,255,255,.29) !important;
+  border-radius: 15px !important;
+  box-shadow: inset 0 1px 0 rgba(255,255,255,.24) !important;
+  -webkit-backdrop-filter: blur(15px) saturate(.88) !important;
+  backdrop-filter: blur(15px) saturate(.88) !important;
+}
+.manager-card.login-unified.expanded {
+  height: auto !important;
+  min-height: min(86dvh, 640px) !important;
+  max-height: none !important;
+  overflow: visible !important;
+}
+.manager-card.login-unified.expanded .social-login-row {
+  grid-template-columns: repeat(4, minmax(0, 1fr)) !important;
+  gap: 8px !important;
+}
+.manager-card.login-unified.expanded .social-login-row button {
+  position: relative !important;
+  height: 48px !important;
+  border-radius: 15px !important;
+  padding: 0 !important;
+}
+.manager-card.login-unified.expanded .social-login-row button > span:not(.provider-icon) {
+  position: absolute !important;
+  width: 1px !important;
+  height: 1px !important;
+  overflow: hidden !important;
+  clip: rect(0,0,0,0) !important;
+}
+.manager-card.login-unified.expanded .provider-icon {
+  width: 25px !important;
+  height: 25px !important;
+  flex-basis: 25px !important;
+}
+
+/* 原本單行方案摘要隱藏，改由上方圖文大框呈現；下方選項保留。 */
+.ang-v070-plan-summary { display: none !important; }
+.manager-card.collapsed .ang-plan-detail-v2 { display: none !important; }
+.manager-card.expanded .ang-plan-detail-v2 {
+  display: grid !important;
+  grid-template-columns: 92px minmax(0, 1fr);
+  gap: 10px;
+  align-items: stretch;
+  min-height: 172px;
+  margin: 7px 0 10px;
+  padding: 10px;
+  border: 1px solid rgba(255,255,255,.24);
+  border-radius: 20px;
+  background: linear-gradient(145deg, rgba(255,255,255,.15), rgba(255,255,255,.07));
+  box-shadow: inset 0 1px 0 rgba(255,255,255,.22), 0 10px 22px rgba(9,19,39,.12);
+  -webkit-backdrop-filter: blur(18px) saturate(.94);
+  backdrop-filter: blur(18px) saturate(.94);
+  animation: ang-detail-in .28s ease both;
+}
+.ang-plan-detail-visual {
+  min-width: 0;
+  border-radius: 16px;
+  overflow: hidden;
+  display: grid;
+  place-items: center;
+  background: linear-gradient(145deg, rgba(255,255,255,.18), rgba(255,255,255,.06));
+  border: 1px solid rgba(255,255,255,.18);
+}
+.ang-plan-detail-visual svg { width: 88%; height: auto; display: block; }
+.ang-plan-detail-copy { min-width: 0; align-self: center; }
+.ang-plan-detail-kicker { display: block; margin-bottom: 3px; font-size: 7.5px; font-weight: 950; letter-spacing: 1.1px; opacity: .72; }
+.ang-plan-detail-copy > strong { display: block; font-size: 13px; line-height: 1.25; }
+.ang-plan-detail-copy > p { margin: 5px 0 7px !important; font-size: 8.3px !important; line-height: 1.48 !important; }
+.ang-plan-detail-tags { display: flex; flex-wrap: wrap; gap: 4px; }
+.ang-plan-detail-tags span { padding: 4px 6px; border-radius: 999px; font-size: 7.3px; font-weight: 850; line-height: 1; background: rgba(255,255,255,.15); border: 1px solid rgba(255,255,255,.16); }
+.ang-plan-detail-v2[data-plan="free"] .ang-plan-detail-visual { color:#64748b; }
+.ang-plan-detail-v2[data-plan="solo"] .ang-plan-detail-visual { color:#16a8c7; }
+.ang-plan-detail-v2[data-plan="performance"] .ang-plan-detail-visual { color:#d94b9b; }
+.ang-plan-detail-v2[data-plan="basic"] .ang-plan-detail-visual { color:#28a7be; }
+.ang-plan-detail-v2[data-plan="pro"] .ang-plan-detail-visual { color:#8064d9; }
+.ang-plan-detail-v2[data-plan="premium"] .ang-plan-detail-visual { color:#d49a24; }
+
+/* 中間總介紹：上方固定大圖文框，下方保留可選特色。 */
+.manager-card.intro.expanded { height: min(88dvh, 710px) !important; max-height: min(88dvh, 710px) !important; }
+.feature-modal-inline.ang-overview-v2 {
+  height: calc(100% - 38px) !important;
+  padding: 12px !important;
+  overflow: hidden !important;
+  display: grid !important;
+  grid-template-rows: minmax(0, 1fr) auto auto !important;
+  gap: 9px !important;
+}
+.ang-overview-display {
+  min-height: 0;
+  padding: 12px;
+  border-radius: 22px;
+  display: grid;
+  grid-template-columns: 112px minmax(0, 1fr);
+  gap: 12px;
+  align-items: center;
+  color: inherit;
+  background: linear-gradient(145deg, rgba(255,255,255,.17), rgba(255,255,255,.07)), radial-gradient(circle at 12% 14%, rgba(94,220,255,.16), transparent 36%);
+  border: 1px solid rgba(255,255,255,.23);
+  box-shadow: inset 0 1px 0 rgba(255,255,255,.22), 0 14px 28px rgba(9,17,38,.16);
+  -webkit-backdrop-filter: blur(20px) saturate(.92);
+  backdrop-filter: blur(20px) saturate(.92);
+  animation: ang-detail-in .28s ease both;
+}
+.ang-overview-visual {
+  align-self: stretch;
+  min-height: 190px;
+  border-radius: 19px;
+  display: grid;
+  place-items: center;
+  overflow: hidden;
+  color: var(--ang-overview-accent, #63d7ef);
+  background: linear-gradient(155deg, rgba(255,255,255,.17), rgba(255,255,255,.04));
+  border: 1px solid rgba(255,255,255,.18);
+}
+.ang-overview-visual svg { width: 92%; height: auto; display: block; filter: drop-shadow(0 8px 14px rgba(6,18,43,.18)); }
+.ang-overview-copy { min-width: 0; }
+.ang-overview-copy .ang-overview-kicker { display:block; margin-bottom:4px; font-size:7.7px; font-weight:950; letter-spacing:1.2px; opacity:.72; }
+.ang-overview-copy h2 { margin:0 !important; font-size:17px !important; line-height:1.22 !important; text-align:left !important; }
+.ang-overview-copy > p { margin:7px 0 9px !important; font-size:8.7px !important; line-height:1.52 !important; text-align:left !important; }
+.ang-overview-highlight-grid { display:grid; grid-template-columns:1fr 1fr; gap:5px; }
+.ang-overview-highlight-grid span { min-width:0; padding:6px 5px; border-radius:10px; font-size:7.5px; font-weight:850; line-height:1.2; text-align:center; background:rgba(255,255,255,.13); border:1px solid rgba(255,255,255,.14); }
+.ang-overview-note { margin-top:8px; padding:7px 8px; border-radius:11px; font-size:7.4px; font-weight:750; line-height:1.4; background:rgba(255,255,255,.10); border-left:3px solid var(--ang-overview-accent, #63d7ef); }
+.ang-overview-options-head { display:flex; justify-content:space-between; align-items:end; gap:8px; }
+.ang-overview-options-head strong { font-size:10px; }
+.ang-overview-options-head small { font-size:7.5px; opacity:.72; }
+.ang-overview-options { display:grid; grid-template-columns:repeat(4,minmax(0,1fr)); gap:6px; }
+.ang-overview-option {
+  min-width:0;
+  min-height:58px;
+  padding:7px 4px;
+  border-radius:14px;
+  color:inherit;
+  background:rgba(255,255,255,.10);
+  border:1px solid rgba(255,255,255,.18);
+  display:grid;
+  place-items:center;
+  gap:2px;
+  font:inherit;
+}
+.ang-overview-option i { font-size:16px; line-height:1; font-style:normal; }
+.ang-overview-option strong { font-size:8px; line-height:1.15; }
+.ang-overview-option small { font-size:6.8px; line-height:1.15; opacity:.68; }
+.ang-overview-option[aria-selected="true"] { background:linear-gradient(145deg, rgba(89,207,226,.27), rgba(126,99,220,.20)); border-color:rgba(173,232,255,.52); box-shadow:0 0 0 2px rgba(126,210,240,.12), inset 0 1px 0 rgba(255,255,255,.22); transform:translateY(-2px); }
+.landing.day .ang-overview-display,
+.landing.day .ang-overview-option { background-color:rgba(255,255,255,.22); border-color:rgba(69,85,115,.18); }
+.landing.day .ang-overview-option[aria-selected="true"] { background:linear-gradient(145deg, rgba(98,193,211,.31), rgba(142,118,210,.24)); border-color:rgba(65,128,161,.33); }
+
+@keyframes ang-detail-in { from { opacity:0; transform:translateY(5px) scale(.992); } to { opacity:1; transform:none; } }
+
+@media (max-width: 390px) {
+  .ang-overview-display { grid-template-columns: 94px minmax(0,1fr); gap:9px; padding:10px; }
+  .ang-overview-visual { min-height:176px; }
+  .ang-overview-copy h2 { font-size:15px !important; }
+  .ang-overview-option small { display:none; }
+  .manager-card.expanded .ang-plan-detail-v2 { grid-template-columns:78px minmax(0,1fr); min-height:160px; }
+}

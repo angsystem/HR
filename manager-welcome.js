@@ -1442,3 +1442,144 @@
   if (document.readyState === 'loading') document.addEventListener('DOMContentLoaded', startV070);
   else startV070();
 }());
+
+
+/* ANG HR v0.7.0｜互動式圖文介紹＋展開後 Email 說明 */
+(function () {
+  'use strict';
+
+  var PLAN_DETAILS = {
+    free: { kicker:'LITE｜FREE', title:'先從真正需要的功能開始', body:'免費方案保留基礎打卡、排班與工時紀錄，先把每天會用到的流程建立起來，再依需要升級或加 Module。', tags:['基礎打卡','排班','工時紀錄','40 天歷史'], icon:'free' },
+    solo: { kicker:'PERSONAL｜SOLO', title:'一個人的工作，也值得被好好管理', body:'把個人排班、打卡、工時、請假、薪資收入、週領與月領紀錄集中在同一個地方，不需要主管審核。', tags:['個人排班','薪資收入','提醒行事曆','請假補卡'], icon:'solo' },
+    performance: { kicker:'PERSONAL｜PERFORMANCE', title:'從記錄工作，進一步看見成長', body:'包含 Solo 的日常管理，再加入目標、KPI、績效週期、自評、評核、一對一回饋、趨勢與報表。', tags:['KPI 目標','績效週期','成長趨勢','完整報表'], icon:'performance' },
+    basic: { kicker:'BUSINESS｜BASIC', title:'核心管理先上線，團隊立即能用', body:'聚焦員工主檔、排班、定位打卡、出勤與基本管理，適合第一次把紙本或群組流程搬進系統的店家與團隊。', tags:['員工主檔','排班發布','GPS／QR','基本出勤'], icon:'business' },
+    pro: { kicker:'BUSINESS｜PRO', title:'把審核、薪資與跨店協作接起來', body:'包含 Basic 核心功能，再加入請假補卡審核、公告、薪資、加班津貼、臨時支援打卡點、更多主管權限與報表。', tags:['審核流程','薪資津貼','支援打卡點','管理報表'], icon:'pro' },
+    premium: { kicker:'BUSINESS｜PREMIUM', title:'完整權限與最高擴充彈性', body:'包含 Pro 全部功能，再加入多公司／多分店、七層權限、進階分析、自訂流程、安全稽核與完整的企業管理能力。', tags:['多公司分店','七層權限','進階分析','安全稽核'], icon:'premium' }
+  };
+
+  var OVERVIEW_DETAILS = {
+    overview: { accent:'#5fd7ed', kicker:'ANG HR v0.7.0｜完整總覽', title:'從一個人的工時，到整間公司的管理', body:'Business 與 Personal Performance 幾乎涵蓋 ANG HR 的完整核心能力：排班、打卡、請假、薪資、權限、分店、績效、提醒與報表，都在同一個平台裡逐步開啟。', tags:['排班與打卡','薪資與出勤','權限與分店','績效與報表','提醒與公告','資料與安全'], note:'不用一開始把所有功能都買齊；先選最符合現在的方案，再依需求擴充。', icon:'overview' },
+    business: { accent:'#4fa6e8', kicker:'BUSINESS｜企業管理', title:'讓每天的管理流程真正串在一起', body:'從員工主檔、排班發布、GPS／QR／NFC 打卡，到週月選休、請假補卡、加班津貼、薪資估算、公司分店、七層權限與營運報表。', tags:['員工主檔','排班發布','GPS／QR／NFC','請假補卡','薪資估算','多公司分店','七層權限','營運報表'], note:'Basic、Pro、Premium 的差異是管理深度，不再用固定「含幾人」限制方案。', icon:'business' },
+    performance: { accent:'#d85ca7', kicker:'PERSONAL｜PERFORMANCE', title:'不只記錄工作，也看見自己的成長', body:'包含 Solo 的個人排班、工時、打卡、收入、請假與提醒，再加入目標 KPI、績效週期、自評、評核、一對一回饋、趨勢分析與績效報表。', tags:['個人排班','工時收入','行事曆提醒','目標 KPI','自評評核','一對一回饋','趨勢分析','績效報表'], note:'個人功能屬於本人帳號；即使離開公司，自費購買的個人模組仍保留。', icon:'performance' },
+    modules: { accent:'#8c73e6', kicker:'PLANS + MODULES｜彈性擴充', title:'方案不用買到最大，缺什麼再加什麼', body:'方案可以和 Module 合在一起使用。公司先選符合目前管理需求的方案，再加真正需要的人數或功能，不必為了單一需求直接升到最大方案。', tags:['方案可搭模組','模組可彼此搭配','依需求逐步增加','避免買用不到的功能'], note:'目前先介紹「人數模組」：需要幾人就增加幾人，不必一開始購買大量名額；其他功能模組之後上架。', icon:'modules' }
+  };
+
+  function esc(value) {
+    return String(value == null ? '' : value).replace(/[&<>"']/g, function (ch) {
+      return ({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;',"'":'&#39;'})[ch];
+    });
+  }
+
+  function svg(kind) {
+    var common='fill="none" stroke="currentColor" stroke-width="5" stroke-linecap="round" stroke-linejoin="round"';
+    if (kind === 'modules') return '<svg viewBox="0 0 160 120" aria-hidden="true"><g '+common+'><rect x="20" y="18" width="48" height="40" rx="10"/><rect x="92" y="18" width="48" height="40" rx="10"/><rect x="20" y="72" width="48" height="30" rx="10"/><path d="M98 87h36M116 69v36"/><path d="M68 38h24M44 58v14M116 58v11"/></g></svg>';
+    if (kind === 'performance') return '<svg viewBox="0 0 160 120" aria-hidden="true"><g '+common+'><circle cx="60" cy="54" r="34"/><circle cx="60" cy="54" r="18"/><path d="M60 54l28-28M82 26h16v16"/><path d="M101 96l14-18 12 9 17-25"/><path d="M101 96h43"/></g></svg>';
+    if (kind === 'business' || kind === 'pro' || kind === 'premium') return '<svg viewBox="0 0 160 120" aria-hidden="true"><g '+common+'><path d="M24 101V28l55-16 55 16v73"/><path d="M15 101h130"/><path d="M45 42h18M96 42h18M45 62h18M96 62h18M45 82h18M96 82h18"/><path d="M72 101V76h16v25"/></g></svg>';
+    if (kind === 'solo') return '<svg viewBox="0 0 160 120" aria-hidden="true"><g '+common+'><circle cx="80" cy="42" r="20"/><path d="M42 102c3-25 17-38 38-38s35 13 38 38"/><rect x="19" y="15" width="31" height="25" rx="6"/><path d="M27 27h15M110 20h30M110 32h20"/></g></svg>';
+    if (kind === 'free') return '<svg viewBox="0 0 160 120" aria-hidden="true"><g '+common+'><rect x="20" y="22" width="120" height="78" rx="16"/><path d="M20 44h120M48 14v18M112 14v18"/><path d="M48 62h19M82 62h30M48 80h38"/><circle cx="118" cy="79" r="12"/><path d="M112 79l4 4 8-9"/></g></svg>';
+    return '<svg viewBox="0 0 160 120" aria-hidden="true"><g '+common+'><rect x="18" y="20" width="124" height="80" rx="18"/><path d="M40 76l20-18 17 12 30-32 14 12"/><path d="M40 42h22M40 55h12"/><circle cx="118" cy="39" r="10"/></g></svg>';
+  }
+
+  function selectedPlanKey(card) {
+    if (card.classList.contains('free')) return 'free';
+    if (card.classList.contains('personal')) {
+      var p=card.querySelector('.personal-option[aria-pressed="true"],.personal-option.selected');
+      return p && p.classList.contains('performance-option') ? 'performance' : 'solo';
+    }
+    var b=card.querySelector('.business-option[aria-pressed="true"],.business-option.selected');
+    if (b && b.classList.contains('premium-option')) return 'premium';
+    if (b && b.classList.contains('pro-option')) return 'pro';
+    return 'basic';
+  }
+
+  function tagsMarkup(tags) {
+    return tags.map(function (tag) { return '<span>'+esc(tag)+'</span>'; }).join('');
+  }
+
+  function installPlanDetail(card) {
+    if (!card || !(card.classList.contains('free') || card.classList.contains('personal') || card.classList.contains('business'))) return;
+    var body=card.querySelector('.manager-card-body');
+    if (!body) return;
+    var key=selectedPlanKey(card), data=PLAN_DETAILS[key];
+    if (!data) return;
+    var box=body.querySelector('.ang-plan-detail-v2');
+    if (!box) {
+      box=document.createElement('section');
+      box.className='ang-plan-detail-v2';
+      var options=body.querySelector('.lite-options,.personal-options,.business-options');
+      if (options) body.insertBefore(box,options); else body.appendChild(box);
+    }
+    if (box.getAttribute('data-plan')===key) return;
+    box.setAttribute('data-plan',key);
+    box.innerHTML='<div class="ang-plan-detail-visual">'+svg(data.icon)+'</div><div class="ang-plan-detail-copy"><span class="ang-plan-detail-kicker">'+esc(data.kicker)+'</span><strong>'+esc(data.title)+'</strong><p>'+esc(data.body)+'</p><div class="ang-plan-detail-tags">'+tagsMarkup(data.tags)+'</div></div>';
+  }
+
+  function overviewDisplay(data) {
+    return '<div class="ang-overview-visual">'+svg(data.icon)+'</div><div class="ang-overview-copy"><span class="ang-overview-kicker">'+esc(data.kicker)+'</span><h2>'+esc(data.title)+'</h2><p>'+esc(data.body)+'</p><div class="ang-overview-highlight-grid">'+tagsMarkup(data.tags)+'</div><div class="ang-overview-note">'+esc(data.note)+'</div></div>';
+  }
+
+  function renderOverview(modal,key) {
+    key=OVERVIEW_DETAILS[key] ? key : 'overview';
+    var display=modal.querySelector('[data-ang-overview-display]');
+    if (!display) return;
+    var data=OVERVIEW_DETAILS[key];
+    modal.style.setProperty('--ang-overview-accent',data.accent);
+    display.innerHTML=overviewDisplay(data);
+    display.setAttribute('data-view',key);
+    var buttons=modal.querySelectorAll('[data-ang-overview-key]');
+    for (var i=0;i<buttons.length;i++) {
+      var active=buttons[i].getAttribute('data-ang-overview-key')===key;
+      buttons[i].setAttribute('aria-selected',active?'true':'false');
+      buttons[i].tabIndex=active?0:-1;
+    }
+  }
+
+  function installOverview() {
+    var modal=document.querySelector('.manager-card.intro.expanded .feature-modal-inline');
+    if (!modal) return;
+    if (modal.getAttribute('data-ang-overview-v2')==='true') return;
+    modal.setAttribute('data-ang-overview-v2','true');
+    modal.classList.add('ang-overview-v2');
+    modal.innerHTML='<section class="ang-overview-display" data-ang-overview-display aria-live="polite"></section><div class="ang-overview-options-head"><strong>功能特色</strong><small>選擇一項，上方顯示完整圖文介紹</small></div><div class="ang-overview-options" role="tablist" aria-label="ANG HR 功能特色"><button type="button" class="ang-overview-option" role="tab" data-ang-overview-key="overview"><i>◎</i><strong>完整總覽</strong><small>核心能力</small></button><button type="button" class="ang-overview-option" role="tab" data-ang-overview-key="business"><i>▦</i><strong>Business</strong><small>企業管理</small></button><button type="button" class="ang-overview-option" role="tab" data-ang-overview-key="performance"><i>↗</i><strong>Performance</strong><small>個人成長</small></button><button type="button" class="ang-overview-option" role="tab" data-ang-overview-key="modules"><i>＋</i><strong>Modules</strong><small>彈性擴充</small></button></div>';
+    renderOverview(modal,'overview');
+  }
+
+  function syncLoginGuide() {
+    var card=document.querySelector('.manager-card.login-unified');
+    if (!card) return;
+    var guide=card.querySelector('.email-verification-guide');
+    if (!guide) return;
+    if (card.classList.contains('expanded') && card.classList.contains('login-system-confirmed')) {
+      guide.hidden=false;
+      guide.innerHTML='<strong>驗證已完成</strong><div class="verification-guide-steps"><span><i aria-hidden="true">✓</i><b>1</b><em>帳號已確認</em></span><span><i aria-hidden="true">▦</i><b>2</b><em>選擇公司或方案</em></span><span><i aria-hidden="true">↗</i><b>3</b><em>進入 ANG HR</em></span></div><small>只有一個公司或方案時會直接進入；有多個時才顯示選擇。方案註冊則會接續付款與基本資料。</small>';
+    }
+  }
+
+  function apply() {
+    var cards=document.querySelectorAll('.manager-card.free,.manager-card.personal,.manager-card.business');
+    for (var i=0;i<cards.length;i++) installPlanDetail(cards[i]);
+    installOverview();
+    syncLoginGuide();
+  }
+
+  document.addEventListener('click',function(event){
+    var button=event.target.closest && event.target.closest('[data-ang-overview-key]');
+    if (!button) return;
+    var modal=button.closest('.feature-modal-inline');
+    if (!modal) return;
+    event.preventDefault();
+    renderOverview(modal,button.getAttribute('data-ang-overview-key'));
+  });
+
+  function start() {
+    apply();
+    var root=document.getElementById('root')||document.body;
+    var queued=false;
+    new MutationObserver(function(){
+      if (queued) return;
+      queued=true;
+      window.requestAnimationFrame(function(){ queued=false; apply(); });
+    }).observe(root,{childList:true,subtree:true,attributes:true,attributeFilter:['class','aria-pressed']});
+  }
+  if (document.readyState==='loading') document.addEventListener('DOMContentLoaded',start); else start();
+}());
