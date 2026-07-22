@@ -277,195 +277,6 @@
         .ang-plan-tab { min-height: 50px; text-align: center; }
         .ang-plan-tab small { display: none; }
       }
-
-
-      /* ===== 2026-07-22 日光版視覺與登入流程調整 ===== */
-      :root{
-        --ang-business-blue:#123f73;
-        --ang-mayhem-orange:#d86a21;
-        --ang-business-purple:#21113e;
-        --ang-personal-magenta:#8f174f;
-        --ang-lite-blue:#123f73;
-        --ang-metal-gold:#e7c66f;
-        --ang-metal-silver:#c9d0dc;
-        --ang-metal-copper:#c77a46;
-      }
-      .manager-card:not(.intro),
-      .manager-card .feature-modal-inline{
-        --drawer-blue:#123f73;
-      }
-      .manager-card:not(.intro){
-        border-color:rgba(81,153,224,.56)!important;
-        background:linear-gradient(160deg,rgba(18,63,115,.94),rgba(5,22,44,.98))!important;
-      }
-      [data-manager-card="intro"]{
-        border-color:rgba(255,175,92,.66)!important;
-        background:linear-gradient(155deg,rgba(216,106,33,.95),rgba(62,25,8,.98))!important;
-      }
-      .ang-five-plan-shell{--entry-orange-rgb:216,106,33}
-      .ang-five-plan-header h2{font-size:clamp(23px,6.5vw,31px)!important}
-      .ang-plan-showcase{
-        background:
-          radial-gradient(circle at 12% 8%,rgba(var(--plan-rgb),.35),transparent 42%),
-          linear-gradient(145deg,rgba(var(--plan-rgb),.32),rgba(2,5,12,.94) 72%)!important;
-      }
-      .landing:not(.night) .ang-plan-showcase{
-        background:
-          radial-gradient(circle at 12% 8%,rgba(var(--plan-rgb),.31),transparent 42%),
-          linear-gradient(145deg,rgba(var(--plan-rgb),.24),rgba(11,12,17,.92) 74%)!important;
-      }
-      .landing:not(.night) .ang-plan-copy h3,
-      .landing:not(.night) .ang-plan-copy p,
-      .landing:not(.night) .ang-plan-copy small{color:#f8fbff!important}
-      .ang-plan-family-title{
-        margin:0;
-        font-size:clamp(28px,8vw,44px);
-        line-height:.95;
-        font-weight:1000;
-        letter-spacing:.02em;
-      }
-      .ang-plan-family-subtitle{
-        margin-top:6px;
-        font-size:clamp(10px,2.8vw,13px);
-        font-weight:850;
-        opacity:.72;
-      }
-      .ang-plan-tier-badge{
-        display:inline-flex;
-        align-items:center;
-        width:max-content;
-        margin:8px 0 2px;
-        padding:5px 10px;
-        border:1px solid currentColor;
-        border-radius:999px;
-        font-size:11px;
-        font-weight:1000;
-        letter-spacing:.08em;
-        text-transform:uppercase;
-        box-shadow:inset 0 1px 0 rgba(255,255,255,.22),0 4px 14px rgba(0,0,0,.28);
-      }
-      .metal-gold{color:var(--ang-metal-gold)!important}
-      .metal-silver{color:var(--ang-metal-silver)!important}
-      .metal-copper{color:var(--ang-metal-copper)!important}
-      .family-business{color:var(--ang-metal-gold)!important}
-      .family-personal{color:var(--ang-metal-silver)!important}
-      .family-lite{color:var(--ang-metal-copper)!important}
-      .ang-plan-tab{
-        min-height:66px!important;
-        background:linear-gradient(155deg,rgba(18,63,115,.92),rgba(5,22,44,.98))!important;
-        border-color:rgba(105,170,235,.42)!important;
-      }
-      .ang-plan-tab strong{font-size:13px!important}
-      .ang-plan-tab small{font-size:9px!important}
-      .ang-plan-tab.active{
-        border-color:currentColor!important;
-        box-shadow:0 0 0 1px currentColor,0 12px 24px rgba(0,0,0,.28)!important;
-      }
-      .ang-five-plan-actions button:last-child,
-      .ang-enter-button{
-        background:linear-gradient(135deg,var(--go-main,#21113e),var(--go-accent,#e7c66f))!important;
-        color:#fff!important;
-        border-color:var(--go-accent,#e7c66f)!important;
-        text-shadow:0 1px 2px rgba(0,0,0,.5);
-      }
-      .ang-account-dialog-backdrop{
-        position:fixed;inset:0;z-index:2147483646;display:grid;place-items:center;
-        padding:18px;background:rgba(0,0,0,.58);backdrop-filter:blur(10px);
-        -webkit-backdrop-filter:blur(10px)
-      }
-      .ang-account-dialog{
-        width:min(420px,100%);padding:22px;border:1px solid rgba(255,255,255,.2);
-        border-radius:24px;background:linear-gradient(150deg,#123f73,#07172e 78%);
-        color:#fff;box-shadow:0 26px 70px rgba(0,0,0,.48)
-      }
-      .ang-account-dialog h3{margin:0 0 8px;font-size:23px}
-      .ang-account-dialog p{margin:0;color:rgba(255,255,255,.78);line-height:1.55}
-      .ang-account-dialog-actions{display:grid;grid-template-columns:1fr 1fr;gap:9px;margin-top:18px}
-      .ang-account-dialog-actions button{min-height:44px;border-radius:14px;border:1px solid rgba(255,255,255,.22);font-weight:950}
-      .ang-account-dialog-actions button:first-child{background:rgba(255,255,255,.1);color:#fff}
-      .ang-account-dialog-actions button:last-child{background:#fff;color:#123f73}
-
-      /* ===== Business 中卡：暗紫色修正｜2026-07-22 ===== */
-      /* 收合時維持 Business 專屬暗紫；展開抽拉內容仍沿用商務藍。 */
-      .manager-card[data-manager-card="business"]:not(.expanded){
-        border-color:rgba(139,103,210,.68)!important;
-        background:
-          radial-gradient(circle at 18% 0%,rgba(117,75,187,.24),transparent 46%),
-          linear-gradient(155deg,rgba(42,21,78,.98),rgba(14,6,29,.995) 78%)!important;
-        box-shadow:
-          inset 0 1px 0 rgba(255,255,255,.14),
-          0 18px 42px rgba(10,4,25,.46)!important;
-      }
-      .landing:not(.night) .manager-card[data-manager-card="business"]:not(.expanded){
-        border-color:rgba(118,86,184,.58)!important;
-        background:
-          radial-gradient(circle at 18% 0%,rgba(115,79,176,.24),transparent 46%),
-          linear-gradient(155deg,rgba(47,26,85,.97),rgba(18,9,35,.985) 80%)!important;
-      }
-
-
-      /* ===== 暗夜版統一、磁吸滑動與登入卡降亮度｜2026-07-22 ===== */
-      /* 暗夜版：每張卡最上方握把列統一為商務藍；卡片本身原有配色不改。 */
-      .landing.night .manager-card-toggle{
-        background:linear-gradient(180deg,rgba(24,76,126,.96),rgba(8,35,70,.98))!important;
-        border-bottom-color:rgba(85,165,235,.52)!important;
-        color:#edf7ff!important;
-        box-shadow:inset 0 1px 0 rgba(255,255,255,.12),0 8px 18px rgba(0,0,0,.20)!important;
-      }
-      .landing.night .manager-card-toggle .pull-bar{
-        background:#8ca8c8!important;
-        box-shadow:0 0 10px rgba(92,171,238,.32)!important;
-      }
-
-      /* 暗夜登入卡：橘色只作外框與識別，內容維持暗黑玻璃，不再整片發亮。 */
-      .landing.night .manager-card.login-unified{
-        border-color:rgba(255,132,30,.92)!important;
-        background:
-          radial-gradient(circle at 18% 0%,rgba(207,91,17,.16),transparent 44%),
-          linear-gradient(155deg,rgba(31,15,7,.985),rgba(5,8,17,.995) 78%)!important;
-        box-shadow:inset 0 1px 0 rgba(255,190,122,.12),0 20px 48px rgba(0,0,0,.58)!important;
-      }
-      .landing.night .manager-card.login-unified .login-card-body,
-      .landing.night .manager-card.login-unified.login-identifier-valid:not(.login-system-confirmed) .login-card-body,
-      .landing.night .manager-card.login-unified.login-verifying .login-card-body,
-      .landing.night .manager-card.login-unified.login-awaiting-verification .login-card-body{
-        --login-state-rgb:207,91,17;
-        color:#fff!important;
-        background:
-          radial-gradient(circle at 12% 0%,rgba(207,91,17,.12),transparent 42%),
-          linear-gradient(145deg,rgba(34,24,22,.82),rgba(7,9,17,.92))!important;
-        border-color:rgba(255,137,50,.74)!important;
-        box-shadow:inset 0 1px 0 rgba(255,255,255,.10),inset 0 0 28px rgba(207,91,17,.08),0 0 22px rgba(0,0,0,.46)!important;
-      }
-      .landing.night .manager-card.login-unified input{
-        color:#f6f8ff!important;
-        background:rgba(255,255,255,.085)!important;
-        border-color:rgba(255,158,82,.34)!important;
-      }
-
-      /* Business 中卡在暗夜版維持深紫黑，不受其他規則洗亮。 */
-      .landing.night .manager-card.business:not(.expanded),
-      .landing.night .manager-card[data-manager-card="business"]:not(.expanded){
-        border-color:rgba(139,103,210,.68)!important;
-        background:
-          radial-gradient(circle at 18% 0%,rgba(117,75,187,.22),transparent 46%),
-          linear-gradient(155deg,rgba(42,21,78,.985),rgba(12,5,26,.998) 80%)!important;
-        box-shadow:inset 0 1px 0 rgba(255,255,255,.12),0 18px 42px rgba(7,3,18,.56)!important;
-      }
-
-      /* 五方案選擇格不顯示金額；保留原本卡片底色與金銀銅文字層級。 */
-      .ang-plan-tab small{display:none!important}
-      .ang-plan-tab{align-content:center}
-
-      /* 不讓卡片跟著手指拖曳；只辨識方向，放手後磁吸到目標。 */
-      .manager-carousel{
-        overflow-x:hidden!important;
-        scroll-snap-type:none!important;
-        touch-action:none!important;
-        -webkit-overflow-scrolling:auto!important;
-      }
-      .manager-card{touch-action:none!important}
-
     </style>
   </head>
 
@@ -483,38 +294,36 @@
 
         var plans = [
           {
-            key: 'basic', family: 'BUSINESS', familyZh: '企業方案', name: 'Basic', price: 'NT$299／月', icon: '▥', rgb: '33,17,62', tier: 'copper',
+            key: 'basic', family: 'BUSINESS', name: 'Basic', price: 'NT$299／月', icon: '▥', rgb: '47,115,217',
             title: '核心管理先上線，團隊立即能用',
             description: '員工主檔、排班、定位打卡、QR／手動備援、週選休／月選休與出勤工時總覽，適合第一次把紙本或群組流程搬進系統的團隊。',
             tags: ['員工主檔', '排班發布', 'GPS／QR', '出勤總覽']
           },
           {
-            key: 'pro', family: 'BUSINESS', familyZh: '企業方案', name: 'Pro', price: 'NT$599／月', icon: '⌘', rgb: '33,17,62', tier: 'silver',
+            key: 'pro', family: 'BUSINESS', name: 'Pro', price: 'NT$599／月', icon: '⌘', rgb: '233,78,155',
             title: '從排班出勤，進一步完成協作管理',
             description: '包含 Basic，並加入請假與補卡審核、公告留言、完整薪資、NFC、臨時支援打卡點，以及主管與角色權限。',
             tags: ['審核流程', '薪資管理', 'NFC', '支援打卡']
           },
           {
-            key: 'premium', family: 'BUSINESS', familyZh: '企業方案', name: 'Premium', price: 'NT$999／月', icon: '◆', rgb: '33,17,62', tier: 'gold',
+            key: 'premium', family: 'BUSINESS', name: 'Premium', price: 'NT$999／月', icon: '◆', rgb: '72,32,122',
             title: '完整權限、彈性最高，支援多店成長',
             description: '包含 Pro，開放多公司／多分店、完整七層職級、進階績效分析、自訂簽核、安全稽核與最高 Module 擴充彈性。',
             tags: ['多分店', '七層職級', '進階報表', 'Module']
           },
           {
-            key: 'solo', family: 'PERSONAL', familyZh: '個人方案', name: 'Solo', price: 'NT$69／月', icon: '◎', rgb: '143,23,79', tier: 'silver',
+            key: 'solo', family: 'PERSONAL', name: 'Solo', price: 'NT$69／月', icon: '◎', rgb: '120,99,217',
             title: '把自己的工時、排班與收入整理清楚',
             description: '個人排班打卡、完整工時、週選休／月選休、請假補卡、加班紀錄、薪資收入、週領／月領、提醒與歷史查詢。',
             tags: ['個人排班', '工時紀錄', '薪資收入', '提醒備份']
           },
           {
-            key: 'performance', family: 'PERSONAL', familyZh: '個人方案', name: 'Performance', price: 'NT$149／月', icon: '↗', rgb: '143,23,79', tier: 'gold',
+            key: 'performance', family: 'PERSONAL', name: 'Performance', price: 'NT$149／月', icon: '↗', rgb: '201,77,181',
             title: '從記錄工作，進一步看見成長',
             description: '包含 Solo 的日常管理，再加入目標 KPI、績效週期、自評與主管評核、一對一回饋、趨勢分析與績效報表。',
             tags: ['KPI 目標', '績效週期', '成長趨勢', '完整報表']
           }
         ];
-
-        window.__ANG_ENTRY_PLANS__ = plans;
 
         var activeIndex = 0;
         var autoTimer = 0;
@@ -555,9 +364,7 @@
               '<article class="ang-plan-showcase" aria-live="polite">',
                 '<div class="ang-plan-visual" aria-hidden="true"><span>' + escapeHtml(plan.icon) + '</span></div>',
                 '<div class="ang-plan-copy">',
-                  '<div class="ang-plan-family-title family-' + plan.family.toLowerCase() + '">' + escapeHtml(plan.family) + '</div>',
-                  '<div class="ang-plan-family-subtitle">' + escapeHtml(plan.familyZh || '') + '</div>',
-                  '<div class="ang-plan-tier-badge metal-' + escapeHtml(plan.tier || 'silver') + '">' + escapeHtml(plan.family + ' ' + plan.name) + '</div>',
+                  '<small>' + escapeHtml(plan.family + ' / ' + plan.name) + '</small>',
                   '<h3>' + escapeHtml(plan.title) + '</h3>',
                   '<p>' + escapeHtml(plan.description) + '</p>',
                   '<div class="ang-plan-tags">' + plan.tags.map(function (tag) { return '<span>' + escapeHtml(tag) + '</span>'; }).join('') + '</div>',
@@ -565,7 +372,7 @@
               '</article>',
               '<div class="ang-plan-tabs" role="tablist" aria-label="切換五個方案">',
                 plans.map(function (item, itemIndex) {
-                  return '<button type="button" role="tab" class="ang-plan-tab metal-' + escapeHtml(item.tier || 'silver') + (itemIndex === activeIndex ? ' active' : '') + '" data-plan-index="' + itemIndex + '" style="--tab-rgb:' + item.rgb + '" aria-selected="' + (itemIndex === activeIndex ? 'true' : 'false') + '"><strong>' + escapeHtml(item.family + ' ' + item.name) + '</strong><small>' + escapeHtml(item.price) + '</small></button>';
+                  return '<button type="button" role="tab" class="ang-plan-tab' + (itemIndex === activeIndex ? ' active' : '') + '" data-plan-index="' + itemIndex + '" style="--tab-rgb:' + item.rgb + '" aria-selected="' + (itemIndex === activeIndex ? 'true' : 'false') + '"><strong>' + escapeHtml(item.name) + '</strong><small>' + escapeHtml(item.price) + '</small></button>';
                 }).join(''),
               '</div>',
               '<div class="ang-five-plan-actions">',
@@ -638,146 +445,6 @@
         else boot();
       }());
     </script>
-
-    <script id="ang-entry-login-flow-patch">
-      (function(){
-        'use strict';
-        var selectedPlan=null;
-        var planColors={
-          basic:{main:'#21113e',accent:'#c77a46'},
-          pro:{main:'#21113e',accent:'#c9d0dc'},
-          premium:{main:'#21113e',accent:'#e7c66f'},
-          solo:{main:'#8f174f',accent:'#c9d0dc'},
-          performance:{main:'#8f174f',accent:'#e7c66f'},
-          lite_business:{main:'#123f73',accent:'#e7c66f'},
-          lite_personal:{main:'#123f73',accent:'#c9d0dc'}
-        };
-        function dialog(title,message,leftText,rightText,onLeft,onRight){
-          var old=document.querySelector('.ang-account-dialog-backdrop'); if(old)old.remove();
-          var wrap=document.createElement('div'); wrap.className='ang-account-dialog-backdrop';
-          wrap.innerHTML='<section class="ang-account-dialog" role="dialog" aria-modal="true"><h3>'+title+'</h3><p>'+message+'</p><div class="ang-account-dialog-actions"><button type="button" data-left>'+leftText+'</button><button type="button" data-right>'+rightText+'</button></div></section>';
-          document.body.appendChild(wrap);
-          wrap.querySelector('[data-left]').onclick=function(){wrap.remove();onLeft&&onLeft()};
-          wrap.querySelector('[data-right]').onclick=function(){wrap.remove();onRight&&onRight()};
-        }
-        function focusAccount(){
-          var input=document.querySelector('input[type="email"],input[autocomplete="email"],input[placeholder*="Email" i],input[placeholder*="帳號"]');
-          if(input){input.focus();try{input.select()}catch(e){}}
-        }
-        function goPlans(){
-          var card=document.querySelector('[data-manager-card="business"],[data-manager-card="personal"]');
-          if(card){var c=card.closest('.manager-carousel');if(c)c.scrollTo({left:Math.max(0,card.offsetLeft-(c.clientWidth-card.clientWidth)/2),behavior:'smooth'})}
-        }
-        function registerDirect(){
-          window.dispatchEvent(new CustomEvent('ang:begin-registration',{detail:{plan:selectedPlan}}));
-          document.documentElement.dataset.angRegistration='1';
-        }
-        function directLogin(){
-          window.dispatchEvent(new CustomEvent('ang:direct-login',{detail:{plan:selectedPlan}}));
-        }
-        function handleAccountStatus(detail){
-          detail=detail||{};
-          var exists=detail.exists===true||detail.registered===true||detail.status==='registered';
-          if(selectedPlan){
-            if(exists){
-              dialog('此帳號已註冊','要直接登入原有帳號，還是更換另一個帳號？','更換帳號','直接登入',focusAccount,directLogin);
-            }else{
-              registerDirect();
-            }
-          }else if(!exists){
-            dialog('查無此帳號或 Email','目前找不到已註冊的資料。你可以重新輸入，或先查看適合的方案。','重新輸入','查看方案',focusAccount,goPlans);
-          }
-        }
-        function patchButtons(){
-          document.querySelectorAll('button').forEach(function(btn){
-            var txt=(btn.textContent||'').trim();
-            var nearInput=btn.parentElement&&btn.parentElement.querySelector('input');
-            if(nearInput && (/^[✓✔勾]$/.test(txt)||/驗證|確認|GO|Go|go/.test(txt))){
-              btn.textContent='Enter'; btn.classList.add('ang-enter-button');
-              var key=selectedPlan&&selectedPlan.key; var color=planColors[key]||{main:'#123f73',accent:'#e7c66f'};
-              btn.style.setProperty('--go-main',color.main); btn.style.setProperty('--go-accent',color.accent);
-            }
-          });
-          document.querySelectorAll('[data-go-card]').forEach(function(btn){
-            if(btn.dataset.angPlanBound)return; btn.dataset.angPlanBound='1';
-            btn.addEventListener('click',function(){
-              var shell=btn.closest('.ang-five-plan-shell'); if(!shell)return;
-              var active=shell.querySelector('.ang-plan-tab.active');
-              if(active){var idx=Number(active.getAttribute('data-plan-index'));var all=window.__ANG_ENTRY_PLANS__||[];selectedPlan=all[idx]||selectedPlan;sessionStorage.setItem('ANG_SELECTED_PLAN',JSON.stringify(selectedPlan||{}));}
-            },true);
-          });
-        }
-        try{selectedPlan=JSON.parse(sessionStorage.getItem('ANG_SELECTED_PLAN')||'null')}catch(e){}
-        window.ANG_HR_ENTRY=window.ANG_HR_ENTRY||{};
-        window.ANG_HR_ENTRY.handleAccountStatus=handleAccountStatus;
-        window.ANG_HR_ENTRY.getSelectedPlan=function(){return selectedPlan};
-        window.addEventListener('ang:account-status',function(e){handleAccountStatus(e.detail)});
-        new MutationObserver(patchButtons).observe(document.body,{childList:true,subtree:true});
-        patchButtons();
-      }());
-    </script>
-
-
-    <script id="ang-entry-magnetic-gesture-patch">
-      (function(){
-        'use strict';
-        var threshold=10;
-        var busy=false;
-        function cards(carousel){return Array.prototype.slice.call(carousel.querySelectorAll('.manager-card'))}
-        function currentIndex(carousel,list){
-          var center=carousel.scrollLeft+carousel.clientWidth/2, best=0, dist=Infinity;
-          list.forEach(function(card,i){var c=card.offsetLeft+card.offsetWidth/2,d=Math.abs(c-center);if(d<dist){dist=d;best=i}});
-          return best;
-        }
-        function centerCard(carousel,card){
-          if(!card)return;
-          var left=Math.max(0,card.offsetLeft-(carousel.clientWidth-card.clientWidth)/2);
-          busy=true;
-          carousel.scrollTo({left:left,behavior:'smooth'});
-          window.setTimeout(function(){busy=false},340);
-        }
-        function toggleVertical(card,up){
-          if(!card)return;
-          var expanded=card.classList.contains('expanded');
-          var toggle=card.querySelector('.manager-card-toggle');
-          if(up&&!expanded&&toggle)toggle.click();
-          if(!up&&expanded&&toggle)toggle.click();
-        }
-        function install(carousel){
-          if(!carousel||carousel.dataset.angMagneticSwipe==='1')return;
-          carousel.dataset.angMagneticSwipe='1';
-          var sx=0,sy=0,tracking=false;
-          carousel.addEventListener('touchstart',function(e){
-            if(!e.touches||!e.touches[0]||busy)return;
-            sx=e.touches[0].clientX;sy=e.touches[0].clientY;tracking=true;
-          },{capture:true,passive:true});
-          carousel.addEventListener('touchmove',function(e){
-            if(tracking)e.preventDefault();
-          },{capture:true,passive:false});
-          carousel.addEventListener('touchend',function(e){
-            if(!tracking)return;tracking=false;
-            var t=e.changedTouches&&e.changedTouches[0];if(!t)return;
-            var dx=t.clientX-sx,dy=t.clientY-sy;
-            if(Math.max(Math.abs(dx),Math.abs(dy))<threshold)return;
-            e.preventDefault();e.stopPropagation();
-            var list=cards(carousel),idx=currentIndex(carousel,list),card=list[idx];
-            if(Math.abs(dx)>=Math.abs(dy)){
-              if(card&&card.classList.contains('expanded')){var tg=card.querySelector('.manager-card-toggle');if(tg)tg.click()}
-              /* 手指往右＝前一張；手指往左＝下一張。 */
-              idx=dx>0?Math.max(0,idx-1):Math.min(list.length-1,idx+1);
-              window.setTimeout(function(){centerCard(carousel,list[idx])},30);
-            }else{
-              toggleVertical(card,dy<0);
-            }
-          },{capture:true,passive:false});
-          carousel.addEventListener('touchcancel',function(){tracking=false},{capture:true,passive:true});
-        }
-        function boot(){document.querySelectorAll('.manager-carousel').forEach(install)}
-        if(document.readyState==='loading')document.addEventListener('DOMContentLoaded',boot,{once:true});else boot();
-        new MutationObserver(boot).observe(document.body,{childList:true,subtree:true});
-      }());
-    </script>
-
     <script>
       (function () {
         if (!('serviceWorker' in navigator)) return;

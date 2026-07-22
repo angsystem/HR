@@ -1,0 +1,24 @@
+/* ANG HR｜六方案集中展示＋方案卡精簡 */
+.manager-card.intro.expanded .feature-modal-inline{padding-top:10px!important}
+.ang-plan-showcase{display:grid;gap:14px;width:100%;max-width:960px;margin:0 auto}
+.ang-plan-showcase-head{text-align:center;padding:4px 12px 0}
+.ang-plan-showcase-head span{font-size:.72rem;letter-spacing:.14em;color:#aab5d2}
+.ang-plan-showcase-head h2{margin:4px 0 5px;font-size:clamp(1.35rem,4vw,2rem)}
+.ang-plan-showcase-head p{margin:0;color:rgba(235,240,255,.72);font-size:.86rem}
+.ang-plan-showcase-detail{display:grid;grid-template-columns:1fr auto;gap:14px;align-items:end;padding:16px 18px;border:1px solid color-mix(in srgb,var(--plan-accent) 65%,transparent);border-radius:20px;background:linear-gradient(135deg,color-mix(in srgb,var(--plan-metal) 18%,rgba(8,13,28,.88)) 0 49.5%,color-mix(in srgb,var(--plan-accent) 20%,rgba(8,13,28,.88)) 50.5% 100%);box-shadow:-10px 0 25px color-mix(in srgb,var(--plan-metal) 18%,transparent),10px 0 25px color-mix(in srgb,var(--plan-accent) 20%,transparent)}
+.ang-plan-showcase-detail span{font-size:.72rem;letter-spacing:.12em;color:#d9e2ff}
+.ang-plan-showcase-detail h3{margin:6px 0 10px;font-size:1rem;line-height:1.45}
+.ang-plan-showcase-detail ul{display:flex;flex-wrap:wrap;gap:7px;padding:0;margin:0;list-style:none}
+.ang-plan-showcase-detail li{padding:6px 9px;border-radius:999px;background:rgba(255,255,255,.08);font-size:.72rem;color:#e7ebfb}
+.ang-plan-showcase-detail button{min-width:112px;min-height:43px;border:1px solid rgba(255,255,255,.2);border-radius:12px;background:linear-gradient(135deg,var(--plan-metal),var(--plan-accent));color:#fff;font-weight:800}
+.ang-plan-showcase-grid{display:grid;grid-template-columns:repeat(3,minmax(0,1fr));gap:10px}
+.ang-plan-showcase-card{position:relative;min-height:156px;padding:13px 11px 12px;border:1px solid color-mix(in srgb,var(--plan-accent) 70%,transparent);border-radius:18px;background:linear-gradient(155deg,color-mix(in srgb,var(--plan-accent) 26%,rgba(10,17,37,.9)),rgba(8,13,28,.9));color:#fff;text-align:left;overflow:hidden;box-shadow:0 12px 26px rgba(0,0,0,.2);transition:transform .18s ease,border-color .18s ease,box-shadow .18s ease}
+.ang-plan-showcase-card.active{transform:translateY(-2px);border-color:var(--plan-metal);box-shadow:0 0 0 2px color-mix(in srgb,var(--plan-metal) 35%,transparent),0 16px 34px rgba(0,0,0,.28)}
+.ang-plan-showcase-card .ang-plan-showcase-family{font-size:.63rem;letter-spacing:.11em;color:#d6ddf2}
+.ang-plan-showcase-card strong{display:block;margin-top:5px;font-size:1.05rem}
+.ang-plan-showcase-card small{display:block;margin-top:2px;color:#f4dce8;font-size:.72rem}
+.ang-plan-showcase-card p{margin:10px 0 0;padding-right:40px;font-size:.72rem;line-height:1.55;color:rgba(239,243,255,.76)}
+.ang-plan-showcase-card i{position:absolute;right:10px;bottom:10px;width:38px;height:38px;border-radius:50%;display:grid;place-items:center;border:3px double rgba(255,255,255,.55);background:var(--plan-metal);color:#161616;font-style:normal;font-weight:900;box-shadow:0 0 16px color-mix(in srgb,var(--plan-metal) 55%,transparent)}
+.manager-card.ang-compact-plan-card .ang-plan-detail-v2,.manager-card.ang-compact-plan-card .ang-v070-plan-summary{display:none!important}
+.manager-card.ang-compact-plan-card.expanded .manager-card-body>p{display:none!important}
+@media(max-width:700px){.ang-plan-showcase-grid{grid-template-columns:repeat(2,minmax(0,1fr))}.ang-plan-showcase-detail{grid-template-columns:1fr}.ang-plan-showcase-detail button{width:100%}}
