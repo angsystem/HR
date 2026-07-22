@@ -29,7 +29,7 @@
     <link rel="stylesheet" crossorigin href="./assets/index-C1fEYMkG.css" />
     <link rel="stylesheet" href="./manager-welcome.css?v=20260722-v070-glass-detail-v3" />
     <link rel="stylesheet" href="./social-login-providers.css?v=20260722-v070-glass-detail-v3" />
-    <link rel="stylesheet" href="./index-card-rules.css?v=20260722-index-card-rules-v1" />
+    <link rel="stylesheet" href="./index-card-rules.css?v=20260722-card-visual-final-v2" />
   </head>
 
   <body>
@@ -37,13 +37,13 @@
     <noscript>ANG HR 需要啟用 JavaScript 才能使用。</noscript>
 
     <script defer src="./manager-welcome.js?v=20260722-v070-glass-detail-v3"></script>
-    <script defer src="./index-card-rules.js?v=20260722-index-card-rules-v1"></script>
+    <script defer src="./index-card-rules.js?v=20260722-card-visual-final-v2"></script>
     <script>
       (function () {
         if (!('serviceWorker' in navigator)) return;
         if (location.protocol !== 'https:' && location.hostname !== 'localhost' && location.hostname !== '127.0.0.1') return;
         window.addEventListener('load', function () {
-          navigator.serviceWorker.register('./sw.js?v=20260722-index-card-rules-v1', { scope: './' }).catch(function (error) {
+          navigator.serviceWorker.register('./sw.js?v=20260722-card-visual-final-v2', { scope: './' }).catch(function (error) {
             console.warn('[ANG HR PWA] Service Worker 註冊失敗：', error);
           });
         });
