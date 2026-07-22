@@ -1,0 +1,19 @@
+ANG HR v0.7.0｜整合驗證
+Build：20260722-v070-integrated
+
+程式檢查：
+- manager-welcome.js：Node 語法檢查通過
+- app/manager-welcome.js：Node 語法檢查通過
+- assets/index-DwNMzswZ.js：Node 語法檢查通過
+- app/assets/index-DwNMzswZ.js：Node 語法檢查通過
+- Web 與 App 入口共用相同 v0.7.0 CSS／JS／bundle
+- ZIP 完整性於封裝後檢查
+
+已整合：
+- entry-flow-2 無密碼登入、公司／方案選擇、方案驗證即註冊、付款與基本資料流程
+- 卡片首尾完整置中
+- 日光／夜光透明玻璃卡規格
+- 登入黃色／成功綠色／失敗紅色狀態
+- 完整總介紹與方案功能清單
+- 方案 + Modules 與人數模組介紹
+- Basic／Pro／Premium 不顯示固定人數

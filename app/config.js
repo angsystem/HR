@@ -20,7 +20,7 @@
   var GOOGLE_CLIENT_ID = '660707205594-74rvsq9s1h87v1s5pi9nvtms1e4qipat.apps.googleusercontent.com';
   var LINE_CHANNEL_ID = '2010402308';
   var FACEBOOK_APP_ID = '1053775314267018';
-  var BUILD_VERSION = 'v0.6.0-20260722-1005';
+  var BUILD_VERSION = 'v0.7.0-20260722-integrated';
 
   function cleanBase(url){
     return String(url || '').trim().replace(/\/+$/, '');
