@@ -29,7 +29,8 @@
     <link rel="stylesheet" crossorigin href="./assets/index-C1fEYMkG.css" />
     <link rel="stylesheet" href="./manager-welcome.css?v=20260722-v070-glass-detail-v3" />
     <link rel="stylesheet" href="./social-login-providers.css?v=20260722-v070-glass-detail-v3" />
-    <link rel="stylesheet" href="./index-card-rules.css?v=20260722-viewport-lock-v1" />
+    <link rel="stylesheet" href="./index-card-rules.css?v=20260722-clean-theme-v2" />
+    <link rel="stylesheet" href="./index-plan-showcase.css?v=20260722-clean-theme-v2" />
 
     <style id="ang-entry-five-plan-patch">
       /* ANG HR｜入口第一張卡：五個方案介紹＋iPhone 固定視窗修復｜2026-07-22 */
@@ -467,6 +468,21 @@
       .manager-card{touch-action:none!important}
 
     </style>
+  
+    <style id="ang-clean-theme-guard">
+      /* 最終保護：舊內嵌規則不得把 Premium 改成青色或高亮。 */
+      .landing.night .manager-card.business[data-plan="premium"] {
+        border-color: rgba(113,64,173,.84) !important;
+        background:
+          radial-gradient(circle at 16% 10%, rgba(113,64,173,.10), transparent 44%),
+          linear-gradient(155deg, rgba(9,5,16,.95), rgba(0,0,0,.90)) !important;
+        box-shadow: 0 0 14px rgba(113,64,173,.12), 0 20px 48px rgba(0,0,0,.54) !important;
+      }
+      .landing:not(.night) .manager-card.business[data-plan="premium"] {
+        border-color: rgba(203,183,235,.92) !important;
+      }
+    </style>
+
   </head>
 
   <body>
@@ -475,7 +491,8 @@
 
     <script defer src="./viewport-lock.js?v=20260722-viewport-lock-v1"></script>
     <script defer src="./manager-welcome.js?v=20260722-v070-glass-detail-v3"></script>
-    <script defer src="./index-card-rules.js?v=20260722-viewport-lock-v1"></script>
+    <script defer src="./index-card-rules.js?v=20260722-clean-theme-v2"></script>
+    <script defer src="./index-plan-showcase.js?v=20260722-clean-theme-v2"></script>
 
     <script id="ang-entry-five-plan-patch-script">
       (function () {

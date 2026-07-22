@@ -144,32 +144,94 @@
 /* ANG HR｜2026-07-22 主卡視覺與穩定性定稿 */
 :root {
   --ang-mayhem-orange: #ff7a1a;
-  --ang-basic-blue: #2f73d9;
-  --ang-pro-pink: #e94e9b;
-  --ang-premium-purple: #48207a;
+
+  /* 日光版：淡藍、淡粉、淡紫 */
+  --ang-day-basic: 174, 207, 255;
+  --ang-day-pro: 247, 184, 216;
+  --ang-day-premium: 203, 183, 235;
+
+  /* 暗夜版：亮藍、亮粉、亮深紫，但卡片底必須維持近黑 */
+  --ang-night-basic: 71, 148, 255;
+  --ang-night-pro: 255, 73, 163;
+  --ang-night-premium: 113, 64, 173;
+
+  --ang-app-height: 100dvh;
 }
 
-/* 主卡顏色：Basic 藍、Pro 桃紅、Premium 深紫；登入 MAYHEM 橘。 */
-.manager-card.business[data-plan='basic'],
-.manager-card.basic,
-.manager-card:has(.basic-option) {
-  --ang-main-card-rgb: 47, 115, 217;
-  border-color: rgba(47,115,217,.88) !important;
-  box-shadow: 0 0 28px rgba(47,115,217,.28), 0 22px 56px rgba(0,0,0,.28) !important;
+/* 主方案卡：日光版使用淡色；暗夜版使用亮色邊框，但卡片本體保持近黑。 */
+.landing:not(.night) .manager-card.business[data-plan='basic'],
+.landing:not(.night) .manager-card.basic,
+.landing:not(.night) .manager-card:has(.basic-option) {
+  --ang-main-card-rgb: var(--ang-day-basic);
+  border-color: rgba(var(--ang-day-basic), 0.88) !important;
+  background:
+    linear-gradient(155deg, rgba(244, 249, 255, 0.88), rgba(224, 237, 255, 0.72)) !important;
+  box-shadow:
+    0 12px 30px rgba(96, 145, 210, 0.15),
+    inset 0 1px 0 rgba(255, 255, 255, 0.72) !important;
 }
-.manager-card.business[data-plan='pro'],
-.manager-card.pro,
-.manager-card:has(.pro-option) {
-  --ang-main-card-rgb: 233, 78, 155;
-  border-color: rgba(233,78,155,.9) !important;
-  box-shadow: 0 0 28px rgba(233,78,155,.3), 0 22px 56px rgba(0,0,0,.28) !important;
+
+.landing:not(.night) .manager-card.business[data-plan='pro'],
+.landing:not(.night) .manager-card.pro,
+.landing:not(.night) .manager-card:has(.pro-option) {
+  --ang-main-card-rgb: var(--ang-day-pro);
+  border-color: rgba(var(--ang-day-pro), 0.9) !important;
+  background:
+    linear-gradient(155deg, rgba(255, 246, 251, 0.9), rgba(250, 224, 239, 0.72)) !important;
+  box-shadow:
+    0 12px 30px rgba(213, 105, 157, 0.14),
+    inset 0 1px 0 rgba(255, 255, 255, 0.74) !important;
 }
-.manager-card.business[data-plan='premium'],
-.manager-card.premium,
-.manager-card:has(.premium-option) {
-  --ang-main-card-rgb: 72, 32, 122;
-  border-color: rgba(112,66,190,.92) !important;
-  box-shadow: 0 0 30px rgba(72,32,122,.4), 0 22px 56px rgba(0,0,0,.3) !important;
+
+.landing:not(.night) .manager-card.business[data-plan='premium'],
+.landing:not(.night) .manager-card.premium,
+.landing:not(.night) .manager-card:has(.premium-option) {
+  --ang-main-card-rgb: var(--ang-day-premium);
+  border-color: rgba(var(--ang-day-premium), 0.9) !important;
+  background:
+    linear-gradient(155deg, rgba(251, 247, 255, 0.9), rgba(233, 221, 249, 0.74)) !important;
+  box-shadow:
+    0 12px 30px rgba(126, 92, 171, 0.14),
+    inset 0 1px 0 rgba(255, 255, 255, 0.74) !important;
+}
+
+.landing.night .manager-card.business[data-plan='basic'],
+.landing.night .manager-card.basic,
+.landing.night .manager-card:has(.basic-option) {
+  --ang-main-card-rgb: var(--ang-night-basic);
+  border-color: rgba(var(--ang-night-basic), 0.86) !important;
+  background:
+    radial-gradient(circle at 18% 12%, rgba(var(--ang-night-basic), 0.11), transparent 42%),
+    linear-gradient(155deg, rgba(5, 9, 17, 0.94), rgba(0, 0, 0, 0.88)) !important;
+  box-shadow:
+    0 0 16px rgba(var(--ang-night-basic), 0.15),
+    0 20px 48px rgba(0, 0, 0, 0.5) !important;
+}
+
+.landing.night .manager-card.business[data-plan='pro'],
+.landing.night .manager-card.pro,
+.landing.night .manager-card:has(.pro-option) {
+  --ang-main-card-rgb: var(--ang-night-pro);
+  border-color: rgba(var(--ang-night-pro), 0.84) !important;
+  background:
+    radial-gradient(circle at 18% 12%, rgba(var(--ang-night-pro), 0.1), transparent 42%),
+    linear-gradient(155deg, rgba(12, 4, 9, 0.94), rgba(0, 0, 0, 0.88)) !important;
+  box-shadow:
+    0 0 16px rgba(var(--ang-night-pro), 0.14),
+    0 20px 48px rgba(0, 0, 0, 0.5) !important;
+}
+
+.landing.night .manager-card.business[data-plan='premium'],
+.landing.night .manager-card.premium,
+.landing.night .manager-card:has(.premium-option) {
+  --ang-main-card-rgb: var(--ang-night-premium);
+  border-color: rgba(var(--ang-night-premium), 0.82) !important;
+  background:
+    radial-gradient(circle at 18% 12%, rgba(var(--ang-night-premium), 0.11), transparent 42%),
+    linear-gradient(155deg, rgba(9, 4, 16, 0.95), rgba(0, 0, 0, 0.9)) !important;
+  box-shadow:
+    0 0 16px rgba(var(--ang-night-premium), 0.13),
+    0 20px 48px rgba(0, 0, 0, 0.52) !important;
 }
 
 .landing .manager-card.login-unified:not(.login-system-confirmed) {
@@ -193,10 +255,12 @@
 .landing .manager-card.login-unified.login-system-confirmed,
 .manager-card.login-unified.login-system-confirmed {
   color: #eafff3 !important;
-  border-color: rgba(32,112,76,.76) !important;
-  background: rgba(2,15,10,.86) !important;
-  background-image: linear-gradient(155deg, rgba(4,24,16,.86), rgba(0,10,7,.8)) !important;
-  box-shadow: 0 20px 54px rgba(0,18,12,.56), 0 0 26px rgba(31,134,89,.16) !important;
+  border-color: rgba(35, 126, 87, 0.72) !important;
+  background: rgba(2, 15, 10, 0.9) !important;
+  background-image: linear-gradient(155deg, rgba(4, 24, 16, 0.9), rgba(0, 8, 6, 0.88)) !important;
+  box-shadow:
+    0 20px 54px rgba(0, 18, 12, 0.58),
+    0 0 18px rgba(31, 134, 89, 0.11) !important;
 }
 .landing .manager-card.login-unified.login-system-confirmed .login-card-body {
   color: #eafff3 !important;
@@ -222,7 +286,7 @@
 /* 金／銀／銅只作用於方案內容按鈕。 */
 .manager-card :is(.premium-option,.performance-option,.business-lite) {
   --ang-plan-metal: 216,173,67;
-  background-color: rgba(216,173,67,.13) !important;
+  background-color: rgba(216, 173, 67, 0.14) !important;
   color: #ffe8a0 !important;
 }
 .manager-card :is(.pro-option,.solo-option,.personal-lite) {
@@ -243,7 +307,7 @@
 /* 展開與滑動穩定：只允許單一主卡對齊，不保留半格。 */
 .manager-carousel {
   scroll-snap-type: x mandatory !important;
-  scroll-behavior: smooth;
+  scroll-behavior: smooth !important;
   overscroll-behavior-x: contain;
 }
 .manager-carousel > .manager-card,
@@ -276,29 +340,43 @@
   justify-content: center;
 }
 
-/* ANG HR 2026-07-22｜暗夜金屬透明卡片最終覆寫 */
-.landing.night .manager-card {
-  background: linear-gradient(155deg, rgba(4,7,14,.72), rgba(0,0,0,.48)) !important;
-  border: 1px solid rgba(196,202,214,.62) !important;
-  box-shadow: inset 0 1px 0 rgba(255,255,255,.12), 0 18px 48px rgba(0,0,0,.46) !important;
-  backdrop-filter: blur(20px) saturate(.82) !important;
-  -webkit-backdrop-filter: blur(20px) saturate(.82) !important;
+/* 日光版內層：淡色玻璃，不使用黑底。 */
+.landing:not(.night) .manager-card .manager-card-body,
+.landing:not(.night) .manager-card .login-card-body,
+.landing:not(.night) .manager-card .free-card-body,
+.landing:not(.night) .manager-card .personal-card-body,
+.landing:not(.night) .manager-card .business-card-body {
+  background: rgba(255, 255, 255, 0.42) !important;
+  box-shadow: inset 0 1px 0 rgba(255, 255, 255, 0.76) !important;
+  backdrop-filter: blur(12px) !important;
+  -webkit-backdrop-filter: blur(12px) !important;
 }
+
+/* 暗夜版共用：接近黑色的透明卡體，只保留非常淡的色彩渲染。 */
+.landing.night .manager-card {
+  background:
+    linear-gradient(155deg, rgba(5, 7, 13, 0.94), rgba(0, 0, 0, 0.88)) !important;
+  box-shadow:
+    inset 0 1px 0 rgba(255, 255, 255, 0.055),
+    0 18px 48px rgba(0, 0, 0, 0.5) !important;
+  backdrop-filter: blur(20px) saturate(0.78) !important;
+  -webkit-backdrop-filter: blur(20px) saturate(0.78) !important;
+}
+
 .landing.night .manager-card .manager-card-body,
 .landing.night .manager-card .login-card-body,
 .landing.night .manager-card .free-card-body,
 .landing.night .manager-card .personal-card-body,
 .landing.night .manager-card .business-card-body {
-  background: rgba(0,0,0,.24) !important;
-  box-shadow: inset 0 1px 0 rgba(255,255,255,.05) !important;
+  background: rgba(0, 0, 0, 0.34) !important;
+  box-shadow: inset 0 1px 0 rgba(255, 255, 255, 0.045) !important;
   backdrop-filter: blur(14px) !important;
   -webkit-backdrop-filter: blur(14px) !important;
 }
-/* 主方案卡仍保留各自主色，內部維持透明黑。 */
-.landing.night .manager-card.business[data-plan='basic'] { border-color: rgba(47,115,217,.92) !important; }
-.landing.night .manager-card.business[data-plan='pro'] { border-color: rgba(233,78,155,.94) !important; }
-.landing.night .manager-card.business[data-plan='premium'] { border-color: rgba(92,42,150,.96) !important; }
-.landing.night .manager-card.login-unified:not(.login-system-confirmed) { border-color: rgba(255,122,26,.94) !important; }
+
+.landing.night .manager-card.login-unified:not(.login-system-confirmed) {
+  border-color: rgba(255, 122, 26, 0.86) !important;
+}
 
 /* 移除方案內的大型圖文介紹框，入口卡直接承載介紹，騰出下方格子空間。 */
 .manager-card .ang-plan-detail-v2 { display:none !important; }
@@ -356,18 +434,13 @@
 .manager-card.login-unified .social-login-row .line-login .provider-icon { width:27px !important;height:27px !important;color:#fff !important; }
 
 /* 卡片不漂移、不停半格。 */
-.manager-carousel { scroll-snap-type:x mandatory !important; scroll-behavior:smooth !important; }
 .manager-card { scroll-snap-align:center !important; scroll-snap-stop:always !important; }
-.manager-card.expanded { transform:none !important; animation:none !important; }
 .manager-card :is(.card-main-action,.personal-select-action,.business-select-action,.confirm-button,[data-confirm]) {
   position:relative !important; bottom:auto !important; margin-top:10px !important; min-height:44px !important;
   flex:0 0 auto !important; visibility:visible !important;
 }
 
 /* ANG HR 2026-07-22｜Web／PWA／App 全域視窗與鍵盤鎖定 */
-:root {
-  --ang-app-height: 100dvh;
-}
 html,
 body,
 #root {
@@ -444,4 +517,70 @@ html.ang-input-focused .manager-card {
 /* 底部按鈕永遠留在可視內容內。 */
 .manager-card :is(.card-main-action,.personal-select-action,.business-select-action,button[type='submit'],.login-verify-button) {
   flex-shrink: 0 !important;
+}
+
+/* =========================================================
+   ANG HR｜Business 共用主卡唯一控制區
+   日光：淡色玻璃｜暗夜：近黑透明＋淡色邊框
+   ========================================================= */
+
+.landing:not(.night) .manager-card.business {
+  background:
+    radial-gradient(circle at 16% 10%, rgba(203, 183, 235, 0.20), transparent 44%),
+    linear-gradient(155deg, rgba(252, 249, 255, 0.90), rgba(236, 226, 249, 0.72)) !important;
+  color: #17213a !important;
+  backdrop-filter: blur(16px) saturate(1.02) !important;
+  -webkit-backdrop-filter: blur(16px) saturate(1.02) !important;
+}
+
+.landing.night .manager-card.business {
+  background:
+    radial-gradient(circle at 16% 10%, rgba(113, 64, 173, 0.10), transparent 44%),
+    linear-gradient(155deg, rgba(9, 5, 16, 0.95), rgba(0, 0, 0, 0.90)) !important;
+  color: #f4f1fb !important;
+  backdrop-filter: blur(18px) saturate(0.78) !important;
+  -webkit-backdrop-filter: blur(18px) saturate(0.78) !important;
+}
+
+/* 內層一律透明；不得再替 Premium 額外加亮底。 */
+.landing.night .manager-card.business :is(
+  .manager-card-body,
+  .business-card-body,
+  .feature-modal-inline
+) {
+  background: rgba(0, 0, 0, 0.28) !important;
+  box-shadow: inset 0 1px 0 rgba(255, 255, 255, 0.045) !important;
+}
+
+.landing:not(.night) .manager-card.business :is(
+  .manager-card-body,
+  .business-card-body,
+  .feature-modal-inline
+) {
+  background: rgba(255, 255, 255, 0.34) !important;
+  box-shadow: inset 0 1px 0 rgba(255, 255, 255, 0.70) !important;
+}
+
+/* Business 三方案只有邊框與極淡渲染不同，卡體不改亮度。 */
+.landing.night .manager-card.business[data-plan="basic"] {
+  border-color: rgba(71, 148, 255, 0.86) !important;
+  box-shadow: 0 0 14px rgba(71, 148, 255, 0.13), 0 20px 48px rgba(0, 0, 0, 0.52) !important;
+}
+.landing.night .manager-card.business[data-plan="pro"] {
+  border-color: rgba(255, 73, 163, 0.84) !important;
+  box-shadow: 0 0 14px rgba(255, 73, 163, 0.12), 0 20px 48px rgba(0, 0, 0, 0.52) !important;
+}
+.landing.night .manager-card.business[data-plan="premium"] {
+  border-color: rgba(113, 64, 173, 0.84) !important;
+  box-shadow: 0 0 14px rgba(113, 64, 173, 0.12), 0 20px 48px rgba(0, 0, 0, 0.54) !important;
+}
+
+.landing:not(.night) .manager-card.business[data-plan="basic"] {
+  border-color: rgba(174, 207, 255, 0.92) !important;
+}
+.landing:not(.night) .manager-card.business[data-plan="pro"] {
+  border-color: rgba(247, 184, 216, 0.92) !important;
+}
+.landing:not(.night) .manager-card.business[data-plan="premium"] {
+  border-color: rgba(203, 183, 235, 0.92) !important;
 }

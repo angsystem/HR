@@ -4,7 +4,7 @@
   var PENDING_PLAN_KEY = 'ang_hr_pending_plan';
   var ENTRY_INTENT_KEY = 'ang_hr_entry_intent';
   var AUTH_MISSING_PATTERN = /not[_ -]?found|missing|unknown[_ -]?account|unregistered|not[_ -]?registered|no[_ -]?account|找不到|查無|不存在|未註冊|沒有這個帳號|沒有此帳號/i;
-  var VERSION = '20260722-index-card-rules-v1';
+  var VERSION = '20260722-index-card-rules-clean-v2';
   var gesture = null;
   var suppressClickUntil = 0;
 
@@ -456,7 +456,6 @@
     });
   }
 
-
   function installConstructionProviders() {
     var card = getLoginCard();
     if (!card) return;
@@ -508,7 +507,9 @@
       applyPlanTheme();
     }, 0);
   });
-  window.addEventListener('pageshow', start);
+  window.addEventListener('pageshow', function (event) {
+    if (event.persisted) start();
+  });
   window.addEventListener('storage', function (event) {
     if (event.key === PENDING_PLAN_KEY) applyPlanTheme();
   });

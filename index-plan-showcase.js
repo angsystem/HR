@@ -2,9 +2,9 @@
   'use strict';
 
   var PLANS = [
-    {key:'basic', family:'Business', title:'Basic', slogan:'無痛管理', accent:'#2f73d9', metal:'#b87333', summary:'員工主檔、排班、GPS／QR 打卡與基本出勤管理。', features:['員工主檔','排班發布','GPS／QR 打卡','基本出勤','基礎報表']},
-    {key:'pro', family:'Business', title:'Pro', slogan:'進階人氣', accent:'#e94e9b', metal:'#c8ced8', summary:'加入審核、薪資、加班津貼、支援打卡點與管理報表。', features:['包含 Basic','請假補卡審核','薪資與津貼','支援打卡點','進階權限','管理報表']},
-    {key:'premium', family:'Business', title:'Premium', slogan:'超值首選', accent:'#48207a', metal:'#d8ad43', summary:'多公司、多分店、七層權限、進階分析與最高擴充彈性。', features:['包含 Pro','多公司／多分店','完整七層權限','進階分析','自訂流程','安全稽核']},
+    {key:'basic', family:'Business', title:'Basic', slogan:'無痛管理', accent:'#4794ff', metal:'#b87333', summary:'員工主檔、排班、GPS／QR 打卡與基本出勤管理。', features:['員工主檔','排班發布','GPS／QR 打卡','基本出勤','基礎報表']},
+    {key:'pro', family:'Business', title:'Pro', slogan:'進階人氣', accent:'#ff49a3', metal:'#c8ced8', summary:'加入審核、薪資、加班津貼、支援打卡點與管理報表。', features:['包含 Basic','請假補卡審核','薪資與津貼','支援打卡點','進階權限','管理報表']},
+    {key:'premium', family:'Business', title:'Premium', slogan:'超值首選', accent:'#7140ad', metal:'#d8ad43', summary:'多公司、多分店、七層權限、進階分析與最高擴充彈性。', features:['包含 Pro','多公司／多分店','完整七層權限','進階分析','自訂流程','安全稽核']},
     {key:'lite', family:'Personal', title:'Lite', slogan:'個人體驗', accent:'#10b9ad', metal:'#c8ced8', summary:'免費體驗基礎打卡、工時、排班與 40 天歷史。', features:['個人打卡','工時統計','排班月曆','請假紀錄','40 天歷史']},
     {key:'solo', family:'Personal', title:'Solo', slogan:'基礎管理', accent:'#7863d9', metal:'#c8ced8', summary:'個人排班、工時、薪資收入、請假、提醒集中管理。', features:['個人排班','工時與加班','薪資簡估','週領／月領','提醒備忘']},
     {key:'performance', family:'Personal', title:'Performance', slogan:'完整規劃', accent:'#c94db5', metal:'#d8ad43', summary:'包含 Solo，再加入目標、KPI、績效與趨勢分析。', features:['包含 Solo','目標 KPI','績效週期','自評與回饋','趨勢分析','績效報表']}
