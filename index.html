@@ -702,10 +702,22 @@
               registerDirect();
             }
           }else if(!exists){
-            dialog('查無此帳號或 Email','目前找不到已註冊的資料。你可以重新輸入，或先查看適合的方案。','重新輸入','查看方案',focusAccount,goPlans);
+            dialog('找不到這個帳號','找不到這個帳號，請先進行註冊流程，或確認帳號／Email 後重試。','再試一次','我要註冊',focusAccount,registerDirect);
           }
         }
+        function patchAccountLabels(){
+          document.querySelectorAll('label,span,p,h1,h2,h3').forEach(function(el){
+            var t=(el.textContent||'').trim();
+            if(t==='個人識別碼'||t==='永久識別碼'||t==='PersonID') el.textContent='ANG HR 帳號';
+            if(t==='帳號'||t==='Email'||t==='帳號 / Email') el.textContent='帳號或 Email';
+          });
+          document.querySelectorAll('input').forEach(function(input){
+            var p=input.getAttribute('placeholder')||'';
+            if(/帳號|email/i.test(p)) input.setAttribute('placeholder','輸入帳號或 Email');
+          });
+        }
         function patchButtons(){
+          patchAccountLabels();
           document.querySelectorAll('button').forEach(function(btn){
             var txt=(btn.textContent||'').trim();
             var nearInput=btn.parentElement&&btn.parentElement.querySelector('input');
