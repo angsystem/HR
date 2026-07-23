@@ -1,0 +1,38 @@
+ANG HR System v0.6.0｜GAS 後端升級
+
+新增檔案：V060_Backend.js
+已修改：程式碼.js 最後一個 handleApi_ 路由
+
+新增 API actions：
+- setupV060Sheets
+- savePreselectSettings
+- getPreselectSettings
+- submitPreselect / employeePreselect
+- getEmployeePreselect
+- createSupportAssignment
+- listSupportAssignments
+- cancelSupportAssignment
+- saveEmergencyContact
+- getEmergencyContactHistory
+
+既有 action 更新：
+- employeeClock：先判斷有效支援指派與 GPS 距離，再寫入支援打卡資訊
+- getEmployeeBootstrapData：回傳 preselectSettings、preselectSubmission、activeSupport、version
+
+部署步驟：
+1. 將本資料夾全部推送到目前 Apps Script 專案。
+2. 在 Apps Script 編輯器執行 setupV060Sheets({company_id:'你的公司ID'}) 一次，授權建立資料表。
+3. 重新部署 Web App「新版本」，不要只儲存程式碼。
+4. 將新的 /exec URL 確認仍與前端 config.js 一致。
+
+新資料表：
+- 選休設定
+- 選休提交
+- 支援指派
+- 緊急聯絡人歷史
+- 個資查閱紀錄
+
+注意：
+- 不會清空舊資料。
+- 支援指派到期後自動不再生效。
+- 緊急聯絡人每次更換會關閉前一筆並新增新歷史，不覆蓋舊資料。

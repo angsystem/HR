@@ -1,0 +1,67 @@
+請執行 ANG HR P0-2。
+
+本階段只盤點，不修改正式程式檔案。
+
+只允許建立或更新：
+
+docs/AI_HANDOFF.md
+docs/API_ACTION_MATRIX.md
+
+不要修改其他檔案。
+不要重構。
+不要刪除檔案。
+不要進入 P0-3。
+不要直接合併 main。
+
+目標：
+建立前後端 API action 對照表。
+
+請檢查：
+
+1. 前端所有呼叫 GAS API 的 action
+2. GAS 後端 handleApi_ / doPost / doGet / router 內所有已支援的 action
+3. 前端有呼叫但後端不存在的 action
+4. 後端存在但前端沒有使用的 action
+5. action 命名相似但不一致的項目
+6. google.script.run 轉 fetch 後可能缺少對應 action 的項目
+
+輸出到 docs/API_ACTION_MATRIX.md，欄位包含：
+
+- 編號
+- action 名稱
+- 前端呼叫位置
+- 後端是否存在
+- 後端位置
+- 功能用途
+- 影響角色
+- 嚴重程度 P0 / P1 / P2 / P3
+- 建議處理方式
+- 是否建議第一批修
+
+同時更新 docs/AI_HANDOFF.md，格式：
+
+# ANG HR AI HANDOFF
+
+## 目前任務
+P0-2｜建立前後端 API action 對照表
+
+## 本次是否修改檔案
+只新增 / 更新文件，不修改正式程式檔案
+
+## 修改檔案清單
+docs/AI_HANDOFF.md
+docs/API_ACTION_MATRIX.md
+
+## 完成內容
+條列完成內容
+
+## 發現問題
+用 P0 / P1 / P2 / P3 分級列出
+
+## 需要 Enden 確認
+列出需要人工確認的項目
+
+## 下一步建議
+只建議 P0-3A，不要執行
+
+完成後請開 PR，等待人工審查。
