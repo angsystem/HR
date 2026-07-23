@@ -1,9 +1,0 @@
-ANG HR GitHub Pages v0.6.0
-
-請將本壓縮檔解壓縮後的所有內容，直接上傳到 GitHub Repository 根目錄。
-不要再多包一層資料夾。
-
-GitHub Pages 設定：
-Settings > Pages > Deploy from a branch > main > /(root)
-
-入口：index.html
