@@ -29,9 +29,50 @@
     <link rel="stylesheet" crossorigin href="./assets/index-C1fEYMkG.css" />
     <link rel="stylesheet" href="./manager-welcome.css?v=20260722-1005" />
     <link rel="stylesheet" href="./social-login-providers.css?v=20260722-1005" />
+
+    <style>
+      #pwa-install-shortcut {
+        position: fixed;
+        top: calc(env(safe-area-inset-top, 0px) + 12px);
+        left: calc(env(safe-area-inset-left, 0px) + 12px);
+        z-index: 2147483647;
+
+        width: 42px;
+        height: 42px;
+        display: grid;
+        place-items: center;
+
+        border: 1px solid rgba(255, 255, 255, 0.35);
+        border-radius: 50%;
+        background: rgba(10, 20, 48, 0.62);
+        color: #ffffff;
+        box-shadow: 0 8px 24px rgba(0, 0, 0, 0.22);
+        backdrop-filter: blur(14px);
+        -webkit-backdrop-filter: blur(14px);
+
+        font-size: 30px;
+        font-weight: 300;
+        line-height: 1;
+        text-decoration: none;
+        user-select: none;
+        -webkit-tap-highlight-color: transparent;
+        touch-action: manipulation;
+      }
+
+      #pwa-install-shortcut:active {
+        transform: scale(0.94);
+      }
+    </style>
   </head>
 
   <body>
+    <a
+      id="pwa-install-shortcut"
+      href="./install/"
+      aria-label="選擇 ANG HR 主畫面圖示"
+      title="加入主畫面"
+    >+</a>
+
     <div id="root"></div>
     <noscript>ANG HR 需要啟用 JavaScript 才能使用。</noscript>
 
