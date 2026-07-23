@@ -1,2 +1,0 @@
-ANG HR v0.7.0
-Build 20260722-v070-integrated
