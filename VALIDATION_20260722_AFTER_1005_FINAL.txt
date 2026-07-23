@@ -1,0 +1,13 @@
+ANG HR｜2026-07-22 10:05 後最終整合
+
+已實作：
+1. Facebook 固定顯示，順序 Google → LINE → Facebook → Apple。
+2. 日光方案卡改為淡紫半透明，底部功能文字全面加深。
+3. 日光登入卡未驗證／驗證中／等待連結時維持淡黃色半透明。
+4. 只有 ANG HR 後端明確回覆帳號存在，或返回可登入 token／系統人員 ID，才轉綠。
+5. 單純寄出驗證信、取得外部 Email、ok:true 或 success:true 不再直接轉綠。
+6. Lite 顯示為：方案類別 Lite、價格 Free、詳細方案 Personal／Business。
+7. Personal 展開卡固定採 Performance 高度，切到 Solo 不縮短。
+8. Root 與 app 目錄已同步；Service Worker 與 HTML 查詢版本已更新。
+
+版本標記：20260722-after1005-final
