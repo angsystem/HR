@@ -1,2 +1,2 @@
-ANG HR v0.7.0
-Build 20260722-v070-glass-detail-v3
+ANG HR v0.6.0
+Build: 2026-07-22-1005

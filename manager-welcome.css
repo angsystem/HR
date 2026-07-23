@@ -1128,12 +1128,11 @@
 .manager-card.login-unified .login-verify-button:disabled { opacity: .58; cursor: wait; }
 
 /* ========================================================================
-   2026-07-22 10:05 後入口最終整合
-   - 方案卡：淡紫半透明＋高對比文字
-   - 登入卡：日光未確認淡黃；後端確認 ANG HR 帳號後才轉綠
-   - Lite：類別 Lite／價格 Free／詳細方案 Personal、Business
+   2026-07-22 10:05 後入口修正
+   - 方案卡：淡紫半透明＋文字高對比
+   - 登入卡：未確認淡黃；系統確認帳號後才轉綠
    - Personal：Solo／Performance 固定同高
-   - Web／PWA：鎖定整頁，避免拖出空白背景
+   - PWA／Web App：鎖定整頁，避免拖出空白背景
    ======================================================================== */
 
 html,
@@ -1157,186 +1156,177 @@ body,
   overscroll-behavior: none;
 }
 
-/* 日光方案卡：真正的淡紫色玻璃底，仍看得到背景，但不讓天空吃掉文字。 */
+/* 日光方案卡：以淡紫色玻璃為主，不再讓天空背景吃掉文字。 */
 .landing.day .manager-card:is(.free, .personal, .business) {
-  color: #1e263c !important;
-  background-color: rgba(235, 224, 250, .82) !important;
-  background-image: linear-gradient(155deg, rgba(251, 247, 255, .90), rgba(214, 198, 244, .79)) !important;
-  border-color: rgba(112, 82, 165, .48) !important;
+  color: #202943 !important;
+  background:
+    linear-gradient(155deg, rgba(250, 246, 255, .91), rgba(226, 215, 249, .82)) !important;
+  border-color: rgba(124, 96, 176, .42) !important;
   box-shadow:
-    inset 0 1px 0 rgba(255, 255, 255, .84),
-    0 20px 50px rgba(67, 48, 111, .31) !important;
-  -webkit-backdrop-filter: blur(28px) saturate(1.08);
-  backdrop-filter: blur(28px) saturate(1.08);
+    inset 0 1px 0 rgba(255, 255, 255, .78),
+    0 20px 48px rgba(71, 54, 116, .28) !important;
+  -webkit-backdrop-filter: blur(24px) saturate(1.12);
+  backdrop-filter: blur(24px) saturate(1.12);
 }
 
 .landing.day .manager-card:is(.free, .personal, .business) .manager-card-body {
-  color: #1e263c !important;
-  background: linear-gradient(135deg, rgba(255, 255, 255, .76), rgba(229, 217, 249, .67)) !important;
-  border-color: rgba(102, 77, 149, .31) !important;
+  color: #202943 !important;
+  background:
+    linear-gradient(135deg, rgba(255, 253, 255, .76), rgba(233, 224, 250, .64)) !important;
+  border-color: rgba(115, 91, 159, .28) !important;
   box-shadow:
-    inset 0 1px 0 rgba(255, 255, 255, .80),
-    0 12px 30px rgba(63, 47, 101, .16) !important;
+    inset 0 1px 0 rgba(255, 255, 255, .76),
+    0 12px 30px rgba(70, 54, 111, .14) !important;
 }
 
 .landing.day .manager-card:is(.free, .personal, .business) :is(h2, h3, strong, b, label) {
-  color: #1d263d !important;
+  color: #202943 !important;
   opacity: 1 !important;
   text-shadow: none !important;
 }
 
-.landing.day .manager-card:is(.free, .personal, .business) :is(p, small, span, em, li) {
-  color: #434b61 !important;
+.landing.day .manager-card:is(.free, .personal, .business) :is(p, small, span, em) {
+  color: #4a526a !important;
   opacity: 1 !important;
   text-shadow: none !important;
 }
 
 .landing.day .manager-card:is(.free, .personal, .business) .plan-card-top > span {
-  color: #555c72 !important;
-  font-weight: 850;
+  color: #596078 !important;
+  font-weight: 800;
 }
 
 .landing.day .manager-card:is(.free, .personal, .business) .plan-card-top > b {
-  color: #67450f !important;
-  background: rgba(255, 231, 157, .79) !important;
-  border: 1px solid rgba(151, 98, 17, .31);
+  color: #714c12 !important;
+  background: rgba(255, 231, 160, .72) !important;
+  border: 1px solid rgba(166, 111, 24, .26);
 }
 
-/* 展開後的底部功能區全面加深；未包含項目仍可辨識，但不再淡到看不見。 */
+/* 底部功能清單不再使用看不清楚的淡粉字。 */
 .landing.day .manager-card:is(.personal, .business) .feature-area-heading strong {
-  color: #1d263c !important;
+  color: #202943 !important;
 }
 
 .landing.day .manager-card:is(.personal, .business) .feature-area-heading small {
-  color: #564e67 !important;
+  color: #5d536f !important;
 }
 
 .landing.day .manager-card:is(.personal, .business) :is(.performance-feature, .business-feature) {
-  color: #2d3449 !important;
+  color: #343b54 !important;
   opacity: 1 !important;
 }
 
 .landing.day .manager-card:is(.personal, .business) :is(.performance-feature, .business-feature).dimmed {
-  color: #60687b !important;
-  opacity: .94 !important;
-  background: rgba(255, 255, 255, .22) !important;
+  color: #687087 !important;
+  opacity: .9 !important;
+  background: rgba(255, 255, 255, .18) !important;
 }
 
-.landing.day .manager-card:is(.personal, .business) :is(.performance-feature, .business-feature) :is(span, small, strong, b) {
-  color: inherit !important;
-  opacity: 1 !important;
+.landing.day .manager-card:is(.personal, .business) :is(.performance-feature, .business-feature).included span {
+  color: #313750 !important;
+  font-weight: 750;
 }
 
-/* Lite 類別：上方為 Lite／Free，下方詳細方案只顯示 Personal／Business。 */
+/* Lite 類別下方詳細方案仍保留兩張卡，但畫面名稱簡化為 Personal／Business。 */
 .landing.day .manager-card.free :is(.personal-lite, .business-lite) {
-  color: #273047 !important;
-  background: rgba(255, 255, 255, .59) !important;
-  border-color: rgba(98, 72, 145, .31) !important;
+  color: #293149 !important;
+  background: rgba(255, 255, 255, .53) !important;
+  border-color: rgba(112, 91, 151, .26) !important;
 }
 
 .landing.day .manager-card.free :is(.personal-lite, .business-lite) strong {
-  color: #684710 !important;
+  color: #6f4a15 !important;
 }
 
-/* 日光登入卡：未驗證、驗證中、等待點連結，都維持淡黃色半透明。 */
-.landing.day .manager-card.login-unified,
-.landing.day .manager-card.login-unified.login-identifier-valid:not(.login-system-confirmed),
-.landing.day .manager-card.login-unified.login-verifying,
-.landing.day .manager-card.login-unified.login-awaiting-verification {
-  color: #382b10 !important;
-  background-color: rgba(247, 223, 150, .67) !important;
-  background-image: linear-gradient(155deg, rgba(255, 250, 218, .80), rgba(232, 192, 87, .60)) !important;
-  border-color: rgba(184, 128, 22, .71) !important;
+/* 登入卡：未驗證及驗證中一律維持淡黃色半透明。 */
+.landing .manager-card.login-unified,
+.landing .manager-card.login-unified.login-identifier-valid:not(.login-system-confirmed),
+.landing .manager-card.login-unified.login-verifying {
+  color: #392b0d !important;
+  background:
+    linear-gradient(155deg, rgba(255, 248, 207, .88), rgba(238, 203, 111, .72)) !important;
+  border-color: rgba(197, 143, 32, .72) !important;
   box-shadow:
-    inset 0 1px 0 rgba(255, 255, 255, .76),
-    0 18px 44px rgba(88, 58, 5, .29) !important;
-  -webkit-backdrop-filter: blur(25px) saturate(1.08);
-  backdrop-filter: blur(25px) saturate(1.08);
+    inset 0 1px 0 rgba(255, 255, 255, .72),
+    0 18px 44px rgba(91, 62, 8, .31) !important;
+  -webkit-backdrop-filter: blur(24px) saturate(1.12);
+  backdrop-filter: blur(24px) saturate(1.12);
 }
 
-.landing.day .manager-card.login-unified .login-card-body,
-.landing.day .manager-card.login-unified.login-identifier-valid:not(.login-system-confirmed) .login-card-body,
-.landing.day .manager-card.login-unified.login-verifying .login-card-body,
-.landing.day .manager-card.login-unified.login-awaiting-verification .login-card-body {
-  --login-state-rgb: 218, 158, 38;
-  color: #382b10 !important;
-  background: linear-gradient(135deg, rgba(255, 253, 228, .69), rgba(232, 186, 70, .40)) !important;
-  border-color: rgba(190, 133, 22, .62) !important;
+.landing .manager-card.login-unified .login-card-body,
+.landing .manager-card.login-unified.login-identifier-valid:not(.login-system-confirmed) .login-card-body,
+.landing .manager-card.login-unified.login-verifying .login-card-body {
+  --login-state-rgb: 224, 169, 49;
+  color: #392b0d !important;
+  background:
+    linear-gradient(135deg, rgba(255, 250, 217, .68), rgba(237, 194, 83, .42)) !important;
+  border-color: rgba(207, 151, 33, .68) !important;
   box-shadow:
-    inset 0 1px 0 rgba(255, 255, 255, .76),
+    inset 0 1px 0 rgba(255, 255, 255, .72),
     inset 0 0 30px rgba(var(--login-state-rgb), .10),
-    0 0 22px rgba(var(--login-state-rgb), .24) !important;
+    0 0 22px rgba(var(--login-state-rgb), .25) !important;
 }
 
+.landing .manager-card.login-unified :is(h2, h3, label, strong, b),
 .landing.day .manager-card.login-unified :is(h2, h3, label, strong, b),
-.landing.day .manager-card.login-unified .login-card-title::after {
-  color: #30250d !important;
+.landing .manager-card.login-unified .login-card-title::after {
+  color: #33260d !important;
   opacity: 1 !important;
   text-shadow: none !important;
 }
 
+.landing .manager-card.login-unified :is(p, small),
 .landing.day .manager-card.login-unified :is(p, small) {
-  color: #594922 !important;
+  color: #5d4b25 !important;
   opacity: 1 !important;
 }
 
+.landing .manager-card.login-unified input,
 .landing.day .manager-card.login-unified input {
-  color: #29220f !important;
-  background: rgba(255, 255, 255, .67) !important;
-  border-color: rgba(116, 80, 17, .36) !important;
-  box-shadow: inset 0 1px 4px rgba(85, 55, 5, .10) !important;
+  color: #2d250f !important;
+  background: rgba(255, 255, 255, .66) !important;
+  border-color: rgba(126, 91, 23, .34) !important;
+  box-shadow: inset 0 1px 4px rgba(93, 62, 8, .10) !important;
 }
 
+.landing .manager-card.login-unified input::placeholder,
 .landing.day .manager-card.login-unified input::placeholder {
-  color: #706347 !important;
+  color: #75684d !important;
   opacity: 1 !important;
 }
 
-/* 暗夜版不得因為輸入文字或僅完成外部驗證就提早變綠。 */
-.landing.night .manager-card.login-unified.login-identifier-valid:not(.login-system-confirmed) .login-card-body,
-.landing.night .manager-card.login-unified.login-verifying .login-card-body,
-.landing.night .manager-card.login-unified.login-awaiting-verification .login-card-body {
-  --login-state-rgb: 129, 112, 196;
-  color: #fff !important;
-  background: linear-gradient(135deg, rgba(32, 35, 52, .58), rgba(9, 10, 20, .42)) !important;
-  border-color: rgba(204, 211, 235, .36) !important;
-  box-shadow:
-    inset 0 1px 0 rgba(255, 255, 255, .14),
-    inset 0 0 32px rgba(113, 91, 173, .12),
-    0 0 22px rgba(1, 3, 12, .48) !important;
-}
-
-/* 綠燈唯一入口：manager-welcome.js 收到 ANG HR 後端的明確帳號確認。 */
+/* 綠燈只能由 manager-welcome.js 在後端確認帳號後加入此 class。 */
 .landing .manager-card.login-unified.login-system-confirmed {
-  color: #0b3820 !important;
-  background-color: rgba(113, 220, 154, .76) !important;
-  background-image: linear-gradient(155deg, rgba(215, 255, 229, .89), rgba(80, 199, 126, .71)) !important;
-  border-color: rgba(45, 160, 94, .86) !important;
+  color: #0c3b22 !important;
+  background:
+    linear-gradient(155deg, rgba(208, 255, 224, .90), rgba(93, 210, 139, .74)) !important;
+  border-color: rgba(55, 174, 105, .84) !important;
   box-shadow:
-    inset 0 1px 0 rgba(255, 255, 255, .75),
-    0 18px 46px rgba(18, 110, 60, .35) !important;
+    inset 0 1px 0 rgba(255, 255, 255, .72),
+    0 18px 46px rgba(22, 119, 67, .34) !important;
 }
 
 .landing .manager-card.login-unified.login-system-confirmed .login-card-body {
-  --login-state-rgb: 42, 177, 96;
-  color: #0b3820 !important;
-  background: linear-gradient(135deg, rgba(222, 255, 234, .73), rgba(67, 188, 113, .47)) !important;
-  border-color: rgba(49, 169, 99, .89) !important;
+  --login-state-rgb: 49, 190, 112;
+  color: #0c3b22 !important;
+  background:
+    linear-gradient(135deg, rgba(218, 255, 231, .72), rgba(75, 198, 122, .48)) !important;
+  border-color: rgba(61, 184, 111, .88) !important;
   box-shadow:
-    inset 0 1px 0 rgba(255, 255, 255, .74),
+    inset 0 1px 0 rgba(255, 255, 255, .72),
     inset 0 0 32px rgba(var(--login-state-rgb), .14),
-    0 0 25px rgba(var(--login-state-rgb), .40) !important;
+    0 0 25px rgba(var(--login-state-rgb), .39) !important;
 }
 
 .landing .manager-card.login-unified.login-system-confirmed :is(h2, h3, label, strong, b, p, small),
 .landing .manager-card.login-unified.login-system-confirmed .login-card-title::after {
-  color: #0b3820 !important;
+  color: #0c3b22 !important;
 }
 
 .landing .manager-card.login-unified.login-system-confirmed .login-verify-button {
-  color: #06331c !important;
-  background: linear-gradient(135deg, rgba(146, 246, 186, .98), rgba(48, 180, 103, .95)) !important;
-  border-color: rgba(52, 164, 96, .93) !important;
+  color: #07341d !important;
+  background: linear-gradient(135deg, rgba(143, 244, 184, .98), rgba(54, 187, 109, .94)) !important;
+  border-color: rgba(65, 178, 108, .92) !important;
 }
 
 .manager-card.login-unified .login-auth-status {
@@ -1349,22 +1339,32 @@ body,
   line-height: 1.45;
 }
 
-.manager-card.login-unified .login-auth-status.info { color: #66501c !important; }
-.manager-card.login-unified .login-auth-status.success { color: #0a5a2e !important; }
-.manager-card.login-unified .login-auth-status.error { color: #881e1e !important; }
+.manager-card.login-unified .login-auth-status.info {
+  color: #66501c !important;
+}
+
+.manager-card.login-unified .login-auth-status.success {
+  color: #0b5d30 !important;
+}
+
+.manager-card.login-unified .login-auth-status.error {
+  color: #8b2020 !important;
+}
 
 .manager-card.login-unified .email-verification-guide {
   grid-column: 1 / -1;
   grid-row: 6;
-  color: #3b321c;
-  background: rgba(255, 255, 255, .47);
-  border: 1px solid rgba(89, 70, 30, .20);
+  color: #3d341d;
+  background: rgba(255, 255, 255, .43);
+  border: 1px solid rgba(92, 75, 36, .18);
   border-radius: 13px;
   margin-top: 7px;
   padding: 9px;
 }
 
-.manager-card.login-unified .email-verification-guide[hidden] { display: none !important; }
+.manager-card.login-unified .email-verification-guide[hidden] {
+  display: none !important;
+}
 
 .manager-card.login-unified .verification-guide-steps {
   display: grid;
@@ -1384,30 +1384,30 @@ body,
   font-style: normal;
 }
 
-.manager-card.login-unified .login-email { grid-row: 7; }
-.manager-card.login-unified .beta-auth-error { grid-row: 8; }
-.manager-card.login-unified .card-main-action { grid-row: 9; }
+.manager-card.login-unified .login-email {
+  grid-row: 7;
+}
 
-/* 社群登入固定 G → L → F → A，Facebook 不可被壓掉或隱藏。 */
+.manager-card.login-unified .beta-auth-error {
+  grid-row: 8;
+}
+
+.manager-card.login-unified .card-main-action {
+  grid-row: 9;
+}
+
+/* 社群登入固定 G → L → F → A。 */
 .manager-card.login-unified .social-login-row {
   grid-template-columns: repeat(4, minmax(0, 1fr)) !important;
   justify-items: center;
   overflow: visible !important;
 }
 
-.manager-card.login-unified .social-login-row .facebook-login,
-.manager-card.login-unified .social-login-row [data-provider="facebook"] {
-  display: inline-flex !important;
-  visibility: visible !important;
-  opacity: 1 !important;
-}
-
-/* Personal 展開卡永遠採 Performance 高度；切到 Solo 不縮短、不跳動。 */
+/* Personal 展開卡永遠採 Performance 高度；切到 Solo 不再縮短。 */
 .manager-carousel article.manager-card.personal.expanded {
-  --personal-expanded-height: min(86dvh, 620px);
-  height: var(--personal-expanded-height) !important;
-  min-height: var(--personal-expanded-height) !important;
-  max-height: var(--personal-expanded-height) !important;
+  height: min(86dvh, 620px) !important;
+  min-height: min(86dvh, 620px) !important;
+  max-height: min(86dvh, 620px) !important;
   overflow: visible !important;
 }
 
@@ -1418,659 +1418,8 @@ body,
 
 @media (max-height: 700px) {
   .manager-carousel article.manager-card.personal.expanded {
-    --personal-expanded-height: 86dvh;
+    height: 86dvh !important;
+    min-height: 86dvh !important;
+    max-height: 86dvh !important;
   }
-}
-
-
-/* ========================================================================
-   2026-07-22｜登入／方案流程第二次修正
-   ======================================================================== */
-
-/* 任一張卡片（含第一張、最後一張）滑到時都必須完整置中。 */
-.manager-carousel {
-  --ang-card-width: min(342px, calc(100vw - 48px));
-  padding-left: max(24px, calc((100% - var(--ang-card-width)) / 2)) !important;
-  padding-right: max(24px, calc((100% - var(--ang-card-width)) / 2)) !important;
-  scroll-padding-left: max(24px, calc((100% - var(--ang-card-width)) / 2)) !important;
-  scroll-padding-right: max(24px, calc((100% - var(--ang-card-width)) / 2)) !important;
-}
-.manager-carousel > .manager-card {
-  scroll-snap-align: center !important;
-  scroll-snap-stop: always;
-}
-
-/* 登入大卡固定透明墨綠；驗證前內卡為黃色。 */
-.landing .manager-card.login-unified,
-.landing.day .manager-card.login-unified,
-.landing.night .manager-card.login-unified {
-  color: #f4fff8 !important;
-  background-color: rgba(7, 52, 39, .72) !important;
-  background-image: linear-gradient(155deg, rgba(12, 78, 59, .79), rgba(3, 35, 28, .70)) !important;
-  border-color: rgba(92, 184, 139, .56) !important;
-  box-shadow: inset 0 1px 0 rgba(224, 255, 239, .20), 0 20px 48px rgba(1, 30, 23, .42) !important;
-  -webkit-backdrop-filter: blur(27px) saturate(1.08) !important;
-  backdrop-filter: blur(27px) saturate(1.08) !important;
-}
-
-.landing .manager-card.login-unified:not(.login-system-confirmed) .login-card-body {
-  --login-state-rgb: 218, 158, 38;
-  color: #382b10 !important;
-  background: linear-gradient(135deg, rgba(255, 251, 218, .88), rgba(235, 192, 75, .72)) !important;
-  border: 2px solid rgba(213, 155, 39, .92) !important;
-  box-shadow: inset 0 1px 0 rgba(255, 255, 255, .82), 0 0 22px rgba(205, 146, 25, .28) !important;
-}
-
-.landing .manager-card.login-unified:not(.login-system-confirmed) .login-card-body :is(h2,h3,label,strong,b) {
-  color: #30240d !important;
-  opacity: 1 !important;
-}
-.landing .manager-card.login-unified:not(.login-system-confirmed) .login-card-body :is(p,small,span) {
-  color: #594822 !important;
-  opacity: 1 !important;
-}
-.landing .manager-card.login-unified:not(.login-system-confirmed) input {
-  color: #29220f !important;
-  background: rgba(255, 255, 255, .72) !important;
-  border-color: rgba(111, 76, 16, .44) !important;
-}
-.landing .manager-card.login-unified:not(.login-system-confirmed) input::placeholder { color: #736548 !important; opacity: 1 !important; }
-
-/* 驗證完成後只有內卡黃框轉綠框；大卡仍保留墨綠玻璃。 */
-.landing .manager-card.login-unified.login-system-confirmed {
-  color: #effff5 !important;
-  background-color: rgba(7, 52, 39, .78) !important;
-  background-image: linear-gradient(155deg, rgba(11, 78, 58, .86), rgba(2, 34, 26, .76)) !important;
-  border-color: rgba(77, 203, 132, .72) !important;
-  box-shadow: inset 0 1px 0 rgba(229, 255, 240, .22), 0 20px 50px rgba(0, 41, 27, .46) !important;
-}
-.landing .manager-card.login-unified.login-system-confirmed .login-card-body {
-  --login-state-rgb: 42, 177, 96;
-  color: #17301f !important;
-  background: linear-gradient(135deg, rgba(255, 252, 220, .91), rgba(244, 220, 142, .78)) !important;
-  border: 2px solid rgba(43, 183, 99, .96) !important;
-  box-shadow: inset 0 1px 0 rgba(255, 255, 255, .84), 0 0 26px rgba(41, 184, 98, .38) !important;
-}
-.landing .manager-card.login-unified.login-system-confirmed .login-card-body :is(h2,h3,label,strong,b,p,small,span),
-.landing .manager-card.login-unified.login-system-confirmed .login-card-title::after { color: #17301f !important; }
-
-/* 密碼欄與舊登入鍵完全移除，改為 Email 驗證提示。 */
-.manager-card.login-unified .login-email[hidden],
-.manager-card.login-unified .card-main-action[hidden] { display: none !important; }
-.manager-card.login-unified .email-verification-hint {
-  grid-column: 1 / -1;
-  color: #493b19;
-  background: rgba(255, 255, 255, .40);
-  border: 1px dashed rgba(111, 76, 16, .34);
-  border-radius: 13px;
-  margin-top: 8px;
-  padding: 9px 10px;
-  display: grid;
-  gap: 3px;
-}
-.manager-card.login-unified .email-verification-hint strong { font-size: 11px; }
-.manager-card.login-unified .email-verification-hint span { font-size: 9px; line-height: 1.45; }
-
-/* 方案展開後「最下面亮色功能文字」：保留方案色，但日光版加深、加粗。 */
-.landing.day .manager-card.personal .performance-feature.included,
-.landing.day .manager-card.business .business-feature.included {
-  opacity: 1 !important;
-  font-weight: 850 !important;
-  text-shadow: 0 1px 0 rgba(255,255,255,.45) !important;
-}
-.landing.day .manager-card.personal .personal-card-body.solo .performance-feature.included { color: #00657d !important; }
-.landing.day .manager-card.personal .personal-card-body.performance .performance-feature.included { color: #9c155e !important; }
-.landing.day .manager-card.business .business-card-body.basic .business-feature.included { color: #00677d !important; }
-.landing.day .manager-card.business .business-card-body.pro .business-feature.included { color: #56339b !important; }
-.landing.day .manager-card.business .business-card-body.premium .business-feature.included { color: #835300 !important; }
-.landing.day .manager-card:is(.personal,.business) :is(.performance-feature,.business-feature).included span {
-  color: inherit !important;
-  font-size: 10.5px !important;
-  font-weight: 850 !important;
-  opacity: 1 !important;
-}
-.landing.day .manager-card:is(.personal,.business) :is(.performance-feature,.business-feature).dimmed {
-  color: #596174 !important;
-  opacity: .88 !important;
-}
-
-/* 驗證後的公司／方案選擇。 */
-.manager-card.login-unified .post-verify-flow {
-  grid-column: 1 / -1;
-  margin-top: 10px;
-  padding: 12px;
-  border-radius: 16px;
-  background: rgba(255,255,255,.58);
-  border: 1px solid rgba(25, 114, 67, .26);
-  display: grid;
-  gap: 7px;
-}
-.manager-card.login-unified .post-verify-flow[hidden] { display: none !important; }
-.manager-card.login-unified .post-verify-flow > strong { font-size: 12px; }
-.manager-card.login-unified .post-verify-flow > small { font-size: 9px; line-height: 1.5; }
-.access-option-list { display: grid; gap: 7px; margin-top: 3px; }
-.access-option {
-  color: #17301f;
-  text-align: left;
-  background: rgba(255,255,255,.72);
-  border: 1px solid rgba(43, 157, 91, .34);
-  border-radius: 13px;
-  padding: 10px;
-  display: grid;
-  grid-template-columns: 1fr auto;
-  gap: 2px 9px;
-}
-.access-option b { grid-column: 1; font-size: 11px; }
-.access-option span { grid-column: 1; font-size: 8px; }
-.access-option i { grid-column: 2; grid-row: 1 / 3; align-self: center; font-size: 9px; font-style: normal; font-weight: 850; }
-.refresh-access-options { border: 0; border-radius: 12px; padding: 10px; font-weight: 850; }
-
-/* 方案註冊：付款成功後卡片向上飛，再切換基本資料。 */
-.plan-registration-flow form { display: grid; gap: 8px; }
-.registration-stage-title { display: flex; align-items: center; gap: 9px; margin-bottom: 2px; }
-.registration-stage-title > b { color: #fff !important; background: #2daa66; border-radius: 50%; place-items: center; width: 26px; height: 26px; display: grid; }
-.registration-stage-title span { display: grid; gap: 1px; }
-.registration-stage-title strong { font-size: 12px; }
-.registration-stage-title small { font-size: 8px; }
-.plan-registration-flow label { margin: 0 !important; font-size: 9px !important; }
-.plan-registration-flow input { margin-top: 4px !important; padding: 10px !important; }
-.payment-row { grid-template-columns: 1fr 1fr; gap: 7px; display: grid; }
-.secure-payment-note { font-size: 8px !important; line-height: 1.45; }
-.plan-registration-flow button[type="submit"] {
-  color: #fff;
-  background: linear-gradient(135deg, #39bd75, #168c51);
-  border: 0;
-  border-radius: 13px;
-  padding: 11px;
-  font-size: 10px;
-  font-weight: 900;
-}
-.registration-status { min-height: 15px; text-align: center; font-size: 8px !important; }
-.registration-card-fly { animation: ang-card-fly-up .52s cubic-bezier(.3,.8,.35,1) both; }
-@keyframes ang-card-fly-up {
-  0% { transform: translateY(0) scale(1); opacity: 1; }
-  58% { transform: translateY(-42px) scale(.985); opacity: .78; }
-  100% { transform: translateY(-88px) scale(.965); opacity: 0; }
-}
-
-
-/* ========================================================================
-   ANG HR v0.7.0｜入口玻璃視覺、詳細介紹與模組說明
-   ======================================================================== */
-
-/* 夜光版 Business：深藍透明玻璃，不使用實心藍。 */
-.landing.night .manager-card.business {
-  color: #f4f8ff !important;
-  background-color: rgba(8, 30, 67, .66) !important;
-  background-image:
-    linear-gradient(150deg, rgba(35, 76, 132, .58), rgba(8, 24, 56, .72)),
-    linear-gradient(25deg, rgba(74, 143, 220, .10), transparent 58%) !important;
-  border-color: rgba(112, 180, 255, .46) !important;
-  box-shadow:
-    inset 0 1px 0 rgba(231, 246, 255, .20),
-    inset 0 0 42px rgba(42, 103, 180, .12),
-    0 22px 54px rgba(1, 12, 35, .56),
-    0 0 28px rgba(49, 141, 245, .20) !important;
-  -webkit-backdrop-filter: blur(28px) saturate(1.18) !important;
-  backdrop-filter: blur(28px) saturate(1.18) !important;
-}
-.landing.night .manager-card.business .manager-card-body {
-  background: linear-gradient(145deg, rgba(30, 70, 125, .30), rgba(6, 20, 48, .32)) !important;
-  border-color: rgba(149, 202, 255, .22) !important;
-  -webkit-backdrop-filter: blur(22px) saturate(1.12) !important;
-  backdrop-filter: blur(22px) saturate(1.12) !important;
-}
-
-/* 日光版三張方案大卡：把類別顏色放到大卡，全部保持透明玻璃。 */
-.landing.day .manager-card.free {
-  color: #253044 !important;
-  background-color: rgba(215, 225, 237, .62) !important;
-  background-image: linear-gradient(150deg, rgba(250, 253, 255, .72), rgba(180, 201, 224, .54)) !important;
-  border-color: rgba(104, 139, 176, .42) !important;
-  box-shadow: inset 0 1px 0 rgba(255,255,255,.76), 0 20px 48px rgba(55, 83, 116, .24) !important;
-  -webkit-backdrop-filter: blur(28px) saturate(1.10) !important;
-  backdrop-filter: blur(28px) saturate(1.10) !important;
-}
-.landing.day .manager-card.personal {
-  color: #fff7ff !important;
-  background-color: rgba(88, 48, 118, .60) !important;
-  background-image: linear-gradient(150deg, rgba(143, 89, 176, .58), rgba(58, 35, 96, .66)) !important;
-  border-color: rgba(224, 177, 255, .48) !important;
-  box-shadow: inset 0 1px 0 rgba(255,255,255,.22), 0 20px 48px rgba(67, 35, 91, .30) !important;
-  -webkit-backdrop-filter: blur(28px) saturate(1.15) !important;
-  backdrop-filter: blur(28px) saturate(1.15) !important;
-}
-.landing.day .manager-card.business {
-  color: #f4f8ff !important;
-  background-color: rgba(20, 54, 104, .64) !important;
-  background-image: linear-gradient(150deg, rgba(57, 100, 159, .56), rgba(15, 38, 83, .69)) !important;
-  border-color: rgba(148, 202, 255, .49) !important;
-  box-shadow: inset 0 1px 0 rgba(255,255,255,.22), 0 20px 50px rgba(31, 60, 101, .34) !important;
-  -webkit-backdrop-filter: blur(28px) saturate(1.17) !important;
-  backdrop-filter: blur(28px) saturate(1.17) !important;
-}
-
-.landing.day .manager-card:is(.free,.personal,.business) .manager-card-body {
-  color: inherit !important;
-  background: rgba(255,255,255,.105) !important;
-  border-color: rgba(255,255,255,.22) !important;
-  box-shadow: inset 0 1px 0 rgba(255,255,255,.20) !important;
-  -webkit-backdrop-filter: blur(20px) saturate(1.08) !important;
-  backdrop-filter: blur(20px) saturate(1.08) !important;
-}
-.landing.day .manager-card:is(.personal,.business) :is(h2,h3,strong,b,label,p,small,span,em,li) {
-  color: inherit !important;
-  text-shadow: 0 1px 4px rgba(7, 15, 36, .22) !important;
-}
-.landing.day .manager-card.free :is(h2,h3,strong,b,label) { color: #253044 !important; text-shadow: none !important; }
-.landing.day .manager-card.free :is(p,small,span,em,li) { color: #4d5a6e !important; text-shadow: none !important; }
-
-/* 日光版內部方案小卡：Business 深灰、Personal 中灰、Free 淺灰；都不是黑色。 */
-.landing.day .manager-card.business .business-option {
-  color: #f7f9fc !important;
-  background: linear-gradient(145deg, rgba(91, 101, 116, .69), rgba(68, 79, 96, .59)) !important;
-  border-color: rgba(231, 237, 245, .34) !important;
-  box-shadow: inset 0 1px 0 rgba(255,255,255,.18), 0 7px 16px rgba(25, 34, 48, .16) !important;
-  -webkit-backdrop-filter: blur(17px) saturate(1.05) !important;
-  backdrop-filter: blur(17px) saturate(1.05) !important;
-}
-.landing.day .manager-card.personal .personal-option {
-  color: #f9fafc !important;
-  background: linear-gradient(145deg, rgba(132, 140, 153, .66), rgba(106, 116, 132, .56)) !important;
-  border-color: rgba(247, 249, 253, .35) !important;
-  box-shadow: inset 0 1px 0 rgba(255,255,255,.20), 0 7px 16px rgba(42, 48, 60, .14) !important;
-  -webkit-backdrop-filter: blur(17px) saturate(1.04) !important;
-  backdrop-filter: blur(17px) saturate(1.04) !important;
-}
-.landing.day .manager-card.free .lite-option {
-  color: #30394a !important;
-  background: linear-gradient(145deg, rgba(218, 223, 231, .78), rgba(187, 196, 207, .66)) !important;
-  border-color: rgba(255, 255, 255, .56) !important;
-  box-shadow: inset 0 1px 0 rgba(255,255,255,.50), 0 7px 16px rgba(66, 76, 91, .12) !important;
-  -webkit-backdrop-filter: blur(17px) saturate(1.02) !important;
-  backdrop-filter: blur(17px) saturate(1.02) !important;
-}
-.landing.day .manager-card:is(.business,.personal) :is(.business-option,.personal-option) :is(span,strong,b,em) {
-  color: #f8faff !important;
-  opacity: 1 !important;
-  text-shadow: 0 1px 3px rgba(10, 17, 29, .26) !important;
-}
-.landing.day .manager-card.free .lite-option :is(span,strong,b,em) {
-  color: #30394a !important;
-  opacity: 1 !important;
-  text-shadow: none !important;
-}
-.landing.day .manager-card.business .business-option.selected,
-.landing.day .manager-card.personal .personal-option.selected,
-.landing.day .manager-card.free .lite-option:focus-visible {
-  border-color: rgba(255,255,255,.88) !important;
-  box-shadow: inset 0 1px 0 rgba(255,255,255,.26), 0 0 0 2px rgba(255,255,255,.20), 0 9px 20px rgba(24,34,52,.20) !important;
-}
-
-/* 登入外卡為墨綠透明玻璃。 */
-.landing .manager-card.login-unified {
-  color: #effff5 !important;
-  background-color: rgba(6, 55, 40, .60) !important;
-  background-image: linear-gradient(155deg, rgba(16, 91, 66, .58), rgba(3, 39, 30, .67)) !important;
-  border-color: rgba(104, 203, 157, .48) !important;
-  box-shadow: inset 0 1px 0 rgba(230,255,241,.20), 0 20px 50px rgba(2,35,26,.36) !important;
-  -webkit-backdrop-filter: blur(28px) saturate(1.14) !important;
-  backdrop-filter: blur(28px) saturate(1.14) !important;
-}
-
-/* 驗證前內卡：黃色透明玻璃。 */
-.landing .manager-card.login-unified:not(.login-system-confirmed):not(.login-system-failed) .login-card-body {
-  --login-state-rgb: 220, 164, 41;
-  color: #3c2c0c !important;
-  background: linear-gradient(140deg, rgba(255, 235, 150, .68), rgba(220, 160, 45, .52)) !important;
-  border: 2px solid rgba(229, 175, 55, .88) !important;
-  box-shadow: inset 0 1px 0 rgba(255,255,255,.54), inset 0 0 28px rgba(255,213,101,.12), 0 0 23px rgba(207,144,26,.25) !important;
-  -webkit-backdrop-filter: blur(22px) saturate(1.10) !important;
-  backdrop-filter: blur(22px) saturate(1.10) !important;
-}
-
-/* 驗證成功：內卡本體轉為綠色玻璃。 */
-.landing .manager-card.login-unified.login-system-confirmed .login-card-body {
-  --login-state-rgb: 42, 177, 96;
-  color: #09351e !important;
-  background: linear-gradient(140deg, rgba(145, 235, 180, .67), rgba(48, 174, 101, .53)) !important;
-  border: 2px solid rgba(57, 194, 112, .94) !important;
-  box-shadow: inset 0 1px 0 rgba(255,255,255,.49), inset 0 0 30px rgba(91,226,145,.13), 0 0 26px rgba(43,184,99,.38) !important;
-  -webkit-backdrop-filter: blur(22px) saturate(1.12) !important;
-  backdrop-filter: blur(22px) saturate(1.12) !important;
-}
-.landing .manager-card.login-unified.login-system-confirmed .login-card-body :is(h2,h3,label,strong,b,p,small,span),
-.landing .manager-card.login-unified.login-system-confirmed .login-card-title::after { color: #09351e !important; }
-
-/* 驗證失敗：內卡本體轉為紅色玻璃，停留原位且不得展開。 */
-.landing .manager-card.login-unified.login-system-failed .login-card-body {
-  --login-state-rgb: 207, 61, 67;
-  color: #4a0d13 !important;
-  background: linear-gradient(140deg, rgba(255, 175, 175, .68), rgba(201, 65, 75, .53)) !important;
-  border: 2px solid rgba(224, 75, 83, .95) !important;
-  box-shadow: inset 0 1px 0 rgba(255,255,255,.48), inset 0 0 30px rgba(255,122,128,.13), 0 0 26px rgba(205,52,61,.36) !important;
-  -webkit-backdrop-filter: blur(22px) saturate(1.10) !important;
-  backdrop-filter: blur(22px) saturate(1.10) !important;
-}
-.landing .manager-card.login-unified.login-system-failed .login-card-body :is(h2,h3,label,strong,b,p,small,span),
-.landing .manager-card.login-unified.login-system-failed .login-card-title::after { color: #4a0d13 !important; }
-
-/* 總介紹：Business + Performance + Modules，資訊完整但維持緊湊。 */
-.manager-card.intro.expanded { height: min(88dvh, 700px) !important; max-height: min(88dvh, 700px) !important; }
-.feature-modal-inline.ang-v070-overview {
-  height: calc(100% - 39px);
-  padding: 12px 12px 10px;
-  overflow: hidden !important;
-  display: grid;
-  grid-template-rows: auto auto 1fr auto auto;
-  gap: 8px;
-}
-.ang-v070-overview .ang-overview-kicker {
-  letter-spacing: 1.5px;
-  opacity: .72;
-  font-size: 8px;
-  font-weight: 900;
-  text-align: center;
-}
-.ang-v070-overview h2 { margin: 0 !important; font-size: 17px !important; text-align: center; }
-.ang-v070-overview .ang-overview-lead {
-  margin: 0;
-  font-size: 9px;
-  line-height: 1.55;
-  text-align: center;
-  opacity: .90;
-}
-.ang-overview-columns { display: grid; grid-template-columns: 1fr 1fr; gap: 7px; min-height: 0; }
-.ang-overview-section {
-  min-width: 0;
-  border: 1px solid rgba(255,255,255,.20);
-  border-radius: 17px;
-  padding: 9px;
-  background: rgba(255,255,255,.10);
-  -webkit-backdrop-filter: blur(15px);
-  backdrop-filter: blur(15px);
-}
-.ang-overview-section > strong { display: block; font-size: 11px; margin-bottom: 2px; }
-.ang-overview-section > small { display: block; font-size: 7.5px; line-height: 1.35; opacity: .76; margin-bottom: 6px; }
-.ang-overview-feature-grid { display: grid; grid-template-columns: 1fr 1fr; gap: 4px; }
-.ang-overview-feature-grid span {
-  min-width: 0;
-  border-radius: 9px;
-  padding: 4px 3px;
-  font-size: 7.5px;
-  font-weight: 800;
-  line-height: 1.2;
-  text-align: center;
-  background: rgba(255,255,255,.12);
-  border: 1px solid rgba(255,255,255,.12);
-}
-.ang-overview-module {
-  display: grid;
-  grid-template-columns: auto 1fr;
-  gap: 8px;
-  align-items: center;
-  border-radius: 16px;
-  padding: 9px 10px;
-  background: linear-gradient(135deg, rgba(90, 214, 210, .18), rgba(140, 102, 235, .17));
-  border: 1px solid rgba(175, 229, 255, .25);
-}
-.ang-overview-module > b {
-  color: #fff;
-  background: rgba(83, 193, 180, .72);
-  border-radius: 12px;
-  width: 38px;
-  height: 38px;
-  place-items: center;
-  display: grid;
-  font-size: 15px;
-}
-.ang-overview-module strong,.ang-overview-module small { display:block; }
-.ang-overview-module strong { font-size: 10px; margin-bottom: 2px; }
-.ang-overview-module small { font-size: 7.8px; line-height: 1.4; opacity:.84; }
-.ang-overview-actions { display: grid; grid-template-columns: 1fr 1fr 1fr; gap: 6px; }
-.ang-overview-actions button {
-  min-height: 34px;
-  border-radius: 11px;
-  border: 1px solid rgba(255,255,255,.22);
-  color: inherit;
-  background: rgba(255,255,255,.12);
-  font-size: 9px;
-  font-weight: 900;
-}
-.ang-overview-actions button:first-child { color:#fff; background: linear-gradient(135deg,#5678df,#50c7dc); border:0; }
-
-/* 各方案短介紹：不顯示固定人數，改成定位與重要功能。 */
-.ang-v070-plan-summary {
-  margin: 6px 0 8px;
-  padding: 8px 9px;
-  border-radius: 12px;
-  border: 1px solid rgba(255,255,255,.16);
-  background: rgba(255,255,255,.09);
-  font-size: 8.5px;
-  font-weight: 750;
-  line-height: 1.5;
-}
-.landing.day .manager-card.free .ang-v070-plan-summary { color:#3b475a !important; background:rgba(255,255,255,.32); border-color:rgba(78,96,119,.18); }
-.landing.day .manager-card:is(.personal,.business) .ang-v070-plan-summary { color:#f8faff !important; }
-
-/* 詳細功能增加後維持雙欄緊湊，避免亮色文字因過淡而消失。 */
-.manager-card.expanded :is(.performance-features,.business-features) { gap: 3px 7px !important; }
-.manager-card.expanded :is(.performance-feature,.business-feature) { min-height: 27px !important; padding: 4px 1px !important; gap: 6px !important; }
-.manager-card.expanded :is(.performance-feature,.business-feature) i { width:16px !important; height:16px !important; flex-basis:16px !important; font-size:9px !important; }
-.manager-card.expanded :is(.performance-feature,.business-feature) span { font-size:9px !important; line-height:1.2 !important; font-weight:800 !important; }
-.manager-card.expanded :is(.performance-feature-area,.business-feature-area) { margin-top:10px !important; padding-top:10px !important; }
-.manager-card.expanded .feature-area-heading { margin-bottom:6px !important; }
-
-@media (max-width: 360px), (max-height: 690px) {
-  .ang-v070-overview .ang-overview-lead { font-size: 8px; }
-  .ang-overview-section { padding: 7px; }
-  .ang-overview-feature-grid span { font-size: 7px; padding: 3px 2px; }
-  .ang-overview-module { padding: 7px 8px; }
-  .ang-overview-module small { font-size: 7px; }
-  .manager-card.expanded :is(.performance-feature,.business-feature) { min-height:24px !important; }
-  .manager-card.expanded :is(.performance-feature,.business-feature) span { font-size:8.2px !important; }
-}
-
-
-/* ========================================================================
-   ANG HR v0.7.0｜低飽和玻璃＋互動式圖文方案介紹（2026-07-22）
-   ======================================================================== */
-
-/* 日光登入：外卡墨綠、內卡淡黃／綠／紅，全部降低飽和與實色感。 */
-.landing.day .manager-card.login-unified {
-  background-color: rgba(18, 78, 61, .29) !important;
-  background-image: linear-gradient(155deg, rgba(65, 133, 107, .26), rgba(7, 54, 42, .34)), linear-gradient(30deg, rgba(255,255,255,.08), transparent 55%) !important;
-  border-color: rgba(116, 190, 159, .36) !important;
-  box-shadow: inset 0 1px 0 rgba(238,255,246,.30), 0 18px 44px rgba(15,55,43,.20) !important;
-  -webkit-backdrop-filter: blur(25px) saturate(.82) !important;
-  backdrop-filter: blur(25px) saturate(.82) !important;
-}
-.landing.day .manager-card.login-unified:not(.login-system-confirmed):not(.login-system-failed) .login-card-body {
-  background: linear-gradient(140deg, rgba(255, 242, 176, .40), rgba(214, 170, 63, .27)), rgba(255,255,255,.08) !important;
-  border-color: rgba(215, 166, 48, .69) !important;
-  box-shadow: inset 0 1px 0 rgba(255,255,255,.55), 0 0 18px rgba(170,119,21,.16) !important;
-  -webkit-backdrop-filter: blur(22px) saturate(.84) !important;
-  backdrop-filter: blur(22px) saturate(.84) !important;
-}
-.landing.day .manager-card.login-unified.login-system-confirmed .login-card-body {
-  background: linear-gradient(140deg, rgba(178, 236, 196, .41), rgba(61, 174, 104, .28)), rgba(255,255,255,.08) !important;
-  border-color: rgba(45, 181, 98, .78) !important;
-  box-shadow: inset 0 1px 0 rgba(255,255,255,.52), 0 0 21px rgba(39,154,88,.22) !important;
-  -webkit-backdrop-filter: blur(22px) saturate(.86) !important;
-  backdrop-filter: blur(22px) saturate(.86) !important;
-}
-.landing.day .manager-card.login-unified.login-system-failed .login-card-body {
-  background: linear-gradient(140deg, rgba(249, 193, 193, .41), rgba(194, 73, 80, .27)), rgba(255,255,255,.08) !important;
-  border-color: rgba(205, 62, 70, .78) !important;
-  box-shadow: inset 0 1px 0 rgba(255,255,255,.50), 0 0 21px rgba(176,48,57,.20) !important;
-  -webkit-backdrop-filter: blur(22px) saturate(.84) !important;
-  backdrop-filter: blur(22px) saturate(.84) !important;
-}
-
-/* 未展開不放額外說明；展開後才在四個方塊按鈕下顯示。 */
-.manager-card.login-unified .email-verification-hint { display: none !important; }
-.manager-card.login-unified .email-verification-guide { display: none !important; }
-.manager-card.login-unified.expanded.login-system-confirmed .email-verification-guide:not([hidden]) {
-  grid-column: 1 / -1 !important;
-  grid-row: 5 !important;
-  display: block !important;
-  margin: 10px 0 0 !important;
-  padding: 11px 12px !important;
-  color: inherit !important;
-  background: rgba(255,255,255,.15) !important;
-  border: 1px solid rgba(255,255,255,.29) !important;
-  border-radius: 15px !important;
-  box-shadow: inset 0 1px 0 rgba(255,255,255,.24) !important;
-  -webkit-backdrop-filter: blur(15px) saturate(.88) !important;
-  backdrop-filter: blur(15px) saturate(.88) !important;
-}
-.manager-card.login-unified.expanded {
-  height: auto !important;
-  min-height: min(86dvh, 640px) !important;
-  max-height: none !important;
-  overflow: visible !important;
-}
-.manager-card.login-unified.expanded .social-login-row {
-  grid-template-columns: repeat(4, minmax(0, 1fr)) !important;
-  gap: 8px !important;
-}
-.manager-card.login-unified.expanded .social-login-row button {
-  position: relative !important;
-  height: 48px !important;
-  border-radius: 15px !important;
-  padding: 0 !important;
-}
-.manager-card.login-unified.expanded .social-login-row button > span:not(.provider-icon) {
-  position: absolute !important;
-  width: 1px !important;
-  height: 1px !important;
-  overflow: hidden !important;
-  clip: rect(0,0,0,0) !important;
-}
-.manager-card.login-unified.expanded .provider-icon {
-  width: 25px !important;
-  height: 25px !important;
-  flex-basis: 25px !important;
-}
-
-/* 原本單行方案摘要隱藏，改由上方圖文大框呈現；下方選項保留。 */
-.ang-v070-plan-summary { display: none !important; }
-.manager-card.collapsed .ang-plan-detail-v2 { display: none !important; }
-.manager-card.expanded .ang-plan-detail-v2 {
-  display: grid !important;
-  grid-template-columns: 92px minmax(0, 1fr);
-  gap: 10px;
-  align-items: stretch;
-  min-height: 172px;
-  margin: 7px 0 10px;
-  padding: 10px;
-  border: 1px solid rgba(255,255,255,.24);
-  border-radius: 20px;
-  background: linear-gradient(145deg, rgba(255,255,255,.15), rgba(255,255,255,.07));
-  box-shadow: inset 0 1px 0 rgba(255,255,255,.22), 0 10px 22px rgba(9,19,39,.12);
-  -webkit-backdrop-filter: blur(18px) saturate(.94);
-  backdrop-filter: blur(18px) saturate(.94);
-  animation: ang-detail-in .28s ease both;
-}
-.ang-plan-detail-visual {
-  min-width: 0;
-  border-radius: 16px;
-  overflow: hidden;
-  display: grid;
-  place-items: center;
-  background: linear-gradient(145deg, rgba(255,255,255,.18), rgba(255,255,255,.06));
-  border: 1px solid rgba(255,255,255,.18);
-}
-.ang-plan-detail-visual svg { width: 88%; height: auto; display: block; }
-.ang-plan-detail-copy { min-width: 0; align-self: center; }
-.ang-plan-detail-kicker { display: block; margin-bottom: 3px; font-size: 7.5px; font-weight: 950; letter-spacing: 1.1px; opacity: .72; }
-.ang-plan-detail-copy > strong { display: block; font-size: 13px; line-height: 1.25; }
-.ang-plan-detail-copy > p { margin: 5px 0 7px !important; font-size: 8.3px !important; line-height: 1.48 !important; }
-.ang-plan-detail-tags { display: flex; flex-wrap: wrap; gap: 4px; }
-.ang-plan-detail-tags span { padding: 4px 6px; border-radius: 999px; font-size: 7.3px; font-weight: 850; line-height: 1; background: rgba(255,255,255,.15); border: 1px solid rgba(255,255,255,.16); }
-.ang-plan-detail-v2[data-plan="free"] .ang-plan-detail-visual { color:#64748b; }
-.ang-plan-detail-v2[data-plan="solo"] .ang-plan-detail-visual { color:#16a8c7; }
-.ang-plan-detail-v2[data-plan="performance"] .ang-plan-detail-visual { color:#d94b9b; }
-.ang-plan-detail-v2[data-plan="basic"] .ang-plan-detail-visual { color:#28a7be; }
-.ang-plan-detail-v2[data-plan="pro"] .ang-plan-detail-visual { color:#8064d9; }
-.ang-plan-detail-v2[data-plan="premium"] .ang-plan-detail-visual { color:#d49a24; }
-
-/* 中間總介紹：上方固定大圖文框，下方保留可選特色。 */
-.manager-card.intro.expanded { height: min(88dvh, 710px) !important; max-height: min(88dvh, 710px) !important; }
-.feature-modal-inline.ang-overview-v2 {
-  height: calc(100% - 38px) !important;
-  padding: 12px !important;
-  overflow: hidden !important;
-  display: grid !important;
-  grid-template-rows: minmax(0, 1fr) auto auto !important;
-  gap: 9px !important;
-}
-.ang-overview-display {
-  min-height: 0;
-  padding: 12px;
-  border-radius: 22px;
-  display: grid;
-  grid-template-columns: 112px minmax(0, 1fr);
-  gap: 12px;
-  align-items: center;
-  color: inherit;
-  background: linear-gradient(145deg, rgba(255,255,255,.17), rgba(255,255,255,.07)), radial-gradient(circle at 12% 14%, rgba(94,220,255,.16), transparent 36%);
-  border: 1px solid rgba(255,255,255,.23);
-  box-shadow: inset 0 1px 0 rgba(255,255,255,.22), 0 14px 28px rgba(9,17,38,.16);
-  -webkit-backdrop-filter: blur(20px) saturate(.92);
-  backdrop-filter: blur(20px) saturate(.92);
-  animation: ang-detail-in .28s ease both;
-}
-.ang-overview-visual {
-  align-self: stretch;
-  min-height: 190px;
-  border-radius: 19px;
-  display: grid;
-  place-items: center;
-  overflow: hidden;
-  color: var(--ang-overview-accent, #63d7ef);
-  background: linear-gradient(155deg, rgba(255,255,255,.17), rgba(255,255,255,.04));
-  border: 1px solid rgba(255,255,255,.18);
-}
-.ang-overview-visual svg { width: 92%; height: auto; display: block; filter: drop-shadow(0 8px 14px rgba(6,18,43,.18)); }
-.ang-overview-copy { min-width: 0; }
-.ang-overview-copy .ang-overview-kicker { display:block; margin-bottom:4px; font-size:7.7px; font-weight:950; letter-spacing:1.2px; opacity:.72; }
-.ang-overview-copy h2 { margin:0 !important; font-size:17px !important; line-height:1.22 !important; text-align:left !important; }
-.ang-overview-copy > p { margin:7px 0 9px !important; font-size:8.7px !important; line-height:1.52 !important; text-align:left !important; }
-.ang-overview-highlight-grid { display:grid; grid-template-columns:1fr 1fr; gap:5px; }
-.ang-overview-highlight-grid span { min-width:0; padding:6px 5px; border-radius:10px; font-size:7.5px; font-weight:850; line-height:1.2; text-align:center; background:rgba(255,255,255,.13); border:1px solid rgba(255,255,255,.14); }
-.ang-overview-note { margin-top:8px; padding:7px 8px; border-radius:11px; font-size:7.4px; font-weight:750; line-height:1.4; background:rgba(255,255,255,.10); border-left:3px solid var(--ang-overview-accent, #63d7ef); }
-.ang-overview-options-head { display:flex; justify-content:space-between; align-items:end; gap:8px; }
-.ang-overview-options-head strong { font-size:10px; }
-.ang-overview-options-head small { font-size:7.5px; opacity:.72; }
-.ang-overview-options { display:grid; grid-template-columns:repeat(4,minmax(0,1fr)); gap:6px; }
-.ang-overview-option {
-  min-width:0;
-  min-height:58px;
-  padding:7px 4px;
-  border-radius:14px;
-  color:inherit;
-  background:rgba(255,255,255,.10);
-  border:1px solid rgba(255,255,255,.18);
-  display:grid;
-  place-items:center;
-  gap:2px;
-  font:inherit;
-}
-.ang-overview-option i { font-size:16px; line-height:1; font-style:normal; }
-.ang-overview-option strong { font-size:8px; line-height:1.15; }
-.ang-overview-option small { font-size:6.8px; line-height:1.15; opacity:.68; }
-.ang-overview-option[aria-selected="true"] { background:linear-gradient(145deg, rgba(89,207,226,.27), rgba(126,99,220,.20)); border-color:rgba(173,232,255,.52); box-shadow:0 0 0 2px rgba(126,210,240,.12), inset 0 1px 0 rgba(255,255,255,.22); transform:translateY(-2px); }
-.landing.day .ang-overview-display,
-.landing.day .ang-overview-option { background-color:rgba(255,255,255,.22); border-color:rgba(69,85,115,.18); }
-.landing.day .ang-overview-option[aria-selected="true"] { background:linear-gradient(145deg, rgba(98,193,211,.31), rgba(142,118,210,.24)); border-color:rgba(65,128,161,.33); }
-
-@keyframes ang-detail-in { from { opacity:0; transform:translateY(5px) scale(.992); } to { opacity:1; transform:none; } }
-
-@media (max-width: 390px) {
-  .ang-overview-display { grid-template-columns: 94px minmax(0,1fr); gap:9px; padding:10px; }
-  .ang-overview-visual { min-height:176px; }
-  .ang-overview-copy h2 { font-size:15px !important; }
-  .ang-overview-option small { display:none; }
-  .manager-card.expanded .ang-plan-detail-v2 { grid-template-columns:78px minmax(0,1fr); min-height:160px; }
 }

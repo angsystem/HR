@@ -1,0 +1,59 @@
+name: Deploy ANG HR Pages
+
+on:
+  push:
+    branches: [main]
+    paths:
+      - "app/src/main/assets/HR/**"
+      - ".github/workflows/deploy-pages.yml"
+  workflow_dispatch:
+
+permissions:
+  contents: read
+  pages: write
+  id-token: write
+
+concurrency:
+  group: github-pages
+  cancel-in-progress: true
+
+jobs:
+  build:
+    runs-on: ubuntu-latest
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v4
+
+      - name: Prepare Pages artifact
+        shell: bash
+        run: |
+          test -f app/src/main/assets/HR/index.html
+          mkdir -p _site
+          rsync -a app/src/main/assets/HR/ _site/ \
+            --exclude '.git/' \
+            --exclude 'GAS/' \
+            --exclude 'app/' \
+            --exclude '*.zip' \
+            --exclude '*.bat' \
+            --exclude '*.jks' \
+            --exclude '*.sha256'
+          touch _site/.nojekyll
+
+      - name: Configure Pages
+        uses: actions/configure-pages@v5
+
+      - name: Upload Pages artifact
+        uses: actions/upload-pages-artifact@v3
+        with:
+          path: _site
+
+  deploy:
+    needs: build
+    runs-on: ubuntu-latest
+    environment:
+      name: github-pages
+      url: ${{ steps.deployment.outputs.page_url }}
+    steps:
+      - name: Deploy Pages
+        id: deployment
+        uses: actions/deploy-pages@v4

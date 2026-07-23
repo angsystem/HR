@@ -1,11 +1,7 @@
-/* ANG HR PWA cache — 2026-07-22 index card rules */
+/* ANG HR PWA cache — 2026-07-22 10:05 後整合版 */
 'use strict';
 
-<<<<<<< HEAD
-const CACHE_VERSION = 'ang-hr-v0.7.0-20260722-viewport-lock-v1';
-=======
-const CACHE_VERSION = 'ang-hr-v0.7.0-20260722-card-visual-final-v2';
->>>>>>> 9f93af02cb1b58d08ce5b61abac68f4b43b5347e
+const CACHE_VERSION = 'ang-hr-v20260722-1005';
 const SHELL_CACHE = CACHE_VERSION + '-shell';
 const RUNTIME_CACHE = CACHE_VERSION + '-runtime';
 const APP_SHELL = [
@@ -16,9 +12,6 @@ const APP_SHELL = [
   './manager-welcome.js',
   './manager-welcome.css',
   './social-login-providers.css',
-  './index-card-rules.js',
-  './viewport-lock.js',
-  './index-card-rules.css',
   './manifest.webmanifest',
   './assets/index-DwNMzswZ.js',
   './assets/index-C1fEYMkG.css',
