@@ -1,3 +1,0 @@
-ANG HR Frontend
-v0.7.1-20260724-email-link-ui-v2
-Email 驗證連結｜移除密碼與 6 位驗證碼欄位｜60 秒重寄
