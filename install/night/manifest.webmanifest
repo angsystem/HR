@@ -1,0 +1,33 @@
+{
+  "id": "../../index.html?icon=night",
+  "name": "ANG HR",
+  "short_name": "ANG HR",
+  "description": "ANG HR 人力資源管理系統",
+  "lang": "zh-Hant",
+  "start_url": "../../index.html?icon=night",
+  "scope": "../../",
+  "display": "standalone",
+  "orientation": "portrait",
+  "background_color": "#050a35",
+  "theme_color": "#07114f",
+  "icons": [
+    {
+      "src": "../../assets/icons/night/icon-192.png",
+      "sizes": "192x192",
+      "type": "image/png",
+      "purpose": "any"
+    },
+    {
+      "src": "../../assets/icons/night/icon-512.png",
+      "sizes": "512x512",
+      "type": "image/png",
+      "purpose": "any"
+    },
+    {
+      "src": "../../assets/icons/night/maskable-512.png",
+      "sizes": "512x512",
+      "type": "image/png",
+      "purpose": "maskable"
+    }
+  ]
+}

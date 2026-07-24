@@ -1,0 +1,242 @@
+<!DOCTYPE html>
+<html lang="zh-Hant">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width,initial-scale=1,maximum-scale=1,user-scalable=no,viewport-fit=cover">
+  <meta name="theme-color" content="#11152f">
+  <meta http-equiv="Cache-Control" content="no-cache, no-store, must-revalidate">
+  <meta http-equiv="Pragma" content="no-cache">
+  <meta http-equiv="Expires" content="0">
+  <title>ANG HR Personal</title>
+  <script src="config.js"></script>
+  <script src="ang-frontend-api.js"></script>
+  <style>
+    :root{
+      --c1:#FF87E0;--c2:#CCA4FF;--c3:#8089FF;--c4:#59DDFF;
+      --bg:#f6f7ff;--surface:rgba(255,255,255,.91);--surface2:#fff;--text:#17182b;--muted:#70758f;
+      --line:rgba(73,80,125,.12);--shadow:0 18px 48px rgba(55,48,120,.13);--nav-h:76px;
+    }
+    body[data-theme="dark"]{--bg:#080a17;--surface:rgba(17,20,42,.91);--surface2:#13172c;--text:#f7f8ff;--muted:#aab0cc;--line:rgba(255,255,255,.10);--shadow:0 18px 48px rgba(0,0,0,.34)}
+    *{box-sizing:border-box;-webkit-tap-highlight-color:transparent}
+    html,body{margin:0;min-height:100%;background:var(--bg);color:var(--text);font-family:-apple-system,BlinkMacSystemFont,"PingFang TC","Noto Sans TC","Microsoft JhengHei",sans-serif}
+    body{padding:env(safe-area-inset-top) 0 calc(var(--nav-h) + env(safe-area-inset-bottom));overflow-x:hidden}
+    button,input,select,textarea{font:inherit}
+    button{cursor:pointer}
+    .bg{position:fixed;inset:0;pointer-events:none;background:radial-gradient(circle at 6% 0%,color-mix(in srgb,var(--c1) 22%,transparent),transparent 34%),radial-gradient(circle at 96% 8%,color-mix(in srgb,var(--c4) 24%,transparent),transparent 38%),linear-gradient(180deg,var(--bg),var(--bg));z-index:0}
+    .app{position:relative;z-index:1;max-width:980px;margin:0 auto;min-height:100vh}
+    .topbar{position:sticky;top:0;z-index:30;display:flex;align-items:center;justify-content:space-between;gap:12px;padding:12px 14px;background:color-mix(in srgb,var(--bg) 78%,transparent);backdrop-filter:blur(22px);border-bottom:1px solid var(--line)}
+    .brand{display:flex;align-items:center;gap:10px;min-width:0;border:0;background:transparent;color:var(--text);padding:0;text-align:left}
+    .logo{width:42px;height:42px;border-radius:15px;display:grid;place-items:center;font-weight:1000;color:white;background:linear-gradient(135deg,var(--c1),var(--c3),var(--c4));box-shadow:0 10px 28px color-mix(in srgb,var(--c3) 34%,transparent)}
+    .brand-copy{min-width:0}.brand-copy strong{display:block;font-size:17px;white-space:nowrap;overflow:hidden;text-overflow:ellipsis}.brand-copy small{display:block;color:var(--muted);font-size:11px;margin-top:2px}
+    .top-actions{display:flex;gap:8px}.icon-btn{width:42px;height:42px;border-radius:15px;border:1px solid var(--line);background:var(--surface);color:var(--text);display:grid;place-items:center;font-size:18px;box-shadow:0 8px 22px rgba(35,38,90,.08)}
+    .content{padding:14px}
+    .page{display:none}.page.active{display:block;animation:fade .22s ease}@keyframes fade{from{opacity:.35;transform:translateY(5px)}to{opacity:1;transform:none}}
+    .hero{padding:20px;border-radius:26px;background:linear-gradient(135deg,color-mix(in srgb,var(--c1) 70%,#fff),color-mix(in srgb,var(--c3) 86%,#fff),color-mix(in srgb,var(--c4) 78%,#fff));color:#11152f;box-shadow:var(--shadow);position:relative;overflow:hidden}
+    .hero:after{content:"";position:absolute;width:210px;height:210px;border-radius:50%;right:-70px;top:-90px;background:rgba(255,255,255,.25)}
+    .hero-row{display:flex;align-items:flex-start;justify-content:space-between;gap:14px;position:relative;z-index:1}.hero h1{font-size:27px;margin:0 0 5px}.hero p{margin:0;font-weight:750;opacity:.72;font-size:13px;line-height:1.5}.plan-pill{padding:7px 10px;border-radius:999px;background:rgba(255,255,255,.62);font-size:11px;font-weight:950;white-space:nowrap}
+    .hero-metrics{display:grid;grid-template-columns:repeat(3,1fr);gap:9px;margin-top:18px;position:relative;z-index:1}.hero-metric{padding:11px;border-radius:17px;background:rgba(255,255,255,.56);min-width:0}.hero-metric small{font-size:10px;font-weight:850;opacity:.65}.hero-metric b{display:block;font-size:18px;margin-top:4px;white-space:nowrap;overflow:hidden;text-overflow:ellipsis}
+    .section-head{display:flex;align-items:center;justify-content:space-between;gap:10px;margin:20px 2px 10px}.section-head h2{font-size:17px;margin:0}.section-head span{font-size:11px;color:var(--muted)}
+    .grid{display:grid;grid-template-columns:repeat(2,minmax(0,1fr));gap:11px}.card{border-radius:22px;background:var(--surface);border:1px solid var(--line);box-shadow:0 10px 28px rgba(42,44,100,.07);padding:16px}.card.wide{grid-column:1/-1}.card-title{font-size:14px;font-weight:950}.card-sub{font-size:11px;color:var(--muted);margin-top:4px;line-height:1.45}.big{font-size:24px;font-weight:1000;margin-top:12px}.badge{display:inline-flex;align-items:center;gap:5px;border-radius:999px;padding:5px 8px;background:color-mix(in srgb,var(--c3) 13%,transparent);color:var(--text);font-size:10px;font-weight:900}
+    .actions{display:flex;gap:8px;flex-wrap:wrap;margin-top:13px}.btn{border:0;border-radius:14px;padding:11px 14px;font-weight:900;background:linear-gradient(135deg,var(--c2),var(--c3));color:#11152f;min-height:42px}.btn.soft{background:var(--surface2);color:var(--text);border:1px solid var(--line)}.btn.danger{background:#ffe4e8;color:#9f1239}.btn.full{width:100%}.btn:disabled{opacity:.45;cursor:not-allowed}
+    .list{display:grid;gap:9px}.item{display:flex;align-items:center;justify-content:space-between;gap:12px;padding:12px;border-radius:17px;background:color-mix(in srgb,var(--surface2) 82%,transparent);border:1px solid var(--line)}.item-main{min-width:0}.item-main strong{font-size:13px}.item-main small{display:block;color:var(--muted);font-size:11px;margin-top:4px;white-space:nowrap;overflow:hidden;text-overflow:ellipsis}.item-side{text-align:right;font-size:12px;font-weight:900;white-space:nowrap}.empty{padding:22px;text-align:center;border:1px dashed var(--line);border-radius:18px;color:var(--muted);font-size:12px}
+    .weekbar{display:grid;grid-template-columns:repeat(7,1fr);gap:6px}.day{border:1px solid var(--line);background:var(--surface);color:var(--text);border-radius:16px;padding:9px 2px;text-align:center}.day small{display:block;color:var(--muted);font-size:9px}.day b{display:block;font-size:14px;margin-top:4px}.day.active{background:linear-gradient(135deg,var(--c2),var(--c4));color:#101327}.day.active small{color:#30385f}
+    .form{display:grid;gap:11px}.field{display:grid;gap:6px}.field label{font-size:11px;font-weight:900;color:var(--muted)}.input{width:100%;border:1px solid var(--line);background:var(--surface2);color:var(--text);border-radius:15px;padding:12px;outline:none}.input:focus{border-color:var(--c3);box-shadow:0 0 0 4px color-mix(in srgb,var(--c3) 14%,transparent)}textarea.input{min-height:92px;resize:vertical}.two{display:grid;grid-template-columns:1fr 1fr;gap:10px}.three{display:grid;grid-template-columns:repeat(3,1fr);gap:8px}
+    .seg{display:flex;padding:4px;border-radius:15px;background:color-mix(in srgb,var(--surface2) 80%,transparent);border:1px solid var(--line)}.seg button{flex:1;border:0;border-radius:11px;padding:9px 7px;background:transparent;color:var(--muted);font-size:11px;font-weight:900}.seg button.active{background:linear-gradient(135deg,var(--c2),var(--c4));color:#101327}
+    .nav{position:fixed;z-index:50;left:50%;bottom:calc(8px + env(safe-area-inset-bottom));transform:translateX(-50%);width:min(94%,650px);height:64px;border-radius:24px;background:color-mix(in srgb,var(--surface) 92%,transparent);border:1px solid var(--line);box-shadow:0 18px 46px rgba(18,20,50,.22);backdrop-filter:blur(22px);display:grid;grid-template-columns:repeat(5,1fr);padding:6px}.nav button{border:0;background:transparent;color:var(--muted);border-radius:18px;display:grid;place-items:center;font-size:10px;font-weight:900;gap:1px}.nav button i{font-style:normal;font-size:18px}.nav button.active{color:#101327;background:linear-gradient(135deg,var(--c2),var(--c4))}
+    .drawer-backdrop{position:fixed;inset:0;background:rgba(5,8,20,.44);z-index:70;display:none}.drawer-backdrop.show{display:block}.drawer{position:fixed;right:10px;top:calc(64px + env(safe-area-inset-top));z-index:71;width:min(330px,calc(100% - 20px));max-height:calc(100vh - 84px - env(safe-area-inset-top));overflow:auto;border-radius:24px;background:var(--surface2);border:1px solid var(--line);box-shadow:0 24px 70px rgba(0,0,0,.28);padding:14px;display:none}.drawer.show{display:block}.drawer-title{font-size:16px;font-weight:1000;margin:4px 3px 12px}.menu-item{width:100%;border:0;border-radius:15px;background:transparent;color:var(--text);padding:12px;text-align:left;font-weight:850}.menu-item:hover,.menu-item:active{background:color-mix(in srgb,var(--c3) 10%,transparent)}
+    .modal-wrap{position:fixed;inset:0;z-index:90;background:rgba(4,6,18,.62);display:none;align-items:flex-end;justify-content:center;padding:12px}.modal-wrap.show{display:flex}.modal{width:min(620px,100%);max-height:92vh;overflow:auto;border-radius:28px 28px 22px 22px;background:var(--surface2);border:1px solid var(--line);box-shadow:0 30px 90px rgba(0,0,0,.34);padding:20px}.modal h2{margin:0 0 5px}.modal p{margin:0 0 16px;color:var(--muted);font-size:12px;line-height:1.55}.modal-actions{display:flex;gap:9px;margin-top:16px}.modal-actions .btn{flex:1}
+    .status{display:none;margin-top:10px;padding:10px 12px;border-radius:14px;font-size:11px;font-weight:800;line-height:1.4}.status.show{display:block}.status.info{background:#e8f4ff;color:#075985}.status.ok{background:#dcfce7;color:#166534}.status.error{background:#ffe4e6;color:#9f1239}
+    .sync-dot{width:7px;height:7px;border-radius:50%;display:inline-block;background:#f59e0b}.sync-dot.ok{background:#10b981}.sync-dot.error{background:#ef4444}
+    @media(min-width:760px){.content{padding:20px}.desktop-cols{display:grid;grid-template-columns:1.2fr .8fr;gap:14px}.hero h1{font-size:32px}.grid{grid-template-columns:repeat(4,minmax(0,1fr))}.card.wide{grid-column:span 2}.modal-wrap{align-items:center}}
+    @media(max-width:380px){.hero{padding:17px}.hero h1{font-size:23px}.hero-metric{padding:9px}.hero-metric b{font-size:15px}.content{padding:10px}.card{padding:13px}.two{grid-template-columns:1fr}.nav{width:96%}}
+  </style>
+</head>
+<body data-theme="dark">
+  <div class="bg"></div>
+  <main class="app">
+    <header class="topbar">
+      <button class="brand" type="button" onclick="toggleDrawer()">
+        <span class="logo">P</span>
+        <span class="brand-copy"><strong id="workspaceName">ANG HR Personal</strong><small id="workspaceMeta">尚未建立個人空間</small></span>
+      </button>
+      <div class="top-actions">
+        <button class="icon-btn" type="button" aria-label="切換日夜" onclick="toggleTheme()">◐</button>
+        <button class="icon-btn" type="button" aria-label="設定" onclick="openSettings()">⚙</button>
+      </div>
+    </header>
+
+    <div class="content">
+      <section class="page active" data-page="today">
+        <div class="hero">
+          <div class="hero-row"><div><h1 id="helloText">今天也辛苦了</h1><p id="todayLine">先建立個人空間，就能開始記錄班表、工時與薪資。</p></div><span class="plan-pill" id="personalPlan">Personal Free</span></div>
+          <div class="hero-metrics">
+            <div class="hero-metric"><small>今日班別</small><b id="metricShift">—</b></div>
+            <div class="hero-metric"><small>本期工時</small><b id="metricHours">0h</b></div>
+            <div class="hero-metric"><small>預估薪資</small><b id="metricPay">$0</b></div>
+          </div>
+        </div>
+        <div class="section-head"><h2>今日狀態</h2><span id="syncState"><i class="sync-dot"></i> 本機模式</span></div>
+        <div class="grid">
+          <article class="card"><div class="card-title">打卡</div><div class="card-sub" id="clockSummary">今天尚未打卡</div><div class="big" id="clockTime">--:--</div><div class="actions"><button class="btn" type="button" onclick="quickClock('in')">上班</button><button class="btn soft" type="button" onclick="quickClock('out')">下班</button></div></article>
+          <article class="card"><div class="card-title">下一個提醒</div><div class="card-sub" id="nextReminderMeta">尚無提醒</div><div class="big" id="nextReminderTitle">—</div><div class="actions"><button class="btn soft" type="button" onclick="showPage('more');openMorePanel('reminder')">新增提醒</button></div></article>
+          <article class="card wide"><div class="section-head" style="margin:0 0 10px"><h2>工作記事</h2><button class="btn soft" type="button" onclick="showPage('more');openMorePanel('note')">新增</button></div><div id="todayNotes" class="list"></div></article>
+          <article class="card wide"><div class="section-head" style="margin:0 0 10px"><h2>近期紀錄</h2><span>只顯示自己的資料</span></div><div id="recentRecords" class="list"></div></article>
+        </div>
+      </section>
+
+      <section class="page" data-page="schedule">
+        <div class="section-head"><h2>班表</h2><span id="scheduleModeLabel">週排班</span></div>
+        <div class="card">
+          <div class="seg" id="scheduleModeSeg"><button type="button" data-mode="week" onclick="setScheduleMode('week')">週排</button><button type="button" data-mode="month" onclick="setScheduleMode('month')">月排</button></div>
+          <div class="weekbar" id="weekBar" style="margin-top:12px"></div>
+        </div>
+        <div class="section-head"><h2>本週安排</h2><button class="btn soft" type="button" onclick="openShiftModal()">新增班別</button></div>
+        <div class="card"><div id="scheduleList" class="list"></div></div>
+      </section>
+
+      <section class="page" data-page="clock">
+        <div class="section-head"><h2>打卡與工時</h2><span>個人自行記錄</span></div>
+        <div class="card">
+          <div class="big" id="liveClock">--:--:--</div><div class="card-sub" id="liveDate">—</div>
+          <div class="actions"><button class="btn" type="button" onclick="quickClock('in')">上班打卡</button><button class="btn soft" type="button" onclick="quickClock('out')">下班打卡</button><button class="btn soft" type="button" onclick="openClockFixModal()">補打卡</button></div>
+        </div>
+        <div class="section-head"><h2>本期紀錄</h2><span id="clockPeriodLabel">依薪資週期</span></div>
+        <div class="card"><div id="clockList" class="list"></div></div>
+      </section>
+
+      <section class="page" data-page="pay">
+        <div class="hero">
+          <div class="hero-row"><div><h1>薪資核對</h1><p id="payCycleText">尚未設定領薪週期</p></div><span class="plan-pill" id="payTypePill">未設定</span></div>
+          <div class="hero-metrics"><div class="hero-metric"><small>預估</small><b id="payEstimate">$0</b></div><div class="hero-metric"><small>實領</small><b id="payActual">$0</b></div><div class="hero-metric"><small>差額</small><b id="payDiff">$0</b></div></div>
+        </div>
+        <div class="section-head"><h2>本期薪資</h2><button class="btn soft" type="button" onclick="openActualPayModal()">登記實領</button></div>
+        <div class="grid"><article class="card"><div class="card-title">一般工時</div><div class="big" id="normalHours">0h</div></article><article class="card"><div class="card-title">加班</div><div class="big" id="otHours">0h</div></article><article class="card wide"><div class="card-title">計算方式</div><div class="card-sub" id="payRuleText">請先到設定填寫時薪、日薪或月薪。</div></article></div>
+        <div class="section-head"><h2>歷史薪資</h2><span>預估與實領比較</span></div>
+        <div class="card"><div id="payHistory" class="list"></div></div>
+      </section>
+
+      <section class="page" data-page="more">
+        <div class="section-head"><h2>更多紀錄</h2><span>請假、記事、提醒與團隊</span></div>
+        <div class="grid">
+          <button class="card" type="button" onclick="openMorePanel('leave')" style="text-align:left;color:inherit"><div class="card-title">請假／休假</div><div class="card-sub">自己留下假別、時間與薪資影響</div></button>
+          <button class="card" type="button" onclick="openMorePanel('note')" style="text-align:left;color:inherit"><div class="card-title">個人記事</div><div class="card-sub">記下口頭約定、代班與工作備註</div></button>
+          <button class="card" type="button" onclick="openMorePanel('reminder')" style="text-align:left;color:inherit"><div class="card-title">提醒事項</div><div class="card-sub">上班、發薪、證件與自訂提醒</div></button>
+          <button class="card" type="button" onclick="openMorePanel('team')" style="text-align:left;color:inherit"><div class="card-title">平等團隊</div><div class="card-sub">沒有老闆、沒有審核，以邀請碼共同使用</div></button>
+        </div>
+        <div id="morePanel" style="margin-top:12px"></div>
+      </section>
+    </div>
+  </main>
+
+  <nav class="nav" aria-label="Personal 主導航">
+    <button type="button" class="active" data-nav="today" onclick="showPage('today')"><i>⌂</i>今日</button>
+    <button type="button" data-nav="schedule" onclick="showPage('schedule')"><i>▦</i>班表</button>
+    <button type="button" data-nav="clock" onclick="showPage('clock')"><i>◉</i>打卡</button>
+    <button type="button" data-nav="pay" onclick="showPage('pay')"><i>＄</i>薪資</button>
+    <button type="button" data-nav="more" onclick="showPage('more')"><i>•••</i>更多</button>
+  </nav>
+
+  <div id="drawerBackdrop" class="drawer-backdrop" onclick="toggleDrawer(false)"></div>
+  <aside id="drawer" class="drawer">
+    <div class="drawer-title">空間與帳號</div>
+    <button class="menu-item" type="button" onclick="openWorkspaceModal()">建立／切換 Personal 空間</button>
+    <button class="menu-item" type="button" onclick="openMorePanelFromMenu('team')">團隊與邀請碼</button>
+    <button class="menu-item" type="button" onclick="openSettings()">個人工作設定</button>
+    <button class="menu-item" type="button" onclick="openModulesModal()">方案與買斷模組</button>
+    <button class="menu-item" type="button" onclick="goCompanySpace()">切換到正式公司</button>
+    <button class="menu-item" type="button" onclick="goEntry()">回登入入口</button>
+  </aside>
+
+  <div id="modalWrap" class="modal-wrap"><div id="modal" class="modal"></div></div>
+
+  <script>
+  (function(){
+    'use strict';
+    const STORE_KEY='ang_personal_state_v1';
+    const THEME_KEY='ang-hr-theme';
+    const API=(window.ANG_HR_CONFIG&&window.ANG_HR_CONFIG.apiBaseUrl)||'';
+    const state=loadState();
+    let selectedDate=todayISO();
+
+    function defaultState(){return{version:1,user:{id:readIdentity(),name:localStorage.getItem('emp_name')||'我'},workspace:null,settings:{scheduleMode:'week',weekStart:1,monthStartDay:1,payFrequency:'monthly',payday:5,payType:'hourly',payRate:0,cloud:false},shifts:[],records:[],notes:[],reminders:[],leaves:[],pays:[],team:{members:[],inviteCode:''},modules:{advancedPayroll:false,multiWorkplaces:false,advancedSchedule:false,exportReports:false},updatedAt:''}}
+    function loadState(){try{const raw=localStorage.getItem(STORE_KEY);if(raw)return Object.assign(defaultState(),JSON.parse(raw)||{})}catch(e){}return defaultState()}
+    function saveState(sync){state.updatedAt=new Date().toISOString();localStorage.setItem(STORE_KEY,JSON.stringify(state));renderAll();if(sync)syncState()}
+    function readIdentity(){const q=new URLSearchParams(location.search);return (q.get('user_id')||q.get('employee_id')||q.get('id')||localStorage.getItem('ang_user_id')||localStorage.getItem('ang_hr_active_employee_id')||localStorage.getItem('loginId')||localStorage.getItem('ang_hr_device_id')||getDeviceId()).trim()}
+    function getDeviceId(){let id=localStorage.getItem('ang_hr_device_id')||'';if(!id){id='DEV-'+Date.now().toString(36).toUpperCase()+'-'+Math.random().toString(36).slice(2,8).toUpperCase();localStorage.setItem('ang_hr_device_id',id)}return id}
+    function todayISO(){const d=new Date();return d.getFullYear()+'-'+String(d.getMonth()+1).padStart(2,'0')+'-'+String(d.getDate()).padStart(2,'0')}
+    function money(n){return '$'+Math.round(Number(n)||0).toLocaleString('zh-TW')}
+    function esc(s){return String(s==null?'':s).replace(/[&<>"']/g,m=>({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;',"'":'&#39;'}[m]))}
+    function uid(prefix){return prefix+'-'+Date.now().toString(36).toUpperCase()+'-'+Math.random().toString(36).slice(2,7).toUpperCase()}
+    function fmtDate(v){if(!v)return'—';const d=new Date(v);if(isNaN(d))return v;return new Intl.DateTimeFormat('zh-TW',{month:'numeric',day:'numeric',weekday:'short'}).format(d)}
+    function fmtTime(v){if(!v)return'—';const d=new Date(v);if(isNaN(d))return v;return String(d.getHours()).padStart(2,'0')+':'+String(d.getMinutes()).padStart(2,'0')}
+    function hoursBetween(a,b){if(!a||!b)return 0;return Math.max(0,(new Date(b)-new Date(a))/3600000)}
+
+    window.showPage=function(name){document.querySelectorAll('.page').forEach(p=>p.classList.toggle('active',p.dataset.page===name));document.querySelectorAll('.nav button').forEach(b=>b.classList.toggle('active',b.dataset.nav===name));if(name==='more'&&!document.getElementById('morePanel').innerHTML)openMorePanel('leave');window.scrollTo({top:0,behavior:'smooth'})}
+    window.toggleTheme=function(){const next=document.body.dataset.theme==='dark'?'light':'dark';document.body.dataset.theme=next;localStorage.setItem(THEME_KEY,next)}
+    window.toggleDrawer=function(force){const show=typeof force==='boolean'?force:!document.getElementById('drawer').classList.contains('show');document.getElementById('drawer').classList.toggle('show',show);document.getElementById('drawerBackdrop').classList.toggle('show',show)}
+    window.goEntry=function(){location.href=(window.ANG_HR_CONFIG&&ANG_HR_CONFIG.indexPageUrl)||'index.html'}
+    window.goCompanySpace=function(){location.href=(window.ANG_HR_CONFIG&&ANG_HR_CONFIG.employeePageUrl)||'employee.html'}
+    window.openMorePanelFromMenu=function(type){toggleDrawer(false);showPage('more');openMorePanel(type)}
+
+    function openModal(html){document.getElementById('modal').innerHTML=html;document.getElementById('modalWrap').classList.add('show')}
+    window.closeModal=function(){document.getElementById('modalWrap').classList.remove('show')}
+    document.getElementById('modalWrap').addEventListener('click',e=>{if(e.target===e.currentTarget)closeModal()})
+
+    window.openWorkspaceModal=function(){toggleDrawer(false);openModal(`<h2>建立 Personal 空間</h2><p>一人使用選「個人」；同事想共同看班表與通知，選「平等團隊」。團隊沒有老闆、沒有審核。</p><div class="form"><div class="field"><label>空間名稱</label><input class="input" id="wsName" value="${esc(state.workspace&&state.workspace.name||'我的工作空間')}"></div><div class="field"><label>模式</label><select class="input" id="wsType"><option value="personal_solo">個人模式</option><option value="personal_team" ${state.workspace&&state.workspace.type==='personal_team'?'selected':''}>無老闆平等團隊</option></select></div></div><div class="modal-actions"><button class="btn soft" onclick="closeModal()">取消</button><button class="btn" onclick="saveWorkspace()">建立／更新</button></div><div class="status" id="modalStatus"></div>`)}
+    window.saveWorkspace=function(){const name=document.getElementById('wsName').value.trim();const type=document.getElementById('wsType').value;if(!name)return modalStatus('請輸入空間名稱','error');const prefix=type==='personal_team'?'PT':'P';if(!state.workspace)state.workspace={id:uid('WS'),code:prefix+Math.random().toString().slice(2,8),createdAt:new Date().toISOString()};state.workspace.name=name;state.workspace.type=type;state.workspace.code=state.workspace.code||prefix+Math.random().toString().slice(2,8);if(type==='personal_team'&&!state.team.members.length)state.team.members.push({id:state.user.id,name:state.user.name||'我',role:'maintainer',plan:'Personal Free'});saveState(true);closeModal()}
+    function modalStatus(text,type){const el=document.getElementById('modalStatus');if(!el)return;el.className='status show '+(type||'info');el.textContent=text}
+
+    window.openSettings=function(){toggleDrawer(false);const s=state.settings;openModal(`<h2>個人工作設定</h2><p>這裡只管理自己的班表、工時與薪資規則，平常不需要一直進來。</p><div class="form"><div class="two"><div class="field"><label>排班方式</label><select class="input" id="setScheduleMode"><option value="week" ${s.scheduleMode==='week'?'selected':''}>週排班</option><option value="month" ${s.scheduleMode==='month'?'selected':''}>月排班</option></select></div><div class="field"><label>每月週期起始日</label><input class="input" id="setMonthStart" type="number" min="1" max="28" value="${s.monthStartDay||1}"></div></div><div class="two"><div class="field"><label>薪資類型</label><select class="input" id="setPayType"><option value="hourly" ${s.payType==='hourly'?'selected':''}>時薪</option><option value="daily" ${s.payType==='daily'?'selected':''}>日薪</option><option value="monthly" ${s.payType==='monthly'?'selected':''}>月薪</option></select></div><div class="field"><label>金額</label><input class="input" id="setPayRate" type="number" min="0" step="1" value="${Number(s.payRate)||0}"></div></div><div class="two"><div class="field"><label>領薪週期</label><select class="input" id="setPayFrequency"><option value="weekly" ${s.payFrequency==='weekly'?'selected':''}>週領</option><option value="biweekly" ${s.payFrequency==='biweekly'?'selected':''}>雙週領</option><option value="semimonthly" ${s.payFrequency==='semimonthly'?'selected':''}>半月領</option><option value="monthly" ${s.payFrequency==='monthly'?'selected':''}>月領</option></select></div><div class="field"><label>發薪日</label><input class="input" id="setPayday" type="number" min="1" max="31" value="${s.payday||5}"></div></div></div><div class="modal-actions"><button class="btn soft" onclick="closeModal()">取消</button><button class="btn" onclick="saveSettings()">儲存設定</button></div>`)}
+    window.saveSettings=function(){state.settings.scheduleMode=document.getElementById('setScheduleMode').value;state.settings.monthStartDay=Math.max(1,Math.min(28,Number(document.getElementById('setMonthStart').value)||1));state.settings.payType=document.getElementById('setPayType').value;state.settings.payRate=Math.max(0,Number(document.getElementById('setPayRate').value)||0);state.settings.payFrequency=document.getElementById('setPayFrequency').value;state.settings.payday=Math.max(1,Math.min(31,Number(document.getElementById('setPayday').value)||5));saveState(true);closeModal()}
+
+    window.openModulesModal=function(){toggleDrawer(false);const m=state.modules;openModal(`<h2>Personal 模組</h2><p>個人功能跟著帳號，自己升級不會要求同團隊其他人一起購買。此頁先建立權限結構，付款流程後續串接。</p><div class="list">${moduleRow('advancedPayroll','進階薪資','加班倍率、津貼、扣款、預估與實領核對',m.advancedPayroll)}${moduleRow('multiWorkplaces','多工作場所','每份工作可有不同班別、薪資與週期',m.multiWorkplaces)}${moduleRow('advancedSchedule','進階班表','跨夜、多段班、輪班週期與進位規則',m.advancedSchedule)}${moduleRow('exportReports','報表匯出','PDF、Excel、CSV 與年度統計',m.exportReports)}</div><div class="modal-actions"><button class="btn full" onclick="closeModal()">完成</button></div>`)}
+    function moduleRow(key,title,sub,on){return `<div class="item"><div class="item-main"><strong>${title}</strong><small>${sub}</small></div><div class="item-side">${on?'已解鎖':'未購買'}</div></div>`}
+
+    window.setScheduleMode=function(mode){state.settings.scheduleMode=mode;saveState(true)}
+    window.openShiftModal=function(){openModal(`<h2>新增班表</h2><p>Personal 的班表是自己的預定工作，不需要主管核准。</p><div class="form"><div class="field"><label>日期</label><input class="input" id="shiftDate" type="date" value="${selectedDate}"></div><div class="two"><div class="field"><label>班別名稱</label><input class="input" id="shiftName" value="A"></div><div class="field"><label>工作場所</label><input class="input" id="shiftWorkplace" placeholder="例如 埔里店"></div></div><div class="two"><div class="field"><label>上班</label><input class="input" id="shiftStart" type="time" value="08:00"></div><div class="field"><label>下班</label><input class="input" id="shiftEnd" type="time" value="16:00"></div></div></div><div class="modal-actions"><button class="btn soft" onclick="closeModal()">取消</button><button class="btn" onclick="saveShift()">儲存班表</button></div>`)}
+    window.saveShift=function(){const date=document.getElementById('shiftDate').value;const name=document.getElementById('shiftName').value.trim()||'班';const start=document.getElementById('shiftStart').value;const end=document.getElementById('shiftEnd').value;if(!date||!start||!end)return;state.shifts.push({id:uid('SH'),date,name,start,end,workplace:document.getElementById('shiftWorkplace').value.trim(),createdAt:new Date().toISOString()});saveState(true);closeModal()}
+
+    window.quickClock=function(type){if(!state.workspace){openWorkspaceModal();return}const now=new Date();const date=todayISO();const openIn=[...state.records].reverse().find(r=>r.type==='clock'&&r.date===date&&r.clockType==='in'&&!state.records.some(o=>o.type==='clock'&&o.clockType==='out'&&o.pairId===r.id));if(type==='out'&&!openIn){alert('今天還沒有上班打卡');return}const rec={id:uid('CLK'),type:'clock',clockType:type,date,at:now.toISOString(),pairId:type==='out'?openIn.id:'',title:type==='in'?'上班打卡':'下班打卡',createdAt:now.toISOString()};state.records.push(rec);saveState(true)}
+    window.openClockFixModal=function(){openModal(`<h2>補打卡</h2><p>Personal 補打卡會直接保存，不需要送審；仍會保留「補登」標記與備註。</p><div class="form"><div class="field"><label>日期時間</label><input class="input" id="fixAt" type="datetime-local"></div><div class="field"><label>類型</label><select class="input" id="fixType"><option value="in">上班</option><option value="out">下班</option></select></div><div class="field"><label>備註</label><textarea class="input" id="fixNote" placeholder="例如：忘記打下班卡"></textarea></div></div><div class="modal-actions"><button class="btn soft" onclick="closeModal()">取消</button><button class="btn" onclick="saveClockFix()">保存補登</button></div>`)}
+    window.saveClockFix=function(){const v=document.getElementById('fixAt').value;if(!v)return;const at=new Date(v);state.records.push({id:uid('FIX'),type:'clock',clockType:document.getElementById('fixType').value,date:v.slice(0,10),at:at.toISOString(),manual:true,title:'補打卡',note:document.getElementById('fixNote').value.trim(),createdAt:new Date().toISOString()});saveState(true);closeModal()}
+
+    window.openActualPayModal=function(){const calc=calculatePayroll();openModal(`<h2>登記實領薪資</h2><p>收到薪水後填入實際金額，系統會和預估薪資比較。</p><div class="form"><div class="field"><label>本期預估</label><input class="input" value="${calc.estimate}" disabled></div><div class="field"><label>實際收到</label><input class="input" id="actualPay" type="number" min="0" value="${calc.actual||''}"></div><div class="field"><label>備註</label><textarea class="input" id="actualNote" placeholder="例如：扣制服費 450 元"></textarea></div></div><div class="modal-actions"><button class="btn soft" onclick="closeModal()">取消</button><button class="btn" onclick="saveActualPay()">儲存</button></div>`)}
+    window.saveActualPay=function(){const calc=calculatePayroll();state.pays.push({id:uid('PAY'),period:calc.period,estimate:calc.estimate,actual:Number(document.getElementById('actualPay').value)||0,note:document.getElementById('actualNote').value.trim(),createdAt:new Date().toISOString()});saveState(true);closeModal()}
+
+    window.openMorePanel=function(type){const box=document.getElementById('morePanel');if(type==='leave')box.innerHTML=leavePanel();if(type==='note')box.innerHTML=notePanel();if(type==='reminder')box.innerHTML=reminderPanel();if(type==='team')box.innerHTML=teamPanel()}
+    function leavePanel(){return `<div class="card"><div class="section-head" style="margin:0 0 12px"><h2>請假／休假紀錄</h2><span>不送審</span></div><div class="form"><div class="two"><div class="field"><label>假別</label><select class="input" id="leaveType"><option>事假</option><option>病假</option><option>特休</option><option>公假</option><option>生理假</option><option>家庭照顧假</option><option>婚假</option><option>喪假</option><option>產假</option><option>陪產假</option><option>育嬰假</option><option>其他</option></select></div><div class="field"><label>薪資影響</label><select class="input" id="leavePay"><option value="unpaid">無薪</option><option value="half">半薪</option><option value="paid">有薪</option><option value="none">不計入</option></select></div></div><div class="two"><div class="field"><label>開始</label><input class="input" id="leaveStart" type="datetime-local"></div><div class="field"><label>結束</label><input class="input" id="leaveEnd" type="datetime-local"></div></div><div class="field"><label>備註</label><textarea class="input" id="leaveNote" placeholder="例如：已用 LINE 通知公司"></textarea></div><button class="btn full" onclick="saveLeave()">儲存請假紀錄</button></div><div class="section-head"><h2>已記錄</h2><span>${state.leaves.length} 筆</span></div><div class="list">${renderLeaveItems()}</div></div>`}
+    window.saveLeave=function(){const start=document.getElementById('leaveStart').value,end=document.getElementById('leaveEnd').value;if(!start||!end)return alert('請選擇開始與結束時間');state.leaves.push({id:uid('LEV'),type:document.getElementById('leaveType').value,pay:document.getElementById('leavePay').value,start:new Date(start).toISOString(),end:new Date(end).toISOString(),note:document.getElementById('leaveNote').value.trim(),status:'recorded',createdAt:new Date().toISOString()});saveState(true);openMorePanel('leave')}
+    function renderLeaveItems(){if(!state.leaves.length)return'<div class="empty">尚無請假／休假紀錄</div>';return [...state.leaves].reverse().map(x=>`<div class="item"><div class="item-main"><strong>${esc(x.type)}</strong><small>${fmtDate(x.start)} ${fmtTime(x.start)}－${fmtTime(x.end)}${x.note?'｜'+esc(x.note):''}</small></div><div class="item-side">已記錄</div></div>`).join('')}
+    function notePanel(){return `<div class="card"><div class="section-head" style="margin:0 0 12px"><h2>個人記事</h2><span>只有自己看得到</span></div><div class="form"><div class="field"><label>內容</label><textarea class="input" id="noteText" placeholder="例如：下週記得問加班費"></textarea></div><div class="two"><div class="field"><label>綁定日期</label><input class="input" id="noteDate" type="date" value="${todayISO()}"></div><div class="field"><label>重要性</label><select class="input" id="noteLevel"><option value="normal">一般</option><option value="important">重要</option></select></div></div><button class="btn full" onclick="saveNote()">保存記事</button></div><div class="section-head"><h2>記事清單</h2><span>${state.notes.length} 筆</span></div><div class="list">${renderNoteItems()}</div></div>`}
+    window.saveNote=function(){const text=document.getElementById('noteText').value.trim();if(!text)return;state.notes.push({id:uid('NOTE'),text,date:document.getElementById('noteDate').value,level:document.getElementById('noteLevel').value,done:false,createdAt:new Date().toISOString()});saveState(true);openMorePanel('note')}
+    window.toggleNoteDone=function(id){const n=state.notes.find(x=>x.id===id);if(n)n.done=!n.done;saveState(true);openMorePanel('note')}
+    function renderNoteItems(){if(!state.notes.length)return'<div class="empty">尚無個人記事</div>';return [...state.notes].reverse().map(x=>`<div class="item"><div class="item-main"><strong style="${x.done?'text-decoration:line-through;opacity:.55':''}">${x.level==='important'?'★ ':''}${esc(x.text)}</strong><small>${fmtDate(x.date)}</small></div><button class="btn soft" onclick="toggleNoteDone('${x.id}')">${x.done?'還原':'完成'}</button></div>`).join('')}
+    function reminderPanel(){return `<div class="card"><div class="section-head" style="margin:0 0 12px"><h2>提醒事項</h2><span>提醒自己</span></div><div class="form"><div class="field"><label>提醒內容</label><input class="input" id="reminderTitle" placeholder="例如：記得帶診斷證明"></div><div class="field"><label>時間</label><input class="input" id="reminderAt" type="datetime-local"></div><button class="btn full" onclick="saveReminder()">新增提醒</button></div><div class="section-head"><h2>提醒清單</h2><span>${state.reminders.length} 筆</span></div><div class="list">${renderReminderItems()}</div></div>`}
+    window.saveReminder=function(){const title=document.getElementById('reminderTitle').value.trim(),at=document.getElementById('reminderAt').value;if(!title||!at)return;state.reminders.push({id:uid('REM'),title,at:new Date(at).toISOString(),done:false,createdAt:new Date().toISOString()});saveState(true);openMorePanel('reminder')}
+    window.toggleReminder=function(id){const r=state.reminders.find(x=>x.id===id);if(r)r.done=!r.done;saveState(true);openMorePanel('reminder')}
+    function renderReminderItems(){if(!state.reminders.length)return'<div class="empty">尚無提醒事項</div>';return [...state.reminders].sort((a,b)=>new Date(a.at)-new Date(b.at)).map(x=>`<div class="item"><div class="item-main"><strong style="${x.done?'text-decoration:line-through;opacity:.55':''}">${esc(x.title)}</strong><small>${fmtDate(x.at)} ${fmtTime(x.at)}</small></div><button class="btn soft" onclick="toggleReminder('${x.id}')">${x.done?'還原':'完成'}</button></div>`).join('')}
+    function teamPanel(){const isTeam=state.workspace&&state.workspace.type==='personal_team';return `<div class="card"><div class="section-head" style="margin:0 0 12px"><h2>平等團隊</h2><span>${isTeam?'無老闆模式':'尚未開啟'}</span></div>${!isTeam?`<div class="empty">目前是個人模式。建立平等團隊後，可用邀請碼讓同事加入，共享班表、請假時段與團隊提醒；薪資和私人記事預設不共享。</div><div class="actions"><button class="btn full" onclick="openWorkspaceModal()">建立平等團隊</button></div>`:`<div class="item"><div class="item-main"><strong>團隊代碼</strong><small>${esc(state.workspace.code)}</small></div><div class="item-side">${state.team.members.length} 人</div></div><div class="actions"><button class="btn" onclick="createInvite()">產生邀請碼</button><button class="btn soft" onclick="joinTeamPrompt()">輸入邀請碼</button></div><div class="section-head"><h2>成員</h2><span>個人方案各自獨立</span></div><div class="list">${renderMembers()}</div>`}</div>`}
+    function renderMembers(){if(!state.team.members.length)return'<div class="empty">尚無團隊成員</div>';return state.team.members.map(m=>`<div class="item"><div class="item-main"><strong>${esc(m.name||m.id)}</strong><small>${esc(m.role==='maintainer'?'空間維護者':'團隊成員')}</small></div><div class="item-side">${esc(m.plan||'Personal Free')}</div></div>`).join('')}
+    window.createInvite=function(){if(!state.workspace||state.workspace.type!=='personal_team')return;state.team.inviteCode='INV-'+Math.random().toString(36).slice(2,8).toUpperCase();saveState(true);alert('邀請碼：'+state.team.inviteCode);openMorePanel('team')}
+    window.joinTeamPrompt=function(){const code=prompt('輸入團隊邀請碼');if(!code)return;alert('邀請碼加入流程已建立，待雲端 API 啟用後會正式加入。')}
+
+    function renderAll(){renderHeader();renderToday();renderWeek();renderSchedule();renderClock();renderPay();if(document.querySelector('[data-page="more"]').classList.contains('active')){const panel=document.getElementById('morePanel');if(panel.dataset.type)openMorePanel(panel.dataset.type)}}
+    function renderHeader(){const ws=state.workspace;document.getElementById('workspaceName').textContent=ws?ws.name:'ANG HR Personal';document.getElementById('workspaceMeta').textContent=ws?(ws.type==='personal_team'?'平等團隊｜':'個人空間｜')+ws.code:'尚未建立個人空間';document.getElementById('personalPlan').textContent=state.modules.advancedPayroll||state.modules.advancedSchedule?'Personal 已加購':'Personal Free'}
+    function renderToday(){const today=todayISO();const shift=state.shifts.find(s=>s.date===today);const calc=calculatePayroll();document.getElementById('helloText').textContent=(state.user.name&&state.user.name!=='我'?state.user.name+'，':'')+'今天也辛苦了';document.getElementById('todayLine').textContent=shift?`${shift.workplace||'工作'}｜${shift.start}－${shift.end}`:'今天尚未安排班表';document.getElementById('metricShift').textContent=shift?shift.name:'休';document.getElementById('metricHours').textContent=calc.hours.toFixed(1)+'h';document.getElementById('metricPay').textContent=money(calc.estimate);const clocks=state.records.filter(r=>r.type==='clock'&&r.date===today);const last=clocks[clocks.length-1];document.getElementById('clockSummary').textContent=last?(last.clockType==='in'?'已上班':'已下班')+(last.manual?'｜補登':''):'今天尚未打卡';document.getElementById('clockTime').textContent=last?fmtTime(last.at):'--:--';const next=state.reminders.filter(r=>!r.done&&new Date(r.at)>=new Date()).sort((a,b)=>new Date(a.at)-new Date(b.at))[0];document.getElementById('nextReminderTitle').textContent=next?next.title:'—';document.getElementById('nextReminderMeta').textContent=next?fmtDate(next.at)+' '+fmtTime(next.at):'尚無提醒';document.getElementById('todayNotes').innerHTML=state.notes.filter(n=>!n.done).slice(-3).reverse().map(n=>`<div class="item"><div class="item-main"><strong>${esc(n.text)}</strong><small>${fmtDate(n.date)}</small></div><span class="badge">${n.level==='important'?'重要':'記事'}</span></div>`).join('')||'<div class="empty">尚無工作記事</div>';document.getElementById('recentRecords').innerHTML=[...state.records].reverse().slice(0,5).map(r=>`<div class="item"><div class="item-main"><strong>${esc(r.title||r.type)}</strong><small>${fmtDate(r.at||r.date)} ${fmtTime(r.at)}</small></div><div class="item-side">${r.manual?'補登':'已保存'}</div></div>`).join('')||'<div class="empty">尚無近期紀錄</div>'}
+    function renderWeek(){const bar=document.getElementById('weekBar');const now=new Date();const day=(now.getDay()+6)%7;const monday=new Date(now);monday.setDate(now.getDate()-day);bar.innerHTML='';for(let i=0;i<7;i++){const d=new Date(monday);d.setDate(monday.getDate()+i);const iso=d.getFullYear()+'-'+String(d.getMonth()+1).padStart(2,'0')+'-'+String(d.getDate()).padStart(2,'0');const b=document.createElement('button');b.className='day'+(iso===selectedDate?' active':'');b.innerHTML=`<small>${['一','二','三','四','五','六','日'][i]}</small><b>${d.getDate()}</b>`;b.onclick=()=>{selectedDate=iso;renderWeek();renderSchedule()};bar.appendChild(b)}document.querySelectorAll('#scheduleModeSeg button').forEach(b=>b.classList.toggle('active',b.dataset.mode===state.settings.scheduleMode));document.getElementById('scheduleModeLabel').textContent=state.settings.scheduleMode==='month'?'月排班':'週排班'}
+    function renderSchedule(){const list=document.getElementById('scheduleList');const rows=state.shifts.filter(s=>state.settings.scheduleMode==='month'?s.date.slice(0,7)===selectedDate.slice(0,7):true).sort((a,b)=>a.date.localeCompare(b.date));list.innerHTML=rows.map(s=>`<div class="item"><div class="item-main"><strong>${fmtDate(s.date)}｜${esc(s.name)}</strong><small>${s.start}－${s.end}${s.workplace?'｜'+esc(s.workplace):''}</small></div><div class="item-side">已確認</div></div>`).join('')||'<div class="empty">尚未建立班表</div>'}
+    function renderClock(){const rows=state.records.filter(r=>r.type==='clock').slice().reverse();document.getElementById('clockList').innerHTML=rows.map(r=>`<div class="item"><div class="item-main"><strong>${r.clockType==='in'?'上班':'下班'}${r.manual?'（補登）':''}</strong><small>${fmtDate(r.at)} ${fmtTime(r.at)}${r.note?'｜'+esc(r.note):''}</small></div><div class="item-side">${r.manual?'自行補登':'個人紀錄'}</div></div>`).join('')||'<div class="empty">尚無打卡紀錄</div>'}
+    function calculatePayroll(){let hours=0;const ins={};state.records.filter(r=>r.type==='clock').sort((a,b)=>new Date(a.at)-new Date(b.at)).forEach(r=>{if(r.clockType==='in')ins[r.id]=r;else{const i=r.pairId?ins[r.pairId]:Object.values(ins).find(x=>x.date===r.date&&!x.used);if(i){hours+=hoursBetween(i.at,r.at);i.used=true}}});let estimate=0;if(state.settings.payType==='hourly')estimate=hours*(Number(state.settings.payRate)||0);if(state.settings.payType==='daily'){const days=new Set(state.records.filter(r=>r.type==='clock'&&r.clockType==='in').map(r=>r.date)).size;estimate=days*(Number(state.settings.payRate)||0)}if(state.settings.payType==='monthly')estimate=Number(state.settings.payRate)||0;const last=state.pays[state.pays.length-1]||{};return{hours,estimate,actual:Number(last.actual)||0,period:currentPeriodLabel()}}
+    function currentPeriodLabel(){const map={weekly:'本週',biweekly:'本雙週',semimonthly:'本半月',monthly:'本月'};return map[state.settings.payFrequency]||'本期'}
+    function renderPay(){const c=calculatePayroll(),last=state.pays[state.pays.length-1]||{};const f={weekly:'週領',biweekly:'雙週領',semimonthly:'半月領',monthly:'月領'}[state.settings.payFrequency]||'未設定';const t={hourly:'時薪',daily:'日薪',monthly:'月薪'}[state.settings.payType]||'未設定';document.getElementById('payCycleText').textContent=f+'｜每期核對預估與實領';document.getElementById('payTypePill').textContent=t+' '+money(state.settings.payRate);document.getElementById('payEstimate').textContent=money(c.estimate);document.getElementById('payActual').textContent=money(last.actual||0);document.getElementById('payDiff').textContent=money((last.actual||0)-c.estimate);document.getElementById('normalHours').textContent=c.hours.toFixed(1)+'h';document.getElementById('otHours').textContent='0h';document.getElementById('payRuleText').textContent=t+' '+money(state.settings.payRate)+'｜'+f+'｜發薪日 '+state.settings.payday+' 日';document.getElementById('payHistory').innerHTML=[...state.pays].reverse().map(p=>`<div class="item"><div class="item-main"><strong>${esc(p.period)}</strong><small>預估 ${money(p.estimate)}｜實領 ${money(p.actual)}${p.note?'｜'+esc(p.note):''}</small></div><div class="item-side">差額 ${money((p.actual||0)-(p.estimate||0))}</div></div>`).join('')||'<div class="empty">尚無實領薪資紀錄</div>'}
+
+    async function syncState(){if(!API||!state.workspace){setSync('本機模式','');return}setSync('同步中','');try{const payload={action:'savePersonalWorkspaceState',user_id:state.user.id,workspace:state.workspace,settings:state.settings,modules:state.modules,team:state.team,state_json:JSON.stringify(state)};const res=await fetch(API,{method:'POST',headers:{'Content-Type':'text/plain;charset=utf-8'},body:JSON.stringify(payload)}).then(r=>r.json());if(res&&res.ok)setSync('已同步','ok');else setSync('本機已保存','error')}catch(e){setSync('本機已保存','error')}}
+    function setSync(text,cls){const el=document.getElementById('syncState');el.innerHTML=`<i class="sync-dot ${cls||''}"></i> ${text}`}
+    async function loadCloud(){if(!API)return;try{const url=API+'?action=getPersonalBootstrapData&user_id='+encodeURIComponent(state.user.id)+'&device_id='+encodeURIComponent(getDeviceId())+'&_ts='+Date.now();const res=await fetch(url,{cache:'no-store'}).then(r=>r.json());if(res&&res.ok&&res.state_json&&!state.workspace){const cloud=JSON.parse(res.state_json);Object.assign(state,cloud);saveState(false);setSync('已同步','ok')}}catch(e){}}
+    function tick(){const d=new Date();document.getElementById('liveClock').textContent=d.toLocaleTimeString('zh-TW',{hour12:false});document.getElementById('liveDate').textContent=d.toLocaleDateString('zh-TW',{year:'numeric',month:'long',day:'numeric',weekday:'long'})}
+    function init(){document.body.dataset.theme=localStorage.getItem(THEME_KEY)||'dark';tick();setInterval(tick,1000);renderAll();loadCloud();if(!state.workspace)setTimeout(openWorkspaceModal,280)}
+    init();
+  })();
+  </script>
+</body>
+</html>

@@ -1,0 +1,33 @@
+{
+  "id": "../../index.html?icon=day",
+  "name": "ANG HR",
+  "short_name": "ANG HR",
+  "description": "ANG HR 人力資源管理系統",
+  "lang": "zh-Hant",
+  "start_url": "../../index.html?icon=day",
+  "scope": "../../",
+  "display": "standalone",
+  "orientation": "portrait",
+  "background_color": "#f7f4f2",
+  "theme_color": "#eef5ff",
+  "icons": [
+    {
+      "src": "../../assets/icons/day/icon-192.png",
+      "sizes": "192x192",
+      "type": "image/png",
+      "purpose": "any"
+    },
+    {
+      "src": "../../assets/icons/day/icon-512.png",
+      "sizes": "512x512",
+      "type": "image/png",
+      "purpose": "any"
+    },
+    {
+      "src": "../../assets/icons/day/maskable-512.png",
+      "sizes": "512x512",
+      "type": "image/png",
+      "purpose": "maskable"
+    }
+  ]
+}
