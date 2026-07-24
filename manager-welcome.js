@@ -1,7 +1,42 @@
 (function () {
   'use strict';
 
+  var PENDING_PLAN_KEY = 'ang_hr_pending_plan';
+  var ACCESS_CONTEXTS_KEY = 'ang_hr_access_contexts';
+  var ACTIVE_CONTEXT_KEY = 'ang_hr_active_context';
+  var AUTH_CONFIRMATION_KEY = 'ang.login.account-confirmation';
+  var emailResendCountdownTimer = 0;
+
+  function safeJsonParse(value, fallback) {
+    try { return JSON.parse(value); } catch (_) { return fallback; }
+  }
+
+  function getPendingPlan() {
+    var plan = safeJsonParse(sessionStorage.getItem(PENDING_PLAN_KEY) || localStorage.getItem(PENDING_PLAN_KEY) || '', null);
+    if (!plan || !plan.plan_code) return null;
+    if (plan.selectedAt && Date.now() - Number(plan.selectedAt) > 30 * 60 * 1000) {
+      sessionStorage.removeItem(PENDING_PLAN_KEY);
+      localStorage.removeItem(PENDING_PLAN_KEY);
+      return null;
+    }
+    return plan;
+  }
+
+  function savePendingPlan(plan) {
+    if (!plan || !plan.plan_code) return;
+    plan.selectedAt = Date.now();
+    sessionStorage.setItem(PENDING_PLAN_KEY, JSON.stringify(plan));
+    localStorage.setItem(PENDING_PLAN_KEY, JSON.stringify(plan));
+  }
+
+  function clearPendingPlan() {
+    sessionStorage.removeItem(PENDING_PLAN_KEY);
+    localStorage.removeItem(PENDING_PLAN_KEY);
+  }
+
+
   var LOGIN_INPUT_SELECTOR = [
+    'input[aria-label="帳號或 Email"]',
     'input[aria-label="Email、帳號或公司代號"]',
     'input[aria-label="Email或使用者代號"]',
     'input[aria-label="Email或帳號"]'
@@ -76,6 +111,357 @@
     });
   }
 
+
+
+  function responseAccountExists(response) {
+    if (!response) return null;
+    var values = [
+      response.accountExists, response.account_exists, response.userExists, response.user_exists,
+      response.exists, response.found, response.registered, response.isRegistered, response.is_registered
+    ];
+    for (var i = 0; i < values.length; i += 1) {
+      var parsed = parseBooleanFlag(values[i]);
+      if (parsed !== null) return parsed;
+    }
+    if (responseConfirmsAccount(response)) return true;
+    return null;
+  }
+
+  function responseHasAccountRecord(response) {
+    if (!response) return false;
+    var explicit = [response.accountExists, response.account_exists, response.userExists, response.user_exists, response.exists, response.found, response.registered, response.isRegistered, response.is_registered];
+    for (var i = 0; i < explicit.length; i += 1) {
+      if (parseBooleanFlag(explicit[i]) === true) return true;
+      if (parseBooleanFlag(explicit[i]) === false) return false;
+    }
+    if (response.user_id || response.userId || response.employee_id || response.employeeId || response.member_id || response.memberId || response.person_id || response.personId || response.account_id || response.accountId || response.company_id || response.companyId) return true;
+    var arrays = ['access_options','accessOptions','contexts','workspaces','accounts','memberships','companies','subscriptions','plans'];
+    for (var j = 0; j < arrays.length; j += 1) if (Array.isArray(response[arrays[j]]) && response[arrays[j]].length) return true;
+    if (response.data && response.data !== response && typeof response.data === 'object') return responseHasAccountRecord(response.data);
+    return false;
+  }
+
+  function valueOf(record, keys) {
+    if (!record) return '';
+    for (var i = 0; i < keys.length; i += 1) {
+      var value = record[keys[i]];
+      if (value !== undefined && value !== null && String(value).trim()) return String(value).trim();
+    }
+    return '';
+  }
+
+  function normalizeAccessOptions(response) {
+    var root = response && response.data && typeof response.data === 'object' ? response.data : (response || {});
+    var candidates = [];
+    ['access_options', 'accessOptions', 'contexts', 'workspaces', 'accounts', 'memberships', 'companies', 'subscriptions', 'plans'].forEach(function (key) {
+      if (Array.isArray(root[key])) candidates = candidates.concat(root[key]);
+      if (Array.isArray(response && response[key])) candidates = candidates.concat(response[key]);
+    });
+
+    if (!candidates.length && (root.company_id || root.companyId || root.plan_code || root.planCode || root.role)) candidates.push(root);
+    if (!candidates.length && response && (response.company_id || response.companyId || response.plan_code || response.planCode || response.role)) candidates.push(response);
+
+    var seen = {};
+    return candidates.map(function (record, index) {
+      if (!record || typeof record !== 'object') return null;
+      var companyId = valueOf(record, ['company_id', 'companyId', 'company_code', 'companyCode']);
+      var companyName = valueOf(record, ['company_name', 'companyName', 'company_label', 'companyLabel']);
+      var planCode = valueOf(record, ['plan_code', 'planCode', 'plan', 'subscription_plan']);
+      var planLabel = valueOf(record, ['plan_label', 'planLabel', 'plan_name', 'planName']);
+      var role = valueOf(record, ['role', 'member_role', 'memberRole']);
+      var family = valueOf(record, ['plan_family', 'planFamily', 'family']);
+      var type = valueOf(record, ['scope_type', 'scopeType', 'type', 'kind']);
+      var userId = valueOf(record, ['user_id', 'userId', 'employee_id', 'employeeId', 'person_id', 'personId']);
+      var token = valueOf(record, ['session_token', 'sessionToken', 'token', 'loginToken']);
+      var title = companyName || companyId || planLabel || planCode || valueOf(record, ['label', 'name', 'title']);
+      if (!title) return null;
+      if (!type) type = companyId ? 'company' : 'plan';
+      if (!family && /^personal/i.test(planCode)) family = 'personal';
+      if (!family && /^business/i.test(planCode)) family = 'business';
+      var key = [type, companyId, planCode, role, userId, title].join('|').toLowerCase();
+      if (seen[key]) return null;
+      seen[key] = true;
+      return {
+        id: key || String(index),
+        type: type,
+        title: title,
+        subtitle: [planLabel || planCode, role].filter(Boolean).join('｜'),
+        company_id: companyId,
+        company_name: companyName,
+        plan_code: planCode,
+        plan_label: planLabel,
+        plan_family: family,
+        role: role,
+        user_id: userId,
+        token: token,
+        raw: record
+      };
+    }).filter(Boolean);
+  }
+
+  function rememberAccessOptions(options) {
+    if (!Array.isArray(options) || !options.length) return;
+    try { localStorage.setItem(ACCESS_CONTEXTS_KEY, JSON.stringify(options)); } catch (_) {}
+  }
+
+  function routeForAccess(option) {
+    var role = String(option.role || '').toLowerCase();
+    var family = String(option.plan_family || '').toLowerCase();
+    var type = String(option.type || '').toLowerCase();
+    if (type.indexOf('plan') !== -1 || family === 'personal' || /^personal_/.test(option.plan_code || '')) return './personal.html';
+    if (/owner|creator|admin|manager|deputy|supervisor|leader/.test(role)) return './admin.html';
+    return './employee.html';
+  }
+
+  function activateAccessOption(option) {
+    if (!option) return;
+    try {
+      localStorage.setItem(ACTIVE_CONTEXT_KEY, JSON.stringify(option));
+      if (option.company_id) {
+        ['ang_hr_active_company_id', 'ang_company_id', 'company_id'].forEach(function (key) { localStorage.setItem(key, option.company_id); });
+      }
+      if (option.user_id) {
+        ['ang_hr_active_employee_id', 'ang_user_id', 'ang_employee_id', 'employee_id'].forEach(function (key) { localStorage.setItem(key, option.user_id); });
+      }
+      if (option.token) {
+        ['ang_hr_active_login_token', 'ang_token', 'ang_employee_token', 'session_token'].forEach(function (key) { localStorage.setItem(key, option.token); });
+      }
+      if (option.role) localStorage.setItem('ang_user_role', option.role);
+      if (option.plan_code) localStorage.setItem('ang_hr_active_plan_code', option.plan_code);
+    } catch (_) {}
+
+    var target = new URL(routeForAccess(option), window.location.href);
+    if (option.company_id) target.searchParams.set('company_id', option.company_id);
+    if (option.user_id) {
+      target.searchParams.set('id', option.user_id);
+      target.searchParams.set('employee_id', option.user_id);
+    }
+    if (option.token) target.searchParams.set('token', option.token);
+    if (option.role) target.searchParams.set('role', option.role);
+    if (option.plan_code) target.searchParams.set('plan', option.plan_code);
+    target.searchParams.set('_ts', String(Date.now()));
+    window.location.href = target.toString();
+  }
+
+  function getPostVerifyFlow(card) {
+    var body = card && card.querySelector('.unified-login-body');
+    if (!body) return null;
+    var flow = body.querySelector('.post-verify-flow');
+    if (!flow) {
+      flow = document.createElement('section');
+      flow.className = 'post-verify-flow';
+      flow.hidden = true;
+      body.appendChild(flow);
+    }
+    return flow;
+  }
+
+  function renderAccessOptions(card, response) {
+    var flow = getPostVerifyFlow(card);
+    if (!flow) return;
+    var options = normalizeAccessOptions(response);
+    rememberAccessOptions(options);
+
+    if (options.length === 1) {
+      flow.hidden = false;
+      flow.className = 'post-verify-flow direct-routing';
+      flow.innerHTML = '<strong>已找到可使用的公司／方案</strong><small>只有一個入口，正在直接進入…</small>';
+      window.setTimeout(function () { activateAccessOption(options[0]); }, 420);
+      return;
+    }
+
+    flow.hidden = false;
+    flow.className = 'post-verify-flow access-choice-flow';
+    if (!options.length) {
+      flow.innerHTML = [
+        '<strong>帳號驗證完成</strong>',
+        '<small>目前尚未收到公司或方案清單，請重新整理帳號權限後再進入。</small>',
+        '<button type="button" class="refresh-access-options">重新讀取公司／方案</button>'
+      ].join('');
+      return;
+    }
+
+    flow.innerHTML = '<strong>選擇要進入的公司或方案</strong><small>進入系統後仍可再次切換，不必登出。</small><div class="access-option-list"></div>';
+    var list = flow.querySelector('.access-option-list');
+    options.forEach(function (option, index) {
+      var button = document.createElement('button');
+      button.type = 'button';
+      button.className = 'access-option';
+      button.dataset.accessIndex = String(index);
+      button.innerHTML = '<b>' + escapeHtml(option.title) + '</b><span>' + escapeHtml(option.subtitle || (option.type === 'company' ? '公司工作區' : '個人方案')) + '</span><i>進入 →</i>';
+      button.addEventListener('click', function () { activateAccessOption(option); });
+      list.appendChild(button);
+    });
+  }
+
+  function escapeHtml(value) {
+    return String(value === undefined || value === null ? '' : value)
+      .replace(/&/g, '&amp;').replace(/</g, '&lt;').replace(/>/g, '&gt;')
+      .replace(/"/g, '&quot;').replace(/'/g, '&#039;');
+  }
+
+  function verifiedAuthPayload(response) {
+    var saved = safeJsonParse(sessionStorage.getItem(AUTH_CONFIRMATION_KEY) || '', {});
+    return Object.assign({}, saved.response || {}, response || {});
+  }
+
+  function showBasicProfileStage(card, response, plan) {
+    var flow = getPostVerifyFlow(card);
+    if (!flow) return;
+    card.classList.add('login-plan-registration', 'registration-basic-stage');
+    card.classList.remove('registration-payment-stage');
+    flow.hidden = false;
+    flow.className = 'post-verify-flow plan-registration-flow basic-profile-stage';
+    flow.innerHTML = [
+      '<div class="registration-stage-title"><b>2</b><span><strong>基本資料</strong><small>最後一步，完成後立即開通。</small></span></div>',
+      '<form class="plan-basic-profile-form">',
+      '<label>姓名<input required name="display_name" autocomplete="name" placeholder="輸入姓名"></label>',
+      '<label>手機<input required name="phone" autocomplete="tel" inputmode="tel" placeholder="輸入手機號碼"></label>',
+      plan && plan.family === 'business' ? '<label>公司／團隊名稱<input required name="company_name" autocomplete="organization" placeholder="輸入公司或團隊名稱"></label>' : '',
+      '<button type="submit">完成註冊與開通</button>',
+      '<small class="registration-status" aria-live="polite"></small>',
+      '</form>'
+    ].join('');
+  }
+
+  function advancePaymentToProfile(card, response, plan) {
+    if (!card) return;
+    card.classList.add('registration-card-fly');
+    window.setTimeout(function () {
+      card.classList.remove('registration-card-fly');
+      showBasicProfileStage(card, response, plan);
+    }, 520);
+  }
+
+  function showPlanRegistrationFlow(card, response) {
+    var plan = getPendingPlan();
+    if (!card || !plan) return;
+    var flow = getPostVerifyFlow(card);
+    if (!flow) return;
+
+    card.classList.add('login-plan-registration');
+    if (plan.is_free) {
+      showBasicProfileStage(card, response, plan);
+      return;
+    }
+
+    card.classList.add('registration-payment-stage');
+    card.classList.remove('registration-basic-stage');
+    flow.hidden = false;
+    flow.className = 'post-verify-flow plan-registration-flow payment-stage';
+    flow.innerHTML = [
+      '<div class="registration-stage-title"><b>1</b><span><strong>付款資訊</strong><small>' + escapeHtml(plan.label || plan.plan_code) + '｜' + escapeHtml(plan.price || '') + '</small></span></div>',
+      '<form class="plan-payment-form">',
+      '<label>持卡人姓名<input required name="cardholder" autocomplete="cc-name" placeholder="CARDHOLDER NAME"></label>',
+      '<label>信用卡號<input required name="card_number" autocomplete="cc-number" inputmode="numeric" maxlength="23" placeholder="0000 0000 0000 0000"></label>',
+      '<div class="payment-row"><label>有效期限<input required name="expiry" autocomplete="cc-exp" inputmode="numeric" maxlength="7" placeholder="MM / YY"></label><label>安全碼<input required name="cvc" autocomplete="cc-csc" inputmode="numeric" maxlength="4" placeholder="CVC"></label></div>',
+      '<small class="secure-payment-note">信用卡資料必須由正式付款服務安全代碼化；ANG HR 不會把完整卡號存入瀏覽器或試算表。</small>',
+      '<button type="submit">確認付款</button>',
+      '<small class="registration-status" aria-live="polite"></small>',
+      '</form>'
+    ].join('');
+  }
+
+  function setPlanRegistrationVerified(card, response, message) {
+    if (!card) return;
+    stopEmailResendCountdown(card.querySelector('.login-verify-button'));
+    card.classList.remove('login-verifying', 'login-awaiting-verification', 'login-verification-empty', 'login-verification-missing', 'login-identifier-valid');
+    card.classList.add('login-system-confirmed', 'login-registration-verified');
+    card.dataset.accountConfirmed = 'registration';
+    var verifiedButton = card.querySelector('.login-verify-button');
+    if (verifiedButton) {
+      verifiedButton.disabled = false;
+      verifiedButton.textContent = '已確認';
+    }
+    var input = getLoginInput(card);
+    if (input) card.dataset.confirmedIdentifier = input.value.trim().toLowerCase();
+    try {
+      sessionStorage.setItem(AUTH_CONFIRMATION_KEY, JSON.stringify({
+        identifier: input ? input.value.trim() : '', confirmedAt: Date.now(), response: response || {}, registration: true
+      }));
+    } catch (_) {}
+    setLoginAuthStatus(card, 'success', message || '驗證完成，正在建立新帳號');
+    if (card.classList.contains('collapsed')) {
+      var toggle = card.querySelector('.manager-card-toggle');
+      if (toggle) toggle.click();
+    }
+    window.setTimeout(function () { showPlanRegistrationFlow(card, response || {}); }, 180);
+  }
+
+  function advanceAfterVerification(card, response) {
+    var pendingPlan = getPendingPlan();
+    var accountExists = responseAccountExists(response);
+    if (pendingPlan && !responseHasAccountRecord(response)) {
+      showPlanRegistrationFlow(card, response || {});
+      return;
+    }
+    renderAccessOptions(card, response || {});
+  }
+
+  function planFromClick(target) {
+    var button = target && target.closest ? target.closest('.personal-lite, .business-lite, .personal-select-action, .business-select-action') : null;
+    if (!button) return null;
+    if (button.classList.contains('personal-lite')) return { plan_code: 'personal_lite', label: 'Personal Lite', family: 'personal', is_free: true, price: 'Free', source: 'plan_card' };
+    if (button.classList.contains('business-lite')) return { plan_code: 'business_lite', label: 'Business Lite', family: 'business', is_free: true, price: 'Free', source: 'plan_card' };
+    if (button.classList.contains('personal-select-action')) {
+      var personalBody = button.closest('.personal-card-body');
+      var performance = personalBody && personalBody.classList.contains('performance');
+      return { plan_code: performance ? 'personal_performance' : 'personal_solo', label: performance ? 'Personal Performance' : 'Personal Solo', family: 'personal', is_free: false, price: performance ? 'NT$149 / 月' : 'NT$69 / 月', source: 'plan_card' };
+    }
+    var businessBody = button.closest('.business-card-body');
+    var tier = businessBody && businessBody.classList.contains('premium') ? 'premium' : (businessBody && businessBody.classList.contains('pro') ? 'pro' : 'basic');
+    var prices = { basic: 'NT$299 / 月', pro: 'NT$599 / 月', premium: 'NT$999 / 月' };
+    return { plan_code: 'business_' + tier, label: 'Business ' + tier.charAt(0).toUpperCase() + tier.slice(1), family: 'business', is_free: false, price: prices[tier], source: 'plan_card' };
+  }
+
+  function installCarouselCentering() {
+    var carousel = document.querySelector('.manager-carousel');
+    if (!carousel || carousel.__angCenteringInstalled) return !!carousel;
+    carousel.__angCenteringInstalled = true;
+    var timer = null;
+    function centerNearest(behavior) {
+      var cards = Array.prototype.slice.call(carousel.children || []);
+      if (!cards.length) return;
+      var midpoint = carousel.scrollLeft + carousel.clientWidth / 2;
+      var best = cards[0];
+      var distance = Infinity;
+      cards.forEach(function (card) {
+        var cardMid = card.offsetLeft + card.clientWidth / 2;
+        var next = Math.abs(midpoint - cardMid);
+        if (next < distance) { distance = next; best = card; }
+      });
+      var left = Math.max(0, best.offsetLeft - (carousel.clientWidth - best.clientWidth) / 2);
+      carousel.scrollTo({ left: left, behavior: behavior || 'smooth' });
+    }
+    carousel.addEventListener('scroll', function () {
+      window.clearTimeout(timer);
+      timer = window.setTimeout(function () { centerNearest('smooth'); }, 120);
+    }, { passive: true });
+    ['pointerup', 'touchend'].forEach(function (name) {
+      carousel.addEventListener(name, function () { window.setTimeout(function () { centerNearest('smooth'); }, 20); }, { passive: true });
+    });
+    window.addEventListener('resize', function () { window.setTimeout(function () { centerNearest('auto'); }, 50); });
+    return true;
+  }
+
+  function installLoginDragLock(card) {
+    if (!card || card.__angDragLockInstalled) return !!card;
+    card.__angDragLockInstalled = true;
+    card.addEventListener('pointerdown', function (event) {
+      if (card.classList.contains('login-system-confirmed')) return;
+      if (event.target.closest('input, .login-verify-button, .social-login-row button')) return;
+      event.preventDefault();
+      event.stopPropagation();
+      setLoginAuthStatus(card, 'info', '請先完成驗證並確認帳號後，卡片才會解鎖');
+    }, true);
+    card.querySelectorAll('input, .login-verify-button, .social-login-row button').forEach(function (control) {
+      if (control.__angPointerIsolated) return;
+      control.__angPointerIsolated = true;
+      control.addEventListener('pointerdown', function (event) { event.stopPropagation(); });
+    });
+    return true;
+  }
+
   function setLoginAuthStatus(card, type, message) {
     if (!card) return;
     var body = card.querySelector('.unified-login-body');
@@ -97,8 +483,19 @@
     return String((response && (response.message || response.msg || response.errorMessage || response.error)) || '').trim();
   }
 
-  function responseConfirmsAccount(response) {
-    if (!response || response.ok === false || response.success === false) return false;
+  function parseBooleanFlag(value) {
+    if (value === true || value === 1 || value === '1') return true;
+    if (value === false || value === 0 || value === '0') return false;
+
+    var normalized = String(value === undefined || value === null ? '' : value).trim().toLowerCase();
+    if (['true', 'yes', 'y', 'verified', 'exists', 'found', 'registered'].indexOf(normalized) !== -1) return true;
+    if (['false', 'no', 'n', 'missing', 'not_found', 'unregistered'].indexOf(normalized) !== -1) return false;
+    return null;
+  }
+
+  function responseExplicitlyRejectsAccount(response) {
+    if (!response) return false;
+    if (response.ok === false || response.success === false) return true;
 
     var explicitValues = [
       response.accountExists,
@@ -113,27 +510,73 @@
     ];
 
     for (var i = 0; i < explicitValues.length; i += 1) {
-      if (explicitValues[i] === false || explicitValues[i] === 0 || explicitValues[i] === '0') return false;
-      if (explicitValues[i] === true || explicitValues[i] === 1 || explicitValues[i] === '1') return true;
+      if (parseBooleanFlag(explicitValues[i]) === false) return true;
     }
 
+    var text = [response.status, response.result, response.code, responseMessage(response)]
+      .join(' ')
+      .trim()
+      .toLowerCase();
+
+    return /not[_ -]?found|missing|unknown[_ -]?account|unregistered|not[_ -]?registered|找不到|不存在|未註冊/.test(text);
+  }
+
+  function responseConfirmsAccount(response) {
+    if (!response || responseExplicitlyRejectsAccount(response)) return false;
+
+    var explicitValues = [
+      response.accountExists,
+      response.account_exists,
+      response.userExists,
+      response.user_exists,
+      response.exists,
+      response.found,
+      response.registered,
+      response.isRegistered,
+      response.is_registered
+    ];
+
+    for (var i = 0; i < explicitValues.length; i += 1) {
+      if (parseBooleanFlag(explicitValues[i]) === true) return true;
+    }
+
+    /* 只有 ANG HR 後端系統 ID、明確內部紀錄，或可登入憑證，才算「系統帳號已確認」。 */
     if (
-      response.user || response.account || response.employee || response.profile ||
-      response.employee_id || response.employeeId || response.company_id || response.companyId ||
+      response.user_id || response.userId || response.employee_id || response.employeeId ||
+      response.member_id || response.memberId || response.person_id || response.personId ||
+      response.account_id || response.accountId || response.ang_id || response.angId ||
       response.verify_token || response.verifyToken || response.session_token || response.sessionToken || response.token
     ) return true;
 
-    var status = String(response.status || response.result || '').toLowerCase();
-    if (/verified|exists|found|registered|sent|success|ok/.test(status)) return true;
+    var records = [response.user, response.account, response.employee, response.member];
+    for (var recordIndex = 0; recordIndex < records.length; recordIndex += 1) {
+      var record = records[recordIndex];
+      if (!record || typeof record !== 'object') continue;
+      if (
+        record.user_id || record.userId || record.employee_id || record.employeeId ||
+        record.member_id || record.memberId || record.person_id || record.personId ||
+        record.account_id || record.accountId || record.ang_id || record.angId ||
+        record.company_id || record.companyId
+      ) return true;
+    }
 
-    /* 舊 GAS 端點只會對系統內帳號回傳 ok:true。 */
-    return response.ok === true || response.success === true;
+    var status = String(response.status || response.result || response.code || '').trim().toLowerCase();
+    return /^(account[_ -]?(?:verified|exists|found)|user[_ -]?(?:exists|found)|member[_ -]?found|registered[_ -]?user)$/.test(status);
+  }
+
+  function responseIndicatesVerificationSent(response) {
+    if (!response || responseExplicitlyRejectsAccount(response)) return false;
+    if (response.ok === true || response.success === true) return true;
+
+    var status = String(response.status || response.result || response.code || '').trim().toLowerCase();
+    var message = responseMessage(response).toLowerCase();
+    return /sent|delivered|pending|mail|link/.test(status + ' ' + message) || /已寄出|已傳送|請查看信箱|驗證連結/.test(message);
   }
 
   function setLoginConfirmed(card, response, message) {
     if (!card) return;
 
-    card.classList.remove('login-verifying', 'login-verification-empty', 'login-verification-missing', 'login-identifier-valid');
+    card.classList.remove('login-verifying', 'login-awaiting-verification', 'login-provider-selected', 'login-verification-empty', 'login-verification-missing', 'login-identifier-valid');
     card.classList.add('login-system-confirmed');
     card.dataset.accountConfirmed = 'true';
 
@@ -141,13 +584,14 @@
     if (input) card.dataset.confirmedIdentifier = input.value.trim().toLowerCase();
 
     var button = card.querySelector('.login-verify-button');
+    stopEmailResendCountdown(button);
     if (button) {
       button.disabled = false;
       button.textContent = '已確認';
     }
 
     try {
-      sessionStorage.setItem('ang.login.account-confirmation', JSON.stringify({
+      sessionStorage.setItem(AUTH_CONFIRMATION_KEY, JSON.stringify({
         identifier: input ? input.value.trim() : '',
         confirmedAt: Date.now(),
         response: response || {}
@@ -160,22 +604,29 @@
       var toggle = card.querySelector('.manager-card-toggle');
       if (toggle) toggle.click();
     }
+
+    window.setTimeout(function () { advanceAfterVerification(card, response || {}); }, 180);
   }
 
   function clearLoginConfirmation(card, keepStatus) {
     if (!card) return;
-    card.classList.remove('login-system-confirmed', 'login-identifier-valid', 'login-verifying');
+    stopEmailResendCountdown(card.querySelector('.login-verify-button'));
+    card.classList.remove('login-system-confirmed', 'login-identifier-valid', 'login-verifying', 'login-awaiting-verification', 'login-provider-selected');
     delete card.dataset.accountConfirmed;
     delete card.dataset.confirmedIdentifier;
 
     var button = card.querySelector('.login-verify-button');
     if (button) {
+      button.__angEmailCountdownActive = false;
       button.disabled = false;
-      button.textContent = '驗證';
+      button.textContent = '發送驗證連結';
     }
 
     var guide = card.querySelector('.email-verification-guide');
     if (guide) guide.hidden = true;
+    var flow = getPostVerifyFlow(card);
+    if (flow) { flow.hidden = true; flow.innerHTML = ''; }
+    card.classList.remove('login-plan-registration', 'login-registration-verified', 'registration-payment-stage', 'registration-basic-stage');
 
     if (!keepStatus) setLoginAuthStatus(card, 'info', '');
   }
@@ -185,8 +636,8 @@
     var input = getLoginInput(card);
     if (!card || !input) return false;
 
-    input.setAttribute('aria-label', 'Email或帳號');
-    input.setAttribute('placeholder', '輸入 Email 或帳號');
+    input.setAttribute('aria-label', '帳號或 Email');
+    input.setAttribute('placeholder', '輸入帳號或 Email');
 
     var current = input.value.trim().toLowerCase();
     if (card.dataset.confirmedIdentifier && current !== card.dataset.confirmedIdentifier) {
@@ -194,6 +645,34 @@
     }
 
     return true;
+  }
+
+  function stopEmailResendCountdown(button) {
+    if (emailResendCountdownTimer) window.clearInterval(emailResendCountdownTimer);
+    emailResendCountdownTimer = 0;
+    if (button) button.__angEmailCountdownActive = false;
+  }
+
+  function startEmailResendCountdown(button, seconds) {
+    if (!button) return;
+    stopEmailResendCountdown(button);
+
+    var left = Math.max(1, Math.ceil(Number(seconds || 60)));
+    button.__angEmailCountdownActive = true;
+    button.disabled = true;
+    button.textContent = '已發送（' + left + '）';
+
+    emailResendCountdownTimer = window.setInterval(function () {
+      left -= 1;
+      if (left > 0) {
+        button.textContent = '已發送（' + left + '）';
+        return;
+      }
+
+      stopEmailResendCountdown(button);
+      button.disabled = false;
+      button.textContent = '重新發送驗證連結';
+    }, 1000);
   }
 
   async function handleLoginVerification(event) {
@@ -215,7 +694,7 @@
       card.classList.add('login-verification-empty');
       input.setAttribute('aria-invalid', 'true');
       input.focus();
-      setLoginAuthStatus(card, 'error', '請先輸入 Email 或帳號');
+      setLoginAuthStatus(card, 'error', '請先輸入帳號或 Email');
       return false;
     }
 
@@ -225,18 +704,24 @@
     var verifyButton = card.querySelector('.login-verify-button');
     if (verifyButton) {
       verifyButton.disabled = true;
-      verifyButton.textContent = '確認中';
+      verifyButton.textContent = '發送中';
     }
 
     setLoginAuthStatus(card, 'info', '正在確認此帳號是否存在 ANG HR…');
 
     try {
-      /* requestEmailCode 為既有後端 action 名稱；前端採「點連結回系統」流程，不要求輸入驗證碼。 */
+      var pendingPlan = getPendingPlan();
+      var verificationFlow = pendingPlan ? 'plan_signup' : 'account_login';
+      /* Email 一律採點連結驗證；方案入口允許「驗證即註冊」。 */
       var response = await callGasApi('requestEmailCode', {
         email: value,
         identifier: value,
         account: value,
-        flow: 'admin_login',
+        flow: verificationFlow,
+        plan: pendingPlan ? pendingPlan.plan_code : '',
+        plan_code: pendingPlan ? pendingPlan.plan_code : '',
+        allow_registration: !!pendingPlan,
+        create_account_after_verify: !!pendingPlan,
         delivery: 'link',
         verification_mode: 'magic_link',
         device_id: getDeviceId(),
@@ -246,13 +731,36 @@
         return_url: window.location.href.split('#')[0]
       });
 
-      if (!responseConfirmsAccount(response)) {
+      var cooldownSeconds = Number(response && (response.resend_after_seconds || response.cooldown_seconds) || 0);
+      if (response && response.ok === false && cooldownSeconds > 0) {
+        card.classList.remove('login-verifying');
+        card.classList.add('login-awaiting-verification');
+        if (guide) guide.hidden = false;
+        setLoginAuthStatus(card, 'info', responseMessage(response) || ('請等待 ' + cooldownSeconds + ' 秒後再重新發送驗證連結'));
+        startEmailResendCountdown(verifyButton, cooldownSeconds);
+        return true;
+      }
+
+      if (responseExplicitlyRejectsAccount(response) && !pendingPlan) {
         throw new Error(responseMessage(response) || 'ANG HR 系統中找不到這個帳號');
       }
 
       if (guide) guide.hidden = false;
-      setLoginConfirmed(card, response, responseMessage(response) || '帳號已確認；若使用 Email，請到信箱點擊驗證連結');
-      return true;
+
+      if (responseIndicatesVerificationSent(response) || (pendingPlan && response && (response.ok === true || response.success === true))) {
+        card.classList.remove('login-verifying');
+        card.classList.add('login-awaiting-verification');
+        setLoginAuthStatus(card, 'info', responseMessage(response) || (pendingPlan ? '驗證連結已寄出；完成驗證後會直接建立帳號' : '驗證連結已寄出；請到信箱點擊連結完成驗證'));
+        startEmailResendCountdown(verifyButton, Number(response && response.resend_after_seconds || 60));
+        return true;
+      }
+
+      if (responseConfirmsAccount(response)) {
+        setLoginConfirmed(card, response, responseMessage(response) || '帳號已確認；若使用 Email，請到信箱點擊驗證連結');
+        return true;
+      }
+
+      throw new Error(responseMessage(response) || (pendingPlan ? '目前無法寄出註冊驗證連結' : '後端尚未確認這個帳號存在 ANG HR'));
     } catch (err) {
       card.classList.remove('login-verifying');
       card.classList.add('login-verification-missing');
@@ -260,9 +768,9 @@
       setLoginAuthStatus(card, 'error', err && err.message ? err.message : '驗證服務連線失敗');
       return false;
     } finally {
-      if (verifyButton && !card.classList.contains('login-system-confirmed')) {
+      if (verifyButton && !card.classList.contains('login-system-confirmed') && !verifyButton.__angEmailCountdownActive) {
         verifyButton.disabled = false;
-        verifyButton.textContent = '驗證';
+        verifyButton.textContent = card.classList.contains('login-awaiting-verification') ? '重新發送驗證連結' : '發送驗證連結';
       }
     }
   }
@@ -304,10 +812,15 @@
     returnUrl.searchParams.set('provider', provider);
     returnUrl.searchParams.set('flow', 'admin_login');
 
+    var pendingPlan = getPendingPlan();
+    var authFlow = pendingPlan ? 'plan_signup' : 'account_login';
     var body = {
       action: actionMap[provider],
       provider: provider,
-      flow: 'admin_login',
+      flow: authFlow,
+      plan: pendingPlan ? pendingPlan.plan_code : '',
+      plan_code: pendingPlan ? pendingPlan.plan_code : '',
+      allow_registration: !!pendingPlan,
       device_id: getDeviceId(),
       deviceId: getDeviceId(),
       source: 'current_entry_login',
@@ -320,7 +833,7 @@
       direct: '1'
     };
 
-    localStorage.setItem('ang_pending_auth', JSON.stringify({ provider: provider, flow: 'admin_login', savedAt: Date.now() }));
+    localStorage.setItem('ang_pending_auth', JSON.stringify({ provider: provider, flow: authFlow, plan: pendingPlan ? pendingPlan.plan_code : '', savedAt: Date.now() }));
 
     var url = new URL(gasUrl, window.location.href);
     Object.keys(body).forEach(function (key) {
@@ -333,13 +846,15 @@
 
   function handleAuthCallback() {
     var params = new URLSearchParams(window.location.search);
-    if (params.get('auth_done') !== '1') return;
+    var isOAuthCallback = params.get('auth_done') === '1';
+    var isEmailCallback = params.get('email_verified') === '1';
+    if (!isOAuthCallback && !isEmailCallback) return;
 
     var error = params.get('error') || params.get('error_message') || params.get('message');
     var callbackData = {};
     [
-      'verify_token', 'token', 'session_token', 'email', 'employee_id', 'company_id', 'role',
-      'account_exists', 'verified', 'success', 'provider'
+      'verify_token', 'token', 'session_token', 'email', 'person_id', 'user_id', 'employee_id', 'member_id', 'company_id', 'role',
+      'account_exists', 'user_exists', 'registered', 'verified', 'success', 'provider', 'flow', 'plan', 'email_verified'
     ].forEach(function (key) {
       var value = params.get(key);
       if (value) {
@@ -359,13 +874,34 @@
         return;
       }
 
+      var pendingPlan = getPendingPlan();
+      if (!pendingPlan && (callbackData.flow === 'plan_signup' || callbackData.flow === 'company_signup') && callbackData.plan) {
+        var code = String(callbackData.plan).toLowerCase();
+        var free = /_lite$/.test(code);
+        pendingPlan = {
+          plan_code: code,
+          label: code.replace(/_/g, ' ').replace(/\b\w/g, function (c) { return c.toUpperCase(); }),
+          family: code.indexOf('business_') === 0 ? 'business' : 'personal',
+          is_free: free,
+          price: free ? 'Free' : '',
+          source: 'email_callback'
+        };
+        savePendingPlan(pendingPlan);
+      }
+      var callbackIdentityVerified = !!(
+        callbackData.verify_token || callbackData.token || callbackData.session_token ||
+        parseBooleanFlag(callbackData.email_verified) === true ||
+        parseBooleanFlag(callbackData.verified) === true || parseBooleanFlag(callbackData.success) === true
+      );
       var callbackConfirmed = !!(
         callbackData.verify_token || callbackData.token || callbackData.session_token ||
-        callbackData.employee_id || callbackData.company_id ||
-        callbackData.account_exists === '1' || callbackData.verified === '1' || callbackData.success === '1'
+        callbackData.user_id || callbackData.employee_id || callbackData.member_id ||
+        parseBooleanFlag(callbackData.account_exists) === true ||
+        parseBooleanFlag(callbackData.user_exists) === true ||
+        parseBooleanFlag(callbackData.registered) === true
       );
 
-      if (!callbackConfirmed) {
+      if (!callbackConfirmed && !(pendingPlan && callbackIdentityVerified)) {
         setLoginAuthStatus(card, 'error', '驗證已返回，但尚未確認此帳號存在 ANG HR');
         return;
       }
@@ -377,11 +913,15 @@
         input.dispatchEvent(new Event('input', { bubbles: true }));
       }
 
-      setLoginConfirmed(card, callbackData, '驗證成功，已確認 ANG HR 帳號');
+      if (pendingPlan && !responseHasAccountRecord(callbackData)) {
+        setPlanRegistrationVerified(card, callbackData, '驗證完成，將直接建立新帳號');
+      } else {
+        setLoginConfirmed(card, callbackData, '驗證成功，已確認 ANG HR 帳號');
+      }
 
       try {
         var cleanUrl = new URL(window.location.href);
-        ['auth_done', 'provider', 'flow', 'verify_token', 'token', 'session_token', 'email', 'employee_id', 'company_id', 'role', 'account_exists', 'verified', 'success', 'error', 'error_message', 'message'].forEach(function (key) {
+        ['auth_done', 'email_verified', 'provider', 'flow', 'plan', 'verify_token', 'token', 'session_token', 'email', 'person_id', 'user_id', 'employee_id', 'member_id', 'company_id', 'role', 'account_exists', 'user_exists', 'registered', 'verified', 'success', 'error', 'error_message', 'message'].forEach(function (key) {
           cleanUrl.searchParams.delete(key);
         });
         window.history.replaceState({}, document.title, cleanUrl.toString());
@@ -418,26 +958,37 @@
     var body = card && card.querySelector('.unified-login-body');
     if (!body) return false;
 
+    var pendingPlan = getPendingPlan();
     var description = body.querySelector('.login-description');
-    if (description) description.textContent = '輸入 Email 或帳號確認是否存在；也可直接使用下方驗證方式。';
+    if (description) description.textContent = pendingPlan
+      ? '完成 Email 或第三方驗證；若尚無帳號，這次驗證會直接建立帳號。'
+      : '輸入 Email 或帳號確認是否存在；完成驗證後選擇要進入的公司或方案。';
 
     var passwordLabel = body.querySelector('.login-email');
     if (passwordLabel) {
-      var passwordInput = passwordLabel.querySelector('input');
-      if (passwordLabel.firstChild && passwordLabel.firstChild.nodeType === Node.TEXT_NODE) {
-        passwordLabel.firstChild.nodeValue = '密碼（或使用下方驗證方式）';
-      }
-      if (passwordInput) {
-        passwordInput.setAttribute('aria-label', '密碼');
-        passwordInput.setAttribute('placeholder', '輸入密碼');
-      }
+      passwordLabel.hidden = true;
+      passwordLabel.setAttribute('aria-hidden', 'true');
     }
+    var legacyLoginAction = body.querySelector('.card-main-action');
+    if (legacyLoginAction) {
+      legacyLoginAction.hidden = true;
+      legacyLoginAction.setAttribute('aria-hidden', 'true');
+      legacyLoginAction.tabIndex = -1;
+    }
+
+    var hint = body.querySelector('.email-verification-hint');
+    if (!hint) {
+      hint = document.createElement('section');
+      hint.className = 'email-verification-hint';
+      body.appendChild(hint);
+    }
+    hint.innerHTML = '<strong>Email 驗證</strong><span>按下驗證後，到信箱點擊 ANG HR 連結；不需要輸入密碼或驗證碼。</span>';
 
     if (!body.querySelector('.login-verify-button')) {
       var verifyButton = document.createElement('button');
       verifyButton.type = 'button';
       verifyButton.className = 'login-verify-button';
-      verifyButton.textContent = '驗證';
+      verifyButton.textContent = '發送驗證連結';
       verifyButton.addEventListener('click', handleLoginVerification);
       body.appendChild(verifyButton);
     }
@@ -486,7 +1037,7 @@
     }
 
     guide.innerHTML = [
-      '<strong>帳號已確認；請前往 Email 信箱</strong>',
+      '<strong>請前往 Email 信箱完成驗證</strong>',
       '<div class="verification-guide-steps">',
       '<span><i aria-hidden="true">✉</i><b>1</b><em>打開 Email 信箱</em></span>',
       '<span><i aria-hidden="true">↗</i><b>2</b><em>點擊 ANG HR 驗證連結</em></span>',
@@ -495,6 +1046,8 @@
       '<small>不需要另外輸入驗證碼；若沒有看到信件，請檢查垃圾郵件匣。</small>'
     ].join('');
 
+    getPostVerifyFlow(card);
+    installLoginDragLock(card);
     syncLoginVerificationState();
     return true;
   }
@@ -521,6 +1074,8 @@
     var price = top && top.querySelector('b');
     var title = card.querySelector('h2');
 
+    card.dataset.planCategory = 'lite';
+    card.dataset.planPrice = 'free';
     if (eyebrow && eyebrow.textContent !== '方案類別') eyebrow.textContent = '方案類別';
     if (price && price.textContent !== 'Free') price.textContent = 'Free';
     if (title && title.textContent !== 'Lite') title.textContent = 'Lite';
@@ -581,7 +1136,8 @@
     var welcomeReady = addWelcomeMessage();
     var loginReady = addLoginActions();
     var planReady = syncPlanCardCopy();
-    return welcomeReady && loginReady && planReady;
+    var centerReady = installCarouselCentering();
+    return welcomeReady && loginReady && planReady && centerReady;
   }
 
   function observeCardRestores() {
@@ -635,6 +1191,11 @@
   }, true);
 
   document.addEventListener('click', function (event) {
+    var selectedPlan = planFromClick(event.target);
+    if (selectedPlan) savePendingPlan(selectedPlan);
+  }, true);
+
+  document.addEventListener('click', function (event) {
     var card = event.target.closest('.manager-card.collapsed.free, .manager-card.collapsed.personal, .manager-card.collapsed.business');
     if (!card || event.target.closest('.manager-card-toggle, .card-main-action, button')) return;
 
@@ -647,7 +1208,10 @@
 
   window.addEventListener('ANG_HR_AUTH_VERIFIED', function (event) {
     var detail = event && event.detail ? event.detail : {};
-    if (responseConfirmsAccount(detail)) {
+    var pendingPlan = getPendingPlan();
+    if (pendingPlan && !responseHasAccountRecord(detail) && (parseBooleanFlag(detail.verified) === true || parseBooleanFlag(detail.success) === true || detail.verify_token || detail.token)) {
+      setPlanRegistrationVerified(getLoginCard(), detail, responseMessage(detail) || '驗證完成，將直接建立新帳號');
+    } else if (responseConfirmsAccount(detail)) {
       setLoginConfirmed(getLoginCard(), detail, responseMessage(detail) || '驗證成功，已確認 ANG HR 帳號');
     }
   });
@@ -657,11 +1221,436 @@
     setLoginAuthStatus(getLoginCard(), 'error', detail.message || '驗證失敗');
   });
 
+  document.addEventListener('submit', async function (event) {
+    var paymentForm = event.target.closest && event.target.closest('.plan-payment-form');
+    if (paymentForm) {
+      event.preventDefault();
+      if (!paymentForm.reportValidity()) return;
+      var card = getLoginCard();
+      var plan = getPendingPlan();
+      var status = paymentForm.querySelector('.registration-status');
+      var submit = paymentForm.querySelector('button[type="submit"]');
+      if (submit) submit.disabled = true;
+      if (status) status.textContent = '正在連接安全付款服務…';
+      try {
+        var result = null;
+        if (window.ANG_HR_PAYMENT && typeof window.ANG_HR_PAYMENT.start === 'function') {
+          result = await window.ANG_HR_PAYMENT.start({ plan: plan, form: paymentForm, auth: verifiedAuthPayload({}) });
+        } else {
+          result = await callGasApi('createPlanCheckout', {
+            plan: plan ? plan.plan_code : '', plan_code: plan ? plan.plan_code : '',
+            verify_token: valueOf(verifiedAuthPayload({}), ['verify_token', 'verifyToken', 'token']),
+            return_url: window.location.href.split('#')[0] + '?payment_success=1'
+          });
+        }
+        var paid = result && (parseBooleanFlag(result.paid) === true || parseBooleanFlag(result.success) === true || /paid|success/.test(String(result.status || '').toLowerCase()));
+        var checkoutUrl = result && (result.checkout_url || result.checkoutUrl || result.payment_url || result.paymentUrl);
+        if (checkoutUrl) { window.location.href = checkoutUrl; return; }
+        if (!paid) throw new Error(responseMessage(result) || '付款服務尚未完成設定，無法送出信用卡資料');
+        advancePaymentToProfile(card, result, plan);
+      } catch (err) {
+        if (status) status.textContent = err && err.message ? err.message : '付款失敗，請稍後再試';
+        if (submit) submit.disabled = false;
+      }
+      return;
+    }
+
+    var profileForm = event.target.closest && event.target.closest('.plan-basic-profile-form');
+    if (profileForm) {
+      event.preventDefault();
+      if (!profileForm.reportValidity()) return;
+      var card = getLoginCard();
+      var plan = getPendingPlan();
+      var status = profileForm.querySelector('.registration-status');
+      var submit = profileForm.querySelector('button[type="submit"]');
+      if (submit) submit.disabled = true;
+      if (status) status.textContent = '正在建立帳號與開通方案…';
+      var data = new FormData(profileForm);
+      try {
+        var result = await callGasApi('completePlanRegistration', {
+          plan: plan ? plan.plan_code : '', plan_code: plan ? plan.plan_code : '',
+          display_name: String(data.get('display_name') || '').trim(),
+          phone: String(data.get('phone') || '').trim(),
+          company_name: String(data.get('company_name') || '').trim(),
+          verify_token: valueOf(verifiedAuthPayload({}), ['verify_token', 'verifyToken', 'token']),
+          device_id: getDeviceId()
+        });
+        if (!result || responseExplicitlyRejectsAccount(result)) throw new Error(responseMessage(result) || '帳號建立失敗');
+        clearPendingPlan();
+        card.classList.add('registration-complete');
+        if (status) status.textContent = '完成，正在進入 ANG HR…';
+        var options = normalizeAccessOptions(result);
+        if (options.length) {
+          rememberAccessOptions(options);
+          window.setTimeout(function () { activateAccessOption(options[0]); }, 450);
+        } else {
+          window.setTimeout(function () { renderAccessOptions(card, result); }, 350);
+        }
+      } catch (err) {
+        if (status) status.textContent = err && err.message ? err.message : '建立帳號失敗，請稍後再試';
+        if (submit) submit.disabled = false;
+      }
+    }
+  });
+
+  document.addEventListener('click', function (event) {
+    var refresh = event.target.closest && event.target.closest('.refresh-access-options');
+    if (!refresh) return;
+    var confirmation = safeJsonParse(sessionStorage.getItem(AUTH_CONFIRMATION_KEY) || '', {});
+    renderAccessOptions(getLoginCard(), confirmation.response || {});
+  });
+
+  window.addEventListener('ANG_HR_PAYMENT_SUCCESS', function (event) {
+    var detail = event && event.detail ? event.detail : {};
+    advancePaymentToProfile(getLoginCard(), detail, getPendingPlan());
+  });
+
+  function handlePaymentCallback() {
+    var params = new URLSearchParams(window.location.search);
+    if (params.get('payment_success') !== '1') return;
+    window.setTimeout(function () { advancePaymentToProfile(getLoginCard(), {}, getPendingPlan()); }, 300);
+  }
+
+  window.ANG_HR_EMAIL_LINK_AUTH = {
+    start: handleLoginVerification,
+    sync: syncLoginVerificationState
+  };
+
   function start() {
     observeUntilReady();
     handleAuthCallback();
+    handlePaymentCallback();
   }
 
   if (document.readyState === 'loading') document.addEventListener('DOMContentLoaded', start);
   else start();
+}());
+
+
+/* ANG HR v0.7.0｜入口詳細介紹、方案標語與驗證狀態 */
+(function () {
+  'use strict';
+
+  var BUSINESS_SLOGANS = {
+    basic: '核心管理・簡單開始',
+    pro: '進階協作・管理更完整',
+    premium: '完整權限・彈性最高'
+  };
+
+  var PLAN_SUMMARIES = {
+    free: '免費也能先完成基礎打卡、排班與工時管理。需要更多資料、薪資、權限或分析時，再升級方案或搭配 Module。',
+    solo: '把個人的排班、工時、打卡、薪資、收入、請假、提醒與日常紀錄集中管理。',
+    performance: '包含 Solo 全部功能，再加入目標與 KPI、績效週期、自評、評核、一對一回饋、趨勢分析與績效報表。',
+    basic: '適合剛開始數位化管理的店家與團隊，聚焦員工主檔、排班、定位打卡、出勤紀錄與基本管理。',
+    pro: '包含 Basic 核心功能，再加入請假補卡審核、公告、薪資、加班津貼、支援打卡點、更多主管權限與報表。',
+    premium: '包含 Pro 全部功能，再加入多公司／多分店、完整七層權限、進階分析、自訂流程、安全稽核與最高擴充彈性。'
+  };
+
+  function setText(node, text) {
+    if (node && node.textContent !== text) node.textContent = text;
+  }
+
+  function selectedPlanKey(card) {
+    if (!card) return '';
+    if (card.classList.contains('free')) return 'free';
+    if (card.classList.contains('personal')) {
+      var personal = card.querySelector('.personal-option[aria-pressed="true"], .personal-option.selected');
+      return personal && personal.classList.contains('performance-option') ? 'performance' : 'solo';
+    }
+    if (card.classList.contains('business')) {
+      var business = card.querySelector('.business-option[aria-pressed="true"], .business-option.selected');
+      if (business && business.classList.contains('premium-option')) return 'premium';
+      if (business && business.classList.contains('pro-option')) return 'pro';
+      return 'basic';
+    }
+    return '';
+  }
+
+  function patchBusinessSlogans() {
+    var options = document.querySelectorAll('.manager-card.business .business-option');
+    for (var i = 0; i < options.length; i += 1) {
+      var key = options[i].classList.contains('premium-option') ? 'premium' : (options[i].classList.contains('pro-option') ? 'pro' : 'basic');
+      var span = options[i].querySelector('span');
+      setText(span, BUSINESS_SLOGANS[key]);
+      options[i].setAttribute('aria-label', (options[i].querySelector('strong') ? options[i].querySelector('strong').textContent : key) + '：' + BUSINESS_SLOGANS[key]);
+    }
+  }
+
+  function patchCardCopy() {
+    var freeCard = document.querySelector('.manager-card.free');
+    var personalCard = document.querySelector('.manager-card.personal');
+    var businessCard = document.querySelector('.manager-card.business');
+    var freeP = freeCard && freeCard.querySelector('.free-card-body > p');
+    var personalP = personalCard && personalCard.querySelector('.personal-card-body > p');
+    var businessP = businessCard && businessCard.querySelector('.business-card-body > p');
+    setText(freeP, '先從需要的功能開始；之後可升級方案，或依需求搭配 Module。');
+    setText(personalP, '從 Solo 的個人工時管理，到 Performance 的目標、績效與成長分析。');
+    setText(businessP, '依管理深度選擇方案；人數與額外功能可用 Module 彈性增加。');
+  }
+
+  function patchPlanSummary(card) {
+    if (!card || card.classList.contains('intro') || card.classList.contains('login-unified')) return;
+    var body = card.querySelector('.manager-card-body');
+    if (!body) return;
+    var key = selectedPlanKey(card);
+    if (!PLAN_SUMMARIES[key]) return;
+    var summary = body.querySelector('.ang-v070-plan-summary');
+    if (!summary) {
+      summary = document.createElement('div');
+      summary.className = 'ang-v070-plan-summary';
+      var options = body.querySelector('.lite-options, .personal-options, .business-options');
+      if (options) body.insertBefore(summary, options);
+      else body.appendChild(summary);
+    }
+    summary.setAttribute('data-plan', key);
+    setText(summary, PLAN_SUMMARIES[key]);
+  }
+
+  function featureSpans(items) {
+    return items.map(function (item) { return '<span>' + item + '</span>'; }).join('');
+  }
+
+  function overviewMarkup() {
+    var business = ['員工主檔','排班發布','GPS／QR／NFC','支援打卡點','週／月選休','請假補卡','加班津貼','薪資估算','公告留言','公司／分店','七層權限','營運報表','資料上傳','歷史紀錄','工作區切換','安全稽核'];
+    var performance = ['個人排班','工時打卡','薪資收入','週領／月領','行事曆提醒','請假補卡','目標 KPI','績效週期','自評／評核','一對一回饋','趨勢分析','績效報表','資料備份','日夜模式'];
+    return [
+      '<div class="ang-overview-kicker">ANG HR v0.7.0｜完整功能總覽</div>',
+      '<h2>一套系統，照現在的需要開始</h2>',
+      '<p class="ang-overview-lead">ANG HR 將 Business 企業管理與 Personal Performance 個人成長整合在同一平台。從排班、打卡、請假、薪資，到權限、分店、績效與報表，都能逐步開啟。</p>',
+      '<div class="ang-overview-columns">',
+        '<section class="ang-overview-section"><strong>Business 企業管理</strong><small>涵蓋 Basic、Pro、Premium 的主要能力。</small><div class="ang-overview-feature-grid">', featureSpans(business), '</div></section>',
+        '<section class="ang-overview-section"><strong>Personal Performance</strong><small>包含 Solo 的日常管理與完整績效成長功能。</small><div class="ang-overview-feature-grid">', featureSpans(performance), '</div></section>',
+      '</div>',
+      '<section class="ang-overview-module"><b>＋</b><div><strong>方案 + Modules，可合在一起使用</strong><small>先選最符合現在的方案，再加需要的 Module，不必為單一功能直接購買最大方案。模組可彼此搭配，也能與原方案合併。現在先介紹「人數模組」：需要幾人就增加幾人，不必一開始買大量名額；其他功能模組後續上架。</small></div></section>',
+      '<div class="ang-overview-actions"><button type="button" data-ang-go-card="login">登入系統</button><button type="button" data-ang-go-card="personal">Personal</button><button type="button" data-ang-go-card="business">Business</button></div>'
+    ].join('');
+  }
+
+  function patchOverview() {
+    var card = document.querySelector('.manager-card.intro.expanded');
+    var modal = card && card.querySelector('.feature-modal-inline');
+    if (!modal) return;
+    if (modal.getAttribute('data-ang-v070') === 'true') return;
+    modal.setAttribute('data-ang-v070', 'true');
+    modal.classList.add('ang-v070-overview');
+    modal.innerHTML = overviewMarkup();
+  }
+
+  function centerCard(key) {
+    var carousel = document.querySelector('.manager-carousel');
+    var target = document.querySelector('.manager-card[data-manager-card="' + key + '"]');
+    if (!carousel || !target) return;
+    var intro = document.querySelector('.manager-card.intro.expanded .manager-card-toggle');
+    if (intro) intro.click();
+    window.setTimeout(function () {
+      var left = target.offsetLeft - (carousel.clientWidth - target.clientWidth) / 2;
+      carousel.scrollTo({ left: Math.max(0, left), behavior: 'smooth' });
+    }, 60);
+  }
+
+  function applyV070() {
+    var landing = document.querySelector('main.landing');
+    if (landing) landing.setAttribute('data-ang-version', '0.7.0');
+    patchBusinessSlogans();
+    patchCardCopy();
+    var cards = document.querySelectorAll('.manager-card.free, .manager-card.personal, .manager-card.business');
+    for (var i = 0; i < cards.length; i += 1) patchPlanSummary(cards[i]);
+    patchOverview();
+  }
+
+  function syncFailureFromStatus() {
+    var card = document.querySelector('.manager-card.login-unified');
+    if (!card || card.classList.contains('login-system-confirmed')) return;
+    var error = card.querySelector('.login-auth-status.error');
+    if (error && String(error.textContent || '').trim()) card.classList.add('login-system-failed');
+  }
+
+  document.addEventListener('click', function (event) {
+    var go = event.target.closest && event.target.closest('[data-ang-go-card]');
+    if (go) {
+      event.preventDefault();
+      centerCard(go.getAttribute('data-ang-go-card'));
+      return;
+    }
+    if (event.target.closest && event.target.closest('.login-verify-button, .social-login-row button')) {
+      var card = document.querySelector('.manager-card.login-unified');
+      if (card) card.classList.remove('login-system-failed');
+    }
+  }, true);
+
+  document.addEventListener('input', function (event) {
+    if (event.target.matches && event.target.matches('input[aria-label="Email或帳號"], input[aria-label="Email、帳號或公司代號"], input[aria-label="Email或使用者代號"]')) {
+      var card = document.querySelector('.manager-card.login-unified');
+      if (card) card.classList.remove('login-system-failed');
+    }
+  });
+
+  window.addEventListener('ANG_HR_AUTH_FAILED', function () {
+    var card = document.querySelector('.manager-card.login-unified');
+    if (card) {
+      card.classList.remove('login-system-confirmed');
+      card.classList.add('login-system-failed');
+    }
+  });
+
+  window.addEventListener('ANG_HR_AUTH_VERIFIED', function () {
+    var card = document.querySelector('.manager-card.login-unified');
+    if (card) card.classList.remove('login-system-failed');
+  });
+
+  function startV070() {
+    applyV070();
+    var root = document.getElementById('root') || document.body;
+    var observer = new MutationObserver(function () {
+      window.requestAnimationFrame(function () {
+        applyV070();
+        syncFailureFromStatus();
+      });
+    });
+    observer.observe(root, { childList: true, subtree: true, attributes: true, attributeFilter: ['class','aria-pressed'] });
+  }
+
+  if (document.readyState === 'loading') document.addEventListener('DOMContentLoaded', startV070);
+  else startV070();
+}());
+
+
+/* ANG HR v0.7.0｜互動式圖文介紹＋展開後 Email 說明 */
+(function () {
+  'use strict';
+
+  var PLAN_DETAILS = {
+    free: { kicker:'LITE｜FREE', title:'先從真正需要的功能開始', body:'免費方案保留基礎打卡、排班與工時紀錄，先把每天會用到的流程建立起來，再依需要升級或加 Module。', tags:['基礎打卡','排班','工時紀錄','40 天歷史'], icon:'free' },
+    solo: { kicker:'PERSONAL｜SOLO', title:'一個人的工作，也值得被好好管理', body:'把個人排班、打卡、工時、請假、薪資收入、週領與月領紀錄集中在同一個地方，不需要主管審核。', tags:['個人排班','薪資收入','提醒行事曆','請假補卡'], icon:'solo' },
+    performance: { kicker:'PERSONAL｜PERFORMANCE', title:'從記錄工作，進一步看見成長', body:'包含 Solo 的日常管理，再加入目標、KPI、績效週期、自評、評核、一對一回饋、趨勢與報表。', tags:['KPI 目標','績效週期','成長趨勢','完整報表'], icon:'performance' },
+    basic: { kicker:'BUSINESS｜BASIC', title:'核心管理先上線，團隊立即能用', body:'聚焦員工主檔、排班、定位打卡、出勤與基本管理，適合第一次把紙本或群組流程搬進系統的店家與團隊。', tags:['員工主檔','排班發布','GPS／QR','基本出勤'], icon:'business' },
+    pro: { kicker:'BUSINESS｜PRO', title:'把審核、薪資與跨店協作接起來', body:'包含 Basic 核心功能，再加入請假補卡審核、公告、薪資、加班津貼、臨時支援打卡點、更多主管權限與報表。', tags:['審核流程','薪資津貼','支援打卡點','管理報表'], icon:'pro' },
+    premium: { kicker:'BUSINESS｜PREMIUM', title:'完整權限與最高擴充彈性', body:'包含 Pro 全部功能，再加入多公司／多分店、七層權限、進階分析、自訂流程、安全稽核與完整的企業管理能力。', tags:['多公司分店','七層權限','進階分析','安全稽核'], icon:'premium' }
+  };
+
+  var OVERVIEW_DETAILS = {
+    overview: { accent:'#5fd7ed', kicker:'ANG HR v0.7.0｜完整總覽', title:'從一個人的工時，到整間公司的管理', body:'Business 與 Personal Performance 幾乎涵蓋 ANG HR 的完整核心能力：排班、打卡、請假、薪資、權限、分店、績效、提醒與報表，都在同一個平台裡逐步開啟。', tags:['排班與打卡','薪資與出勤','權限與分店','績效與報表','提醒與公告','資料與安全'], note:'不用一開始把所有功能都買齊；先選最符合現在的方案，再依需求擴充。', icon:'overview' },
+    business: { accent:'#4fa6e8', kicker:'BUSINESS｜企業管理', title:'讓每天的管理流程真正串在一起', body:'從員工主檔、排班發布、GPS／QR／NFC 打卡，到週月選休、請假補卡、加班津貼、薪資估算、公司分店、七層權限與營運報表。', tags:['員工主檔','排班發布','GPS／QR／NFC','請假補卡','薪資估算','多公司分店','七層權限','營運報表'], note:'Basic、Pro、Premium 的差異是管理深度，不再用固定「含幾人」限制方案。', icon:'business' },
+    performance: { accent:'#d85ca7', kicker:'PERSONAL｜PERFORMANCE', title:'不只記錄工作，也看見自己的成長', body:'包含 Solo 的個人排班、工時、打卡、收入、請假與提醒，再加入目標 KPI、績效週期、自評、評核、一對一回饋、趨勢分析與績效報表。', tags:['個人排班','工時收入','行事曆提醒','目標 KPI','自評評核','一對一回饋','趨勢分析','績效報表'], note:'個人功能屬於本人帳號；即使離開公司，自費購買的個人模組仍保留。', icon:'performance' },
+    modules: { accent:'#8c73e6', kicker:'PLANS + MODULES｜彈性擴充', title:'方案不用買到最大，缺什麼再加什麼', body:'方案可以和 Module 合在一起使用。公司先選符合目前管理需求的方案，再加真正需要的人數或功能，不必為了單一需求直接升到最大方案。', tags:['方案可搭模組','模組可彼此搭配','依需求逐步增加','避免買用不到的功能'], note:'目前先介紹「人數模組」：需要幾人就增加幾人，不必一開始購買大量名額；其他功能模組之後上架。', icon:'modules' }
+  };
+
+  function esc(value) {
+    return String(value == null ? '' : value).replace(/[&<>"']/g, function (ch) {
+      return ({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;',"'":'&#39;'})[ch];
+    });
+  }
+
+  function svg(kind) {
+    var common='fill="none" stroke="currentColor" stroke-width="5" stroke-linecap="round" stroke-linejoin="round"';
+    if (kind === 'modules') return '<svg viewBox="0 0 160 120" aria-hidden="true"><g '+common+'><rect x="20" y="18" width="48" height="40" rx="10"/><rect x="92" y="18" width="48" height="40" rx="10"/><rect x="20" y="72" width="48" height="30" rx="10"/><path d="M98 87h36M116 69v36"/><path d="M68 38h24M44 58v14M116 58v11"/></g></svg>';
+    if (kind === 'performance') return '<svg viewBox="0 0 160 120" aria-hidden="true"><g '+common+'><circle cx="60" cy="54" r="34"/><circle cx="60" cy="54" r="18"/><path d="M60 54l28-28M82 26h16v16"/><path d="M101 96l14-18 12 9 17-25"/><path d="M101 96h43"/></g></svg>';
+    if (kind === 'business' || kind === 'pro' || kind === 'premium') return '<svg viewBox="0 0 160 120" aria-hidden="true"><g '+common+'><path d="M24 101V28l55-16 55 16v73"/><path d="M15 101h130"/><path d="M45 42h18M96 42h18M45 62h18M96 62h18M45 82h18M96 82h18"/><path d="M72 101V76h16v25"/></g></svg>';
+    if (kind === 'solo') return '<svg viewBox="0 0 160 120" aria-hidden="true"><g '+common+'><circle cx="80" cy="42" r="20"/><path d="M42 102c3-25 17-38 38-38s35 13 38 38"/><rect x="19" y="15" width="31" height="25" rx="6"/><path d="M27 27h15M110 20h30M110 32h20"/></g></svg>';
+    if (kind === 'free') return '<svg viewBox="0 0 160 120" aria-hidden="true"><g '+common+'><rect x="20" y="22" width="120" height="78" rx="16"/><path d="M20 44h120M48 14v18M112 14v18"/><path d="M48 62h19M82 62h30M48 80h38"/><circle cx="118" cy="79" r="12"/><path d="M112 79l4 4 8-9"/></g></svg>';
+    return '<svg viewBox="0 0 160 120" aria-hidden="true"><g '+common+'><rect x="18" y="20" width="124" height="80" rx="18"/><path d="M40 76l20-18 17 12 30-32 14 12"/><path d="M40 42h22M40 55h12"/><circle cx="118" cy="39" r="10"/></g></svg>';
+  }
+
+  function selectedPlanKey(card) {
+    if (card.classList.contains('free')) return 'free';
+    if (card.classList.contains('personal')) {
+      var p=card.querySelector('.personal-option[aria-pressed="true"],.personal-option.selected');
+      return p && p.classList.contains('performance-option') ? 'performance' : 'solo';
+    }
+    var b=card.querySelector('.business-option[aria-pressed="true"],.business-option.selected');
+    if (b && b.classList.contains('premium-option')) return 'premium';
+    if (b && b.classList.contains('pro-option')) return 'pro';
+    return 'basic';
+  }
+
+  function tagsMarkup(tags) {
+    return tags.map(function (tag) { return '<span>'+esc(tag)+'</span>'; }).join('');
+  }
+
+  function installPlanDetail(card) {
+    if (!card || !(card.classList.contains('free') || card.classList.contains('personal') || card.classList.contains('business'))) return;
+    var body=card.querySelector('.manager-card-body');
+    if (!body) return;
+    var key=selectedPlanKey(card), data=PLAN_DETAILS[key];
+    if (!data) return;
+    var box=body.querySelector('.ang-plan-detail-v2');
+    if (!box) {
+      box=document.createElement('section');
+      box.className='ang-plan-detail-v2';
+      var options=body.querySelector('.lite-options,.personal-options,.business-options');
+      if (options) body.insertBefore(box,options); else body.appendChild(box);
+    }
+    if (box.getAttribute('data-plan')===key) return;
+    box.setAttribute('data-plan',key);
+    box.innerHTML='<div class="ang-plan-detail-visual">'+svg(data.icon)+'</div><div class="ang-plan-detail-copy"><span class="ang-plan-detail-kicker">'+esc(data.kicker)+'</span><strong>'+esc(data.title)+'</strong><p>'+esc(data.body)+'</p><div class="ang-plan-detail-tags">'+tagsMarkup(data.tags)+'</div></div>';
+  }
+
+  function overviewDisplay(data) {
+    return '<div class="ang-overview-visual">'+svg(data.icon)+'</div><div class="ang-overview-copy"><span class="ang-overview-kicker">'+esc(data.kicker)+'</span><h2>'+esc(data.title)+'</h2><p>'+esc(data.body)+'</p><div class="ang-overview-highlight-grid">'+tagsMarkup(data.tags)+'</div><div class="ang-overview-note">'+esc(data.note)+'</div></div>';
+  }
+
+  function renderOverview(modal,key) {
+    key=OVERVIEW_DETAILS[key] ? key : 'overview';
+    var display=modal.querySelector('[data-ang-overview-display]');
+    if (!display) return;
+    var data=OVERVIEW_DETAILS[key];
+    modal.style.setProperty('--ang-overview-accent',data.accent);
+    display.innerHTML=overviewDisplay(data);
+    display.setAttribute('data-view',key);
+    var buttons=modal.querySelectorAll('[data-ang-overview-key]');
+    for (var i=0;i<buttons.length;i++) {
+      var active=buttons[i].getAttribute('data-ang-overview-key')===key;
+      buttons[i].setAttribute('aria-selected',active?'true':'false');
+      buttons[i].tabIndex=active?0:-1;
+    }
+  }
+
+  function installOverview() {
+    var modal=document.querySelector('.manager-card.intro.expanded .feature-modal-inline');
+    if (!modal) return;
+    if (modal.getAttribute('data-ang-overview-v2')==='true') return;
+    modal.setAttribute('data-ang-overview-v2','true');
+    modal.classList.add('ang-overview-v2');
+    modal.innerHTML='<section class="ang-overview-display" data-ang-overview-display aria-live="polite"></section><div class="ang-overview-options-head"><strong>功能特色</strong><small>選擇一項，上方顯示完整圖文介紹</small></div><div class="ang-overview-options" role="tablist" aria-label="ANG HR 功能特色"><button type="button" class="ang-overview-option" role="tab" data-ang-overview-key="overview"><i>◎</i><strong>完整總覽</strong><small>核心能力</small></button><button type="button" class="ang-overview-option" role="tab" data-ang-overview-key="business"><i>▦</i><strong>Business</strong><small>企業管理</small></button><button type="button" class="ang-overview-option" role="tab" data-ang-overview-key="performance"><i>↗</i><strong>Performance</strong><small>個人成長</small></button><button type="button" class="ang-overview-option" role="tab" data-ang-overview-key="modules"><i>＋</i><strong>Modules</strong><small>彈性擴充</small></button></div>';
+    renderOverview(modal,'overview');
+  }
+
+  function syncLoginGuide() {
+    var card=document.querySelector('.manager-card.login-unified');
+    if (!card) return;
+    var guide=card.querySelector('.email-verification-guide');
+    if (!guide) return;
+    if (card.classList.contains('expanded') && card.classList.contains('login-system-confirmed')) {
+      guide.hidden=false;
+      guide.innerHTML='<strong>驗證已完成</strong><div class="verification-guide-steps"><span><i aria-hidden="true">✓</i><b>1</b><em>帳號已確認</em></span><span><i aria-hidden="true">▦</i><b>2</b><em>選擇公司或方案</em></span><span><i aria-hidden="true">↗</i><b>3</b><em>進入 ANG HR</em></span></div><small>只有一個公司或方案時會直接進入；有多個時才顯示選擇。方案註冊則會接續付款與基本資料。</small>';
+    }
+  }
+
+  function apply() {
+    var cards=document.querySelectorAll('.manager-card.free,.manager-card.personal,.manager-card.business');
+    for (var i=0;i<cards.length;i++) installPlanDetail(cards[i]);
+    installOverview();
+    syncLoginGuide();
+  }
+
+  document.addEventListener('click',function(event){
+    var button=event.target.closest && event.target.closest('[data-ang-overview-key]');
+    if (!button) return;
+    var modal=button.closest('.feature-modal-inline');
+    if (!modal) return;
+    event.preventDefault();
+    renderOverview(modal,button.getAttribute('data-ang-overview-key'));
+  });
+
+  function start() {
+    apply();
+    var root=document.getElementById('root')||document.body;
+    var queued=false;
+    new MutationObserver(function(){
+      if (queued) return;
+      queued=true;
+      window.requestAnimationFrame(function(){ queued=false; apply(); });
+    }).observe(root,{childList:true,subtree:true,attributes:true,attributeFilter:['class','aria-pressed']});
+  }
+  if (document.readyState==='loading') document.addEventListener('DOMContentLoaded',start); else start();
 }());
