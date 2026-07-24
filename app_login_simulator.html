@@ -1,0 +1,179 @@
+<!DOCTYPE html>
+<html lang="zh-Hant">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width,initial-scale=1,maximum-scale=1,user-scalable=no,viewport-fit=cover">
+  <title>ANG HR｜APP 登入模擬器</title>
+  <script src="./config.js"></script>
+  <style>
+    :root{
+      --bg:#f5f7fb;--card:#fff;--text:#111827;--muted:#6b7280;
+      --main:#ff7a21;--deep:#c45a10;--line:#e5e7eb;
+      --gradient:linear-gradient(135deg,#ff882f 0%,#ff6d1d 58%,#ffac73 100%);
+    }
+    *{box-sizing:border-box;-webkit-tap-highlight-color:transparent}
+    body{margin:0;background:var(--bg);color:var(--text);font-family:-apple-system,BlinkMacSystemFont,"Segoe UI",sans-serif;padding:14px}
+    .wrap{max-width:760px;margin:0 auto}
+    .hero{background:var(--gradient);color:#fff;border-radius:26px;padding:18px;margin-bottom:12px;box-shadow:0 14px 30px rgba(255,122,33,.22)}
+    .hero h1{margin:0 0 6px;font-size:24px}
+    .hero p{margin:0;font-size:13px;font-weight:800;opacity:.92;line-height:1.5}
+    .card{background:var(--card);border-radius:22px;padding:14px;margin-bottom:12px;box-shadow:0 8px 24px rgba(0,0,0,.05);border:1px solid rgba(0,0,0,.03)}
+    label{display:block;font-size:13px;color:var(--muted);font-weight:900;margin:0 0 7px}
+    input,textarea{width:100%;border:none;outline:none;border-radius:16px;background:#f3f4f6;padding:13px 12px;font:inherit;color:var(--text);margin-bottom:10px}
+    textarea{min-height:150px;font-family:ui-monospace,SFMono-Regular,Consolas,monospace;font-size:12px;line-height:1.5}
+    .grid{display:grid;grid-template-columns:1fr 1fr;gap:8px}
+    .btn{border:none;outline:none;cursor:pointer;width:100%;border-radius:18px;padding:14px;font-weight:900;font-size:15px;background:var(--gradient);color:#fff;box-shadow:0 12px 24px rgba(255,122,33,.18)}
+    .btn.ghost{background:#fff7ed;color:var(--deep);border:1px solid rgba(255,122,33,.18);box-shadow:none}
+    .btn.gray{background:#f3f4f6;color:#111827;box-shadow:none}
+    .note{font-size:12px;line-height:1.6;color:var(--muted);font-weight:800}
+    .result{background:#0f172a;color:#e5e7eb;border-radius:18px;padding:12px;font-family:ui-monospace,SFMono-Regular,Consolas,monospace;font-size:12px;white-space:pre-wrap;word-break:break-word;min-height:120px}
+    .ok{color:#10b981}.bad{color:#ef4444}
+    @media(max-width:560px){.grid{grid-template-columns:1fr}}
+  </style>
+</head>
+<body>
+  <div class="wrap">
+    <div class="hero">
+      <h1>ANG HR｜APP 登入模擬器</h1>
+      <p>用來模擬包成 APP 後，本機保存 company_id / id / token / device_id，再呼叫 GAS 讀取人員、分店、權限與橫幅資料。</p>
+    </div>
+
+    <div class="card">
+      <div class="grid">
+        <div>
+          <label>company_id</label>
+          <input id="companyId" value="ang_99" placeholder="例如 ang_99">
+        </div>
+        <div>
+          <label>device_id</label>
+          <input id="deviceId" placeholder="自動產生">
+        </div>
+      </div>
+      <div class="grid">
+        <div>
+          <label>員編 id</label>
+          <input id="empId" value="ANG0603" placeholder="ANG0603">
+        </div>
+        <div>
+          <label>角色 role</label>
+          <input id="role" value="Creator" placeholder="Employee / Manager / Admin / Creator">
+        </div>
+      </div>
+      <label>token</label>
+      <input id="token" value="0273d013afe64538aeb3f52d18d289ab1775139447000" placeholder="員工 token">
+      <label>API URL</label>
+      <input id="apiUrl" placeholder="自動讀 config.js">
+      <div class="note">正式 APP 會把這些資料存在手機本機；這頁用 localStorage 模擬。</div>
+    </div>
+
+    <div class="card">
+      <div class="grid">
+        <button class="btn" onclick="bindLogin()">模擬第一次 APP 綁定登入</button>
+        <button class="btn ghost" onclick="autoLogin()">模擬 APP 自動登入</button>
+        <button class="btn ghost" onclick="goEmployee()">進員工頁</button>
+        <button class="btn ghost" onclick="goAdmin()">進管理頁</button>
+        <button class="btn gray" onclick="saveLocal()">只存到本機</button>
+        <button class="btn gray" onclick="clearLocal()">清除本機資料</button>
+      </div>
+    </div>
+
+    <div class="card">
+      <label>登入結果</label>
+      <div class="result" id="result">尚未執行</div>
+    </div>
+  </div>
+
+  <script>
+    function qs(id){return document.getElementById(id)}
+    function log(obj){
+      qs('result').textContent = typeof obj === 'string' ? obj : JSON.stringify(obj, null, 2);
+    }
+    function randDevice(){
+      return 'appsim-' + Math.random().toString(16).slice(2) + '-' + Date.now();
+    }
+    function getApi(){
+      var cfg=window.ANG_HR_CONFIG||{};
+      return (qs('apiUrl').value || cfg.apiBaseUrl || cfg.workerApiUrl || cfg.gasApiUrl || '').trim();
+    }
+    function getDirBase(){
+      return String(location.href).split('#')[0].split('?')[0].replace(/\/[^\/]*$/,'');
+    }
+    function pageUrl(file){
+      var q = [
+        'company_id=' + encodeURIComponent(qs('companyId').value.trim()),
+        'id=' + encodeURIComponent(qs('empId').value.trim().toUpperCase()),
+        'token=' + encodeURIComponent(qs('token').value.trim()),
+        'role=' + encodeURIComponent(qs('role').value.trim()),
+        'device_id=' + encodeURIComponent(qs('deviceId').value.trim()),
+        'app=1',
+        '_ts=' + Date.now()
+      ];
+      return getDirBase() + '/' + file + '?' + q.join('&');
+    }
+    function payload(action){
+      return {
+        action: action,
+        company_id: qs('companyId').value.trim(),
+        id: qs('empId').value.trim().toUpperCase(),
+        token: qs('token').value.trim(),
+        role: qs('role').value.trim(),
+        device_id: qs('deviceId').value.trim(),
+        app: '1'
+      };
+    }
+    function saveLocal(){
+      if(!qs('deviceId').value.trim()) qs('deviceId').value = randDevice();
+      localStorage.setItem('ang_company_id', qs('companyId').value.trim());
+      localStorage.setItem('ang_employee_id', qs('empId').value.trim().toUpperCase());
+      localStorage.setItem('ang_employee_token', qs('token').value.trim());
+      localStorage.setItem('ang_user_role', qs('role').value.trim());
+      localStorage.setItem('ang_employee_role', qs('role').value.trim());
+      localStorage.setItem('ang_device_id', qs('deviceId').value.trim());
+      localStorage.setItem('ang_app_mode', '1');
+      log('已存到本機 localStorage，可按「進員工頁 / 進管理頁」測試。');
+    }
+    function clearLocal(){
+      ['ang_company_id','ang_employee_id','ang_employee_token','ang_user_role','ang_employee_role','ang_device_id','ang_app_mode'].forEach(function(k){localStorage.removeItem(k)});
+      qs('deviceId').value = randDevice();
+      log('已清除本機資料，並重新產生 device_id。');
+    }
+    function call(action){
+      saveLocal();
+      var api=getApi();
+      if(!api){log('缺少 API URL，請確認 config.js');return}
+      log('呼叫中：' + action);
+      fetch(api,{
+        method:'POST',
+        headers:{'Content-Type':'text/plain;charset=utf-8'},
+        body:JSON.stringify(payload(action))
+      })
+      .then(function(r){return r.text()})
+      .then(function(t){
+        var data={};
+        try{data=JSON.parse(t)}catch(e){data={ok:false,message:'invalid_json',raw:t}}
+        if(data && data.ok){
+          if(data.profile && data.profile.role) qs('role').value = data.profile.role;
+          if(data.device_id) qs('deviceId').value = data.device_id;
+          saveLocal();
+        }
+        log(data);
+      })
+      .catch(function(e){log({ok:false,message:String(e)})});
+    }
+    function bindLogin(){call('appBindLogin')}
+    function autoLogin(){call('appAutoLogin')}
+    function goEmployee(){saveLocal(); location.href=pageUrl('employee.html')}
+    function goAdmin(){saveLocal(); location.href=pageUrl('admin.html')}
+
+    (function init(){
+      var cfg=window.ANG_HR_CONFIG||{};
+      qs('apiUrl').value = cfg.apiBaseUrl || cfg.workerApiUrl || cfg.gasApiUrl || '';
+      qs('companyId').value = localStorage.getItem('ang_company_id') || qs('companyId').value;
+      qs('empId').value = localStorage.getItem('ang_employee_id') || qs('empId').value;
+      qs('token').value = localStorage.getItem('ang_employee_token') || qs('token').value;
+      qs('role').value = localStorage.getItem('ang_user_role') || qs('role').value;
+      qs('deviceId').value = localStorage.getItem('ang_device_id') || randDevice();
+    })();
+  </script>
+</body>
+</html>

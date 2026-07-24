@@ -186,6 +186,127 @@
     return String(base).split('#')[0] + (String(base).indexOf('?') > -1 ? '&' : '?') + qs.join('&');
   }
 
+
+
+  var ACCESS_CONTEXTS_KEY = 'ang_hr_access_contexts';
+  var ACTIVE_CONTEXT_KEY = 'ang_hr_active_context';
+
+  function readAccessContexts(){
+    try {
+      var list = JSON.parse(localStorage.getItem(ACCESS_CONTEXTS_KEY) || '[]');
+      return Array.isArray(list) ? list : [];
+    } catch(err){ return []; }
+  }
+
+  function setAccessContexts(list){
+    if (!Array.isArray(list)) return;
+    try { localStorage.setItem(ACCESS_CONTEXTS_KEY, JSON.stringify(list)); } catch(err) {}
+    installContextSwitcher(true);
+  }
+
+  function contextRoute(context){
+    context = context || {};
+    var family = String(context.plan_family || context.family || '').toLowerCase();
+    var planCode = String(context.plan_code || context.plan || '').toLowerCase();
+    var role = String(context.role || '').toLowerCase();
+    var type = String(context.type || '').toLowerCase();
+    if (type.indexOf('plan') !== -1 || family === 'personal' || planCode.indexOf('personal_') === 0) return './personal.html';
+    if (/owner|creator|admin|manager|deputy|supervisor|leader/.test(role)) return './admin.html';
+    return './employee.html';
+  }
+
+  function switchContext(context){
+    if (!context) return;
+    var companyId = String(context.company_id || context.companyId || '').trim().toUpperCase();
+    var userId = String(context.user_id || context.userId || context.employee_id || context.employeeId || '').trim().toUpperCase();
+    var token = String(context.token || context.session_token || context.sessionToken || '').trim();
+    var role = String(context.role || '').trim();
+    var planCode = String(context.plan_code || context.planCode || context.plan || '').trim();
+    if (companyId) setStored(DEFAULT_KEYS.company, companyId);
+    if (userId) setStored(DEFAULT_KEYS.user, userId);
+    if (token) setStored(DEFAULT_KEYS.token, token);
+    if (role) setStored(DEFAULT_KEYS.role, role);
+    try {
+      localStorage.setItem(ACTIVE_CONTEXT_KEY, JSON.stringify(context));
+      if (planCode) localStorage.setItem('ang_hr_active_plan_code', planCode);
+    } catch(err) {}
+    var base = contextRoute(context);
+    var url = new URL(base, window.location.href);
+    if (companyId) url.searchParams.set('company_id', companyId);
+    if (userId) { url.searchParams.set('id', userId); url.searchParams.set('employee_id', userId); }
+    if (token) url.searchParams.set('token', token);
+    if (role) url.searchParams.set('role', role);
+    if (planCode) url.searchParams.set('plan', planCode);
+    url.searchParams.set('_ts', String(Date.now()));
+    window.location.href = url.toString();
+  }
+
+  function escapeContextText(value){
+    return String(value === undefined || value === null ? '' : value)
+      .replace(/&/g,'&amp;').replace(/</g,'&lt;').replace(/>/g,'&gt;')
+      .replace(/"/g,'&quot;').replace(/'/g,'&#039;');
+  }
+
+  function installContextSwitcher(force){
+    var contexts = readAccessContexts();
+    var existing = document.getElementById('ang-context-switcher-root');
+    if (contexts.length <= 1) {
+      if (existing) existing.remove();
+      return;
+    }
+    if (existing && !force) return;
+    if (existing) existing.remove();
+
+    var root = document.createElement('div');
+    root.id = 'ang-context-switcher-root';
+    root.innerHTML = [
+      '<button type="button" class="ang-context-switcher-button" aria-label="切換公司或方案">切換</button>',
+      '<div class="ang-context-switcher-backdrop" hidden>',
+      '<section class="ang-context-switcher-panel" role="dialog" aria-modal="true" aria-label="切換公司或方案">',
+      '<button type="button" class="ang-context-switcher-close" aria-label="關閉">×</button>',
+      '<strong>切換公司／方案</strong>',
+      '<small>不必登出，切換後會重新載入對應資料與權限。</small>',
+      '<div class="ang-context-switcher-list"></div>',
+      '</section></div>'
+    ].join('');
+
+    var style = document.getElementById('ang-context-switcher-style');
+    if (!style) {
+      style = document.createElement('style');
+      style.id = 'ang-context-switcher-style';
+      style.textContent = [
+        '#ang-context-switcher-root{position:fixed;right:12px;bottom:calc(76px + env(safe-area-inset-bottom));z-index:2147483000;font-family:inherit}',
+        '.ang-context-switcher-button{color:#fff;background:linear-gradient(135deg,#188b55,#0d5838);border:1px solid rgba(255,255,255,.34);border-radius:999px;padding:9px 12px;font-size:11px;font-weight:900;box-shadow:0 8px 24px rgba(0,45,28,.34)}',
+        '.ang-context-switcher-backdrop{position:fixed;inset:0;background:rgba(4,10,8,.54);backdrop-filter:blur(8px);display:grid;place-items:end center;padding:16px 12px calc(16px + env(safe-area-inset-bottom));z-index:2147483001}',
+        '.ang-context-switcher-backdrop[hidden]{display:none!important}',
+        '.ang-context-switcher-panel{color:#183126;background:rgba(248,252,249,.96);border:1px solid rgba(33,126,78,.22);border-radius:22px;width:min(100%,420px);max-height:72vh;overflow:auto;padding:18px;box-shadow:0 24px 70px rgba(0,35,22,.35);position:relative}',
+        '.ang-context-switcher-panel>strong,.ang-context-switcher-panel>small{display:block}.ang-context-switcher-panel>strong{font-size:17px}.ang-context-switcher-panel>small{margin-top:4px;color:#506459;font-size:10px;line-height:1.5}',
+        '.ang-context-switcher-close{position:absolute;right:12px;top:10px;background:transparent;border:0;font-size:25px}',
+        '.ang-context-switcher-list{display:grid;gap:8px;margin-top:14px}',
+        '.ang-context-switcher-option{text-align:left;color:#183126;background:#fff;border:1px solid rgba(33,126,78,.18);border-radius:14px;padding:11px 12px;display:grid;grid-template-columns:1fr auto;gap:2px 10px}',
+        '.ang-context-switcher-option b{font-size:12px}.ang-context-switcher-option span{font-size:9px;color:#607167}.ang-context-switcher-option i{grid-column:2;grid-row:1/3;align-self:center;font-style:normal;font-size:10px;font-weight:900}'
+      ].join('');
+      document.head.appendChild(style);
+    }
+
+    var backdrop = root.querySelector('.ang-context-switcher-backdrop');
+    var list = root.querySelector('.ang-context-switcher-list');
+    contexts.forEach(function(context){
+      var title = context.title || context.company_name || context.company_id || context.plan_label || context.plan_code || 'ANG HR';
+      var subtitle = context.subtitle || [context.plan_label || context.plan_code, context.role].filter(Boolean).join('｜') || '工作區';
+      var button = document.createElement('button');
+      button.type = 'button';
+      button.className = 'ang-context-switcher-option';
+      button.innerHTML = '<b>'+escapeContextText(title)+'</b><span>'+escapeContextText(subtitle)+'</span><i>切換 →</i>';
+      button.addEventListener('click', function(){ switchContext(context); });
+      list.appendChild(button);
+    });
+    root.querySelector('.ang-context-switcher-button').addEventListener('click', function(){ backdrop.hidden = false; });
+    root.querySelector('.ang-context-switcher-close').addEventListener('click', function(){ backdrop.hidden = true; });
+    backdrop.addEventListener('click', function(event){ if (event.target === backdrop) backdrop.hidden = true; });
+    document.body.appendChild(root);
+  }
+
   window.ANG_API = {
     get url(){ return getApiUrl(); },
     get companyId(){ return syncIdentity().company_id; },
@@ -195,9 +316,12 @@
     request: request,
     verifySession: verifySession,
     syncIdentity: syncIdentity,
-    buildSwitchUrl: buildSwitchUrl
+    buildSwitchUrl: buildSwitchUrl,
+    getAccessContexts: readAccessContexts,
+    setAccessContexts: setAccessContexts,
+    switchContext: switchContext
   };
 
-  if (document.readyState === 'loading') document.addEventListener('DOMContentLoaded', function(){ syncIdentity(); });
-  else syncIdentity();
+  if (document.readyState === 'loading') document.addEventListener('DOMContentLoaded', function(){ syncIdentity(); installContextSwitcher(false); });
+  else { syncIdentity(); installContextSwitcher(false); }
 })(window, document);
