@@ -220,10 +220,6 @@
       source: 'backend_direct_return_restore',
       returnUrl: returnUrl,
       return_url: returnUrl,
-      redirectUri: returnUrl,
-      redirect_uri: returnUrl,
-      callbackUrl: returnUrl,
-      callback_url: returnUrl,
       direct: '1'
     };
 
@@ -313,8 +309,6 @@
       source: 'backend_direct_return_restore',
       returnUrl: returnUrl,
       return_url: returnUrl,
-      callbackUrl: returnUrl,
-      callback_url: returnUrl,
       direct: '1'
     }, 20000).then(function (response) {
       var cooldown = Number(response && (response.resend_after_seconds || response.cooldown_seconds) || 60);

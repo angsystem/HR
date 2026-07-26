@@ -826,10 +826,6 @@
       source: 'current_entry_login',
       returnUrl: returnUrl.toString(),
       return_url: returnUrl.toString(),
-      redirectUri: returnUrl.toString(),
-      redirect_uri: returnUrl.toString(),
-      callbackUrl: returnUrl.toString(),
-      callback_url: returnUrl.toString(),
       direct: '1'
     };
 
