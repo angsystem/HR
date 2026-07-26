@@ -1,0 +1,84 @@
+(function(){
+  'use strict';
+  var KEY='ang-hr-display-mode';
+  function readMode(){
+    try{
+      var requested=new URLSearchParams(location.search).get('mode');
+      if(requested==='lite'||requested==='standard') return requested;
+      return localStorage.getItem(KEY)==='lite'?'lite':'standard';
+    }catch(_){return 'standard';}
+  }
+  function apply(mode,write){
+    mode=mode==='lite'?'lite':'standard';
+    document.documentElement.setAttribute('data-display-mode',mode);
+    if(document.body) document.body.setAttribute('data-display-mode',mode);
+    if(write){try{localStorage.setItem(KEY,mode);}catch(_){}}
+    var button=document.getElementById('angDisplayModeToggle');
+    if(button){
+      button.dataset.mode=mode;
+      button.setAttribute('aria-pressed',String(mode==='lite'));
+      button.setAttribute('aria-label',mode==='lite'?'切換為標準模式':'切換為輕量模式');
+      button.innerHTML='<b>'+(mode==='lite'?'LITE':'STD')+'</b><span>'+(mode==='lite'?'輕量模式':'標準模式')+'</span>';
+    }
+    try{window.ANGHRApp&&window.ANGHRApp.setDisplayMode&&window.ANGHRApp.setDisplayMode(mode);}catch(_){ }
+    window.dispatchEvent(new CustomEvent('ANG_HR_DISPLAY_MODE_CHANGE',{detail:{mode:mode}}));
+    return mode;
+  }
+  function mount(){
+    var mode=apply(readMode(),false);
+    if(!document.getElementById('angDisplayModeToggle')){
+      var button=document.createElement('button');
+      button.id='angDisplayModeToggle';
+      button.type='button';
+      button.title='網路較慢或裝置較舊時可切換輕量模式';
+      button.addEventListener('click',function(){mode=apply(mode==='lite'?'standard':'lite',true);});
+      document.body.appendChild(button);
+    }
+    apply(mode,false);
+  }
+  window.ANGHRDisplayMode={get:readMode,set:function(mode){return apply(mode,true);},toggle:function(){return apply(readMode()==='lite'?'standard':'lite',true);}};
+  if(document.readyState==='loading') document.addEventListener('DOMContentLoaded',mount,{once:true}); else mount();
+})();
+
+/* ANG HR v0.6.0 formal attendance entry */
+(function(){
+  window.openAngAttendanceCenter = function(){
+    try {
+      var qs = new URLSearchParams(location.search || '');
+      var company = qs.get('company_id') || qs.get('company_code') || localStorage.getItem('ang_hr_active_company_id') || localStorage.getItem('ang_company_id') || localStorage.getItem('company_id') || 'ANG_HR';
+      var employee = qs.get('employee_id') || qs.get('id') || localStorage.getItem('ang_hr_active_employee_id') || localStorage.getItem('ang_employee_id') || localStorage.getItem('employee_id') || localStorage.getItem('loginId') || '';
+      var token = qs.get('session_token') || qs.get('token') || localStorage.getItem('ang_hr_active_login_token') || localStorage.getItem('ang_employee_token') || localStorage.getItem('session_token') || localStorage.getItem('loginToken') || '';
+      var mode = document.documentElement.getAttribute('data-display-mode') || localStorage.getItem('ang-hr-display-mode') || 'standard';
+      var target = './nfc_clock.html?company_id=' + encodeURIComponent(company) + '&id=' + encodeURIComponent(employee) + '&token=' + encodeURIComponent(token) + '&mode=' + encodeURIComponent(mode) + '&_ts=' + Date.now();
+      location.href = target;
+    } catch (error) {
+      location.href = './nfc_clock.html';
+    }
+  };
+})();
+
+/* ANG HR v0.6.0 admin attendance quick tools */
+(function(){
+  function sessionQuery(){
+    var qs=new URLSearchParams(location.search||'');
+    var company=qs.get('company_id')||localStorage.getItem('ang_hr_active_company_id')||localStorage.getItem('ang_company_id')||'ANG_HR';
+    var id=qs.get('employee_id')||qs.get('id')||localStorage.getItem('ang_hr_active_employee_id')||localStorage.getItem('ang_employee_id')||localStorage.getItem('loginId')||'';
+    var token=qs.get('session_token')||qs.get('token')||localStorage.getItem('ang_hr_active_login_token')||localStorage.getItem('ang_employee_token')||localStorage.getItem('session_token')||localStorage.getItem('loginToken')||'';
+    return '?company_id='+encodeURIComponent(company)+'&id='+encodeURIComponent(id)+'&token='+encodeURIComponent(token)+'&mode='+encodeURIComponent(document.documentElement.getAttribute('data-display-mode')||'standard');
+  }
+  window.openAngClockPointAdmin=function(){location.href='./nfc_admin.html'+sessionQuery();};
+  window.openAngSupportAdmin=function(){location.href='./support_admin.html'+sessionQuery();};
+  function mount(){
+    var qs=new URLSearchParams(location.search||'');
+    var file=(location.pathname.split('/').pop()||'').toLowerCase();
+    var view=(qs.get('view')||'').toLowerCase();
+    if(!(file==='admin.html'||view==='admin'||document.getElementById('adminApp')||document.querySelector('[data-admin-root]')))return;
+    if(document.getElementById('angAttendanceAdminTools'))return;
+    var box=document.createElement('div');box.id='angAttendanceAdminTools';
+    box.innerHTML='<button type="button" data-tool="points">打卡點</button><button type="button" data-tool="support">支援</button>';
+    box.querySelector('[data-tool="points"]').onclick=window.openAngClockPointAdmin;
+    box.querySelector('[data-tool="support"]').onclick=window.openAngSupportAdmin;
+    document.body.appendChild(box);
+  }
+  if(document.readyState==='loading')document.addEventListener('DOMContentLoaded',function(){setTimeout(mount,400);},{once:true});else setTimeout(mount,400);
+})();

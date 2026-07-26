@@ -1,30 +1,15 @@
-<script>
-  (function() {
-    let timer;
-    const idleLimit = 15 * 60 * 1000; // 15 分鐘 = 900,000 毫秒
-
-    function performAutoLogout() {
-      // 顯示警告通知
-      alert('🔒 安全警示：您已閒置超過 15 分鐘，系統將自動返回總覽看板。');
-      
-      // 強制跳轉至 boss 頁面 (確保在 iframe 中有效)
-      const baseUrl = window.location.origin + window.location.pathname;
-      window.top.location.href = baseUrl + '?page=boss';
-    }
-
-    function resetIdleTimer() {
-      if (timer) clearTimeout(timer);
-      timer = setTimeout(performAutoLogout, idleLimit);
-    }
-
-    // 監聽所有互動動作
-    const events = ['mousedown', 'mousemove', 'keypress', 'scroll', 'touchstart', 'click'];
-    events.forEach(function(eventName) {
-      document.addEventListener(eventName, resetIdleTimer, true);
-    });
-
-    // 初始啟動計時
-    resetIdleTimer();
-    console.log("🛡️ 安全監控已啟動：15 分鐘閒置自動登出。");
-  })();
-</script>
+<!doctype html>
+<html lang="zh-Hant">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, viewport-fit=cover" />
+    <meta name="theme-color" content="#f7f4fb" />
+    <meta name="description" content="ANG HR 人力資源管理系統" />
+    <title>ANG HR</title>
+    <script type="module" crossorigin src="./assets/index-qbbX9Nfl.js"></script>
+    <link rel="stylesheet" crossorigin href="./assets/index-C9CzYj9H.css">
+  </head>
+  <body>
+    <div id="root"></div>
+  </body>
+</html>

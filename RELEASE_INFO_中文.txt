@@ -1,0 +1,17 @@
+ANG HR v0.6.0 正式基準版
+建置日期：2026-07-21
+Repository：angsystem/HR
+GitHub Pages：https://angsystem.github.io/HR/
+Android package：com.angsystem.hr
+
+本包包含：
+- GitHub Pages deploy 前端
+- React src/dist
+- Employee/Admin/Creator/Personal/Register 頁面
+- 日光／暗夜背景與開場影片
+- 標準／Lite 輕量模式
+- GAS v0.6.0 後端與正式打卡模組
+- Android Studio 原生專案
+- 功能基準、部署檢查與 QA 報告
+
+正式營運前仍需部署 GAS、設定 OAuth/LINE/Drive、建立資料表並完成真機驗收。

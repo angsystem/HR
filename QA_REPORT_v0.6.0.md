@@ -1,0 +1,39 @@
+<!DOCTYPE html>
+<html lang="zh-Hant">
+<head>
+<meta charset="UTF-8"><meta name="viewport" content="width=device-width,initial-scale=1,viewport-fit=cover">
+<title>ANG HR 打卡點設定</title><script src="./config.js"></script>
+<style>
+:root{--bg:#f5f7fb;--card:#fff;--text:#101828;--muted:#667085;--line:#dfe4ec;--main:#ff7a21;--ok:#047857;--err:#b42318}*{box-sizing:border-box}body{margin:0;background:var(--bg);font-family:-apple-system,BlinkMacSystemFont,"Segoe UI","Noto Sans TC",sans-serif;color:var(--text);padding:18px}.wrap{max-width:900px;margin:auto}.card{background:var(--card);border:1px solid var(--line);border-radius:24px;padding:20px;margin-bottom:14px;box-shadow:0 15px 38px rgba(16,24,40,.08)}h1{margin:0 0 6px;font-size:25px}h2{font-size:17px;margin:0 0 12px}.hint{font-size:13px;color:var(--muted);line-height:1.6}.grid{display:grid;grid-template-columns:repeat(2,minmax(0,1fr));gap:11px}@media(max-width:680px){.grid{grid-template-columns:1fr}}label{display:block;font-size:12px;font-weight:900;margin:10px 0 6px}input,select{width:100%;height:44px;border:1px solid #cfd5df;border-radius:13px;padding:0 12px;font-size:14px}button{border:0;border-radius:14px;padding:12px 14px;font-weight:1000;cursor:pointer}.primary{background:linear-gradient(135deg,#ff8a2a,#ff6415);color:#fff}.soft{background:#eef2ff;color:#4338ca;border:1px solid #c7d2fe}.ghost{background:#fff;color:#344054;border:1px solid var(--line)}.actions{display:flex;flex-wrap:wrap;gap:8px;margin-top:14px}.status{margin-top:13px;border:1px solid var(--line);border-radius:15px;padding:11px;background:#f8fafc;white-space:pre-wrap;font-size:13px;line-height:1.55}.status.ok{background:#ecfdf3;border-color:#a7f3d0;color:var(--ok)}.status.err{background:#fef2f2;border-color:#fecaca;color:var(--err)}.tablewrap{overflow:auto}table{width:100%;border-collapse:collapse;min-width:780px;font-size:12px}th,td{padding:9px;border-bottom:1px solid #eaecf0;text-align:left}th{background:#f8fafc}.mono{font-family:ui-monospace,Menlo,monospace}.toplinks{display:flex;gap:8px;flex-wrap:wrap;margin-bottom:14px}
+html[data-display-mode="lite"] .card{box-shadow:none}
+</style><link rel="stylesheet" href="./display-mode.css">
+</head>
+<body><main class="wrap">
+<div class="toplinks"><button class="ghost" onclick="location.href='./support_admin.html'+location.search">臨時支援設定</button><button class="ghost" onclick="location.href='./app.html?view=admin'">返回管理端</button></div>
+<section class="card"><h1>打卡點設定</h1><div class="hint">同一分店可建立多個點。NFC、QR 與 GPS 共用同一座標與半徑；所有儲存與讀取均需有效管理 Session。</div>
+<div class="grid">
+<div><label>公司代碼</label><input id="companyId"></div><div><label>管理者員編</label><input id="employeeId"></div>
+<div><label>登入 Token</label><input id="token" type="password"></div><div><label>分店 ID</label><input id="branchId" placeholder="PULI"></div>
+<div><label>打卡點名稱</label><input id="pointName" placeholder="埔里店正門"></div><div><label>允許半徑（公尺）</label><input id="radius" type="number" min="10" max="5000" value="200"></div>
+<div><label>緯度</label><input id="latitude" inputmode="decimal"></div><div><label>經度</label><input id="longitude" inputmode="decimal"></div>
+<div><label>NFC Key／UID</label><input id="nfcKey" class="mono" placeholder="感應後自動帶入"></div><div><label>QR Key</label><input id="qrKey" class="mono" placeholder="例如 PULI-DOOR-01"></div>
+<div><label>啟用狀態</label><select id="active"><option value="true">啟用</option><option value="false">停用</option></select></div>
+</div>
+<div class="actions"><button class="soft" id="nfcBtn">感應 NFC</button><button class="soft" id="locationBtn">使用目前位置</button><button class="primary" id="saveBtn">儲存打卡點</button><button class="ghost" id="setupBtn">建立正式資料表</button><button class="ghost" id="reloadBtn">重新讀取</button></div><div id="status" class="status">準備中…</div></section>
+<section class="card"><h2>已啟用打卡點</h2><div class="tablewrap" id="list">尚未讀取</div></section>
+</main>
+<script>
+(function(){'use strict';const CFG=window.ANG_HR_CONFIG||{},qs=new URLSearchParams(location.search),$=id=>document.getElementById(id);const gas=qs.get('gas')||CFG.apiBaseUrl||CFG.gasApiUrl||'';
+$('companyId').value=(qs.get('company_id')||localStorage.getItem('ang_company_id')||'ANG_HR').toUpperCase();$('employeeId').value=(qs.get('id')||localStorage.getItem('ang_login_id')||'').toUpperCase();$('token').value=qs.get('token')||localStorage.getItem('ang_login_token')||'';
+$('nfcBtn').onclick=()=>{try{if(window.ANGHRApp&&ANGHRApp.requestNfcScan){ANGHRApp.requestNfcScan();return st('請將手機靠近 NFC 標籤。');}}catch(e){}st('目前裝置無法直接讀 NFC，請手動輸入 UID。','err')};
+$('locationBtn').onclick=async()=>{try{st('正在取得位置…');const p=await loc();$('latitude').value=p.latitude;$('longitude').value=p.longitude;st('已帶入目前座標，精準度約 '+Math.round(p.accuracy)+' 公尺。','ok')}catch(e){st(e.message,'err')}};
+$('saveBtn').onclick=save;$('setupBtn').onclick=()=>call({action:'setupAttendanceV060'}).then(ok).catch(err);$('reloadBtn').onclick=load;
+window.addEventListener('ANG_HR_NFC_SCAN',e=>{const d=e.detail||{};$('nfcKey').value=String(d.uid||d.id||d.nfc_id||'').trim().toUpperCase();st('已讀取 NFC UID：'+$('nfcKey').value,'ok')});
+function identity(){const p={company_id:$('companyId').value.trim().toUpperCase(),id:$('employeeId').value.trim().toUpperCase(),employee_id:$('employeeId').value.trim().toUpperCase(),token:$('token').value.trim(),loginToken:$('token').value.trim(),device_id:device()};localStorage.setItem('ang_company_id',p.company_id);localStorage.setItem('ang_login_id',p.id);if(p.token)localStorage.setItem('ang_login_token',p.token);return p}
+async function call(payload){if(!gas)throw new Error('尚未設定 GAS API 網址');const r=await fetch(gas,{method:'POST',headers:{'Content-Type':'text/plain;charset=UTF-8'},body:JSON.stringify(Object.assign(identity(),payload))});const text=await r.text();let data;try{data=JSON.parse(text)}catch(e){throw new Error('後端回應格式錯誤：'+text.slice(0,120))}if(!data.ok)throw new Error(data.message||'操作失敗');return data}
+async function save(){try{st('正在儲存…');const data=await call({action:'saveClockPointV060',branch_id:$('branchId').value.trim().toUpperCase(),point_name:$('pointName').value.trim(),radius_meters:Number($('radius').value||200),latitude:Number($('latitude').value),longitude:Number($('longitude').value),nfc_key:$('nfcKey').value.trim().toUpperCase(),qr_key:$('qrKey').value.trim().toUpperCase(),active:$('active').value});ok(data);load()}catch(e){err(e)}}
+async function load(){try{st('正在讀取…');const data=await call({action:'listClockPointsV060',branch_id:''});const rows=data.points||[];$('list').innerHTML=rows.length?'<table><thead><tr><th>分店</th><th>名稱</th><th>座標</th><th>半徑</th><th>NFC</th><th>QR</th></tr></thead><tbody>'+rows.map(x=>'<tr><td>'+esc(x.branch_id)+'</td><td>'+esc(x.point_name)+'</td><td class="mono">'+esc(x.latitude)+', '+esc(x.longitude)+'</td><td>'+esc(x.radius_meters)+'m</td><td class="mono">'+esc(x.nfc_key)+'</td><td class="mono">'+esc(x.qr_key)+'</td></tr>').join('')+'</tbody></table>':'目前沒有啟用的打卡點';st('已讀取 '+rows.length+' 個打卡點。','ok')}catch(e){err(e)}}
+function loc(){return new Promise((resolve,reject)=>{if(!navigator.geolocation)return reject(new Error('此裝置不支援定位'));navigator.geolocation.getCurrentPosition(p=>resolve({latitude:p.coords.latitude,longitude:p.coords.longitude,accuracy:p.coords.accuracy}),()=>reject(new Error('無法取得定位，請確認權限與 GPS')), {enableHighAccuracy:true,timeout:12000,maximumAge:5000})})}
+function device(){try{if(window.ANGHRApp&&ANGHRApp.getDeviceId)return String(ANGHRApp.getDeviceId()||'')}catch(e){}return localStorage.getItem('ang_device_id')||''}function ok(d){st(d.message||'完成','ok')}function err(e){st(e.message||String(e),'err')}function st(s,t){$('status').textContent=s;$('status').className='status'+(t?' '+t:'')}function esc(s){return String(s??'').replace(/[&<>"']/g,m=>({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;',"'":'&#39;'}[m]))}
+load();})();
+</script><script src="./display-mode.js" defer></script></body></html>
