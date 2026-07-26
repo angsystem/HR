@@ -1,0 +1,62 @@
+/* ANG HR v1.0.0｜入口正式覆蓋層 */
+:root{
+  --ang-login-green:58,232,156;
+  --ang-success-green:80,255,176;
+  --ang-lite-blue:174,221,255;
+  --ang-personal-pink:255,135,224;
+  --ang-business-purple:176,128,255;
+  --ang-gold:216,173,67;
+  --ang-silver:200,206,216;
+  --ang-bronze:184,115,51;
+}
+
+.landing .manager-card.login-unified:not(.login-system-confirmed),
+.manager-card.login-unified:not(.login-system-confirmed){
+  --login-metal:rgb(var(--ang-login-green))!important;
+  --login-main:rgb(var(--ang-login-green))!important;
+  --login-metal-rgb:var(--ang-login-green)!important;
+  --login-main-rgb:var(--ang-login-green)!important;
+  border:2px solid rgba(var(--ang-login-green),.92)!important;
+  background:radial-gradient(circle at 18% 10%,rgba(var(--ang-login-green),.16),transparent 40%),linear-gradient(155deg,rgba(4,22,16,.9),rgba(6,35,25,.76))!important;
+  box-shadow:0 0 18px rgba(var(--ang-login-green),.34),0 0 42px rgba(var(--ang-login-green),.16),0 22px 52px rgba(0,0,0,.42)!important;
+}
+
+.manager-card.login-unified.login-system-confirmed,
+.manager-card.login-unified[data-auth-state="success"]{
+  border-color:rgba(var(--ang-success-green),.98)!important;
+  background:radial-gradient(circle at 50% 0%,rgba(var(--ang-success-green),.28),transparent 46%),linear-gradient(155deg,rgba(2,45,29,.94),rgba(2,24,17,.91))!important;
+  box-shadow:0 0 22px rgba(var(--ang-success-green),.46),0 0 56px rgba(var(--ang-success-green),.24),0 24px 56px rgba(0,0,0,.46)!important;
+}
+
+.manager-card.login-unified.login-system-confirmed .login-verify-button,
+.manager-card.login-unified[data-auth-state="success"] .login-verify-button{
+  background:linear-gradient(135deg,#2ee59d,#0b9f69)!important;
+  color:#fff!important;
+  box-shadow:0 0 22px rgba(var(--ang-success-green),.36)!important;
+}
+
+.manager-card.login-unified .social-login-row{
+  display:grid!important;
+  grid-template-columns:minmax(0,1fr) minmax(0,1fr)!important;
+  gap:10px!important;
+  width:100%!important;
+}
+.manager-card.login-unified .social-login-row>button,
+.manager-card.login-unified .social-login-row>a{width:100%!important;min-width:0!important;justify-content:center!important}
+
+.ang-v1-email-guide{display:grid;grid-template-columns:42px minmax(0,1fr);gap:12px;margin-top:14px;padding:14px;border:1px solid rgba(var(--ang-login-green),.35);border-radius:16px;background:rgba(7,31,23,.56);color:rgba(255,255,255,.94)}
+.ang-v1-email-guide-icon{display:grid;place-items:center;width:42px;height:42px;border-radius:13px;background:rgba(var(--ang-login-green),.16);font-size:22px}
+.ang-v1-email-guide strong{display:block;margin-bottom:5px}.ang-v1-email-guide p,.ang-v1-email-guide small{display:block;margin:0;color:rgba(255,255,255,.75);font-size:.82rem;line-height:1.55}
+
+.swipe-guide,.swipe-hint,.landing-swipe-hint,.manager-swipe-guide,[class*="swipe"][class*="hint"],[class*="swipe"][class*="guide"]{background:rgba(255,255,255,.05)!important;border-color:rgba(255,255,255,.12)!important;box-shadow:none!important;backdrop-filter:blur(5px)!important}
+
+.landing:not(.night) .manager-card.free,.landing:not(.night) .manager-card.lite{border-color:rgba(var(--ang-lite-blue),.94)!important;background:linear-gradient(155deg,rgba(244,251,255,.94),rgba(var(--ang-lite-blue),.6))!important}
+.landing:not(.night) .manager-card.personal{border-color:rgba(var(--ang-personal-pink),.92)!important;background:linear-gradient(155deg,rgba(255,246,252,.94),rgba(var(--ang-personal-pink),.5))!important}
+.landing:not(.night) .manager-card.business{border-color:rgba(var(--ang-business-purple),.92)!important;background:linear-gradient(155deg,rgba(250,247,255,.94),rgba(var(--ang-business-purple),.52))!important}
+
+.business-lite,.performance-option,.premium-option{border-color:rgba(var(--ang-gold),.92)!important;box-shadow:0 0 16px rgba(var(--ang-gold),.2)!important}
+.personal-lite,.solo-option,.pro-option{border-color:rgba(var(--ang-silver),.92)!important;box-shadow:0 0 16px rgba(var(--ang-silver),.18)!important}
+.basic-option{border-color:rgba(var(--ang-bronze),.94)!important;box-shadow:0 0 16px rgba(var(--ang-bronze),.2)!important}
+
+.manager-carousel{scroll-snap-type:x mandatory!important;scroll-padding-inline:max(12px,calc((100vw - min(92vw,520px))/2))!important}
+.manager-carousel>.manager-card{scroll-snap-align:center!important;scroll-snap-stop:always!important;max-width:min(92vw,520px)!important}
