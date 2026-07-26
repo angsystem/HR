@@ -1,0 +1,50 @@
+<!doctype html>
+<html lang="zh-Hant">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, viewport-fit=cover" />
+  <meta name="theme-color" content="#0f2a1f" />
+  <meta name="description" content="ANG HR LINE MINI App" />
+  <meta name="application-name" content="ANG HR" />
+  <title>ANG HR｜LINE MINI App</title>
+
+  <link rel="icon" href="./favicon.ico?v=20260726-line-mini-app-v1" sizes="any" />
+  <link rel="icon" href="./icons/icon-192.png?v=20260726-line-mini-app-v1" sizes="192x192" type="image/png" />
+  <link rel="apple-touch-icon" href="./icons/apple-touch-icon.png?v=20260726-line-mini-app-v1" />
+
+  <script src="./config.js?v=20260726-line-mini-app-v1"></script>
+  <script src="./line-mini-app-config.js?v=20260726-line-mini-app-v1"></script>
+  <script charset="utf-8" src="https://static.line-scdn.net/liff/edge/2/sdk.js"></script>
+  <script src="./line-mini-app-bridge.js?v=20260726-line-mini-app-v1"></script>
+
+  <script>
+    (function () {
+      var config = window.ANG_HR_CONFIG || {};
+      config.runtime = 'line-mini-app';
+      config.isLineMiniApp = true;
+      config.lineMiniAppEntryUrl = window.location.href;
+      config.lineIdentityReady = window.ANG_HR_LIFF_READY;
+      window.ANG_HR_CONFIG = config;
+    }());
+  </script>
+
+  <script defer src="./auth-backend-redirect.js?v=20260726-line-mini-app-v1"></script>
+  <script type="module" crossorigin src="./assets/index-EmailLink60-v2.js?v=20260726-line-mini-app-v1"></script>
+
+  <link rel="stylesheet" crossorigin href="./assets/index-C1fEYMkG.css?v=20260726-line-mini-app-v1" />
+  <link rel="stylesheet" href="./manager-welcome.css?v=20260726-line-mini-app-v1" />
+  <link rel="stylesheet" href="./social-login-providers.css?v=20260726-line-mini-app-v1" />
+  <link rel="stylesheet" href="./index-card-rules.css?v=20260726-line-mini-app-v1" />
+  <link rel="stylesheet" href="./ang-hr-v1-entry.css?v=20260726-line-mini-app-v1" />
+</head>
+<body>
+  <div id="root"></div>
+  <noscript>ANG HR LINE MINI App 需要啟用 JavaScript 才能使用。</noscript>
+
+  <script defer src="./manager-welcome.js?v=20260726-line-mini-app-v1"></script>
+  <script defer src="./index-card-rules.js?v=20260726-line-mini-app-v1"></script>
+  <script defer src="./ang-hr-v1-entry.js?v=20260726-line-mini-app-v1"></script>
+
+  <!-- MINI App 入口刻意不註冊 Service Worker，避免 LINE 內建瀏覽器讀到舊快取。 -->
+</body>
+</html>
