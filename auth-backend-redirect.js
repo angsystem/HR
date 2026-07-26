@@ -184,6 +184,20 @@
     } catch (_) {}
   }
 
+  function navigateOAuthTopLevel_(url) {
+    var target = String(url || '').trim();
+    if (!target) return;
+
+    try {
+      if (window.top && window.top !== window) {
+        window.top.location.replace(target);
+        return;
+      }
+    } catch (_) {}
+
+    window.location.replace(target);
+  }
+
   function startProvider(provider) {
     var gasUrl = getGasUrl();
     if (!gasUrl) {
@@ -234,7 +248,7 @@
       }
     });
 
-    window.location.assign(url.toString());
+    navigateOAuthTopLevel_(url.toString());
   }
 
   function stopEmailCountdown(button) {
