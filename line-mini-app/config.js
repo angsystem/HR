@@ -1,4 +1,4 @@
-// ANG HR LINE MINI App 獨立設定
+// ANG HR LINE MINI App：LINE 專用設定
 (function (window) {
   'use strict';
 
@@ -9,19 +9,21 @@
 
   window.ANG_HR_MINI_CONFIG = {
     appName: 'ANG HR',
+    client: 'line',
+    channel: 'line-mini-app',
+    apiVersion: 'v1',
     environment: environment,
-    version: '2026.07.26-mini-v2',
+    version: '2026.07.26-line-split-v1',
 
-    // LINE Developers Console 建立後填入。三個環境不可混用。
+    // LINE Developers Console 建立後填入；三個環境不可混用。
     liffIds: {
       developing: '',
       review: '',
       published: ''
     },
 
-    // 僅共用 ANG HR 後端 API，不共用原本 Web 入口與前端畫面。
+    // LINE 只共用資料與互動 API，不載入 Web／Flutter 的入口與程式。
     gasApiUrl: 'https://script.google.com/macros/s/AKfycbzNycUTGQG0gqgb8B6F7tndEhRXU7GAiKFFWZr0e8sDwL2kXU5tBGLlJR_iBdX7SCnH/exec',
-    verifyAction: 'verifyLineMiniAppIdToken',
 
     routes: {
       home: 'home',
