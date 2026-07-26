@@ -37,7 +37,7 @@
   var oauthCallbackBaseUrl = cleanBase(OAUTH_CALLBACK_BASE_URL);
 
   window.ANG_HR_CONFIG = {
-    appName: 'ANG HR System',
+    appName: 'ANG HR',
     contactEmail: 'ang0603.system@gmail.com',
 
     // GAS：驗證按鈕先進 GAS；Provider 回 GAS 完成判定，再由 GAS 直接跳回公開前端。
