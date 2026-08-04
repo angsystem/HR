@@ -106,12 +106,9 @@ body.dark .manager-card.login-unified .social-login-row .apple-login,
 }
 
 
-/* Android first release: keep Google + LINE only. Facebook and Apple are intentionally disabled. */
-.manager-card.login-unified .social-login-row .facebook-login,
+/* Apple 尚未完成後端設定；Facebook 已啟用。 */
 .manager-card.login-unified .social-login-row .apple-login,
-button[data-provider="facebook"],
 button[data-provider="apple"],
-[data-auth-provider="facebook"],
 [data-auth-provider="apple"] {
   display: none !important;
 }

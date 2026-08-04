@@ -21,7 +21,8 @@
   var GAS_API_URL = 'https://script.google.com/macros/s/AKfycbzNycUTGQG0gqgb8B6F7tndEhRXU7GAiKFFWZr0e8sDwL2kXU5tBGLlJR_iBdX7SCnH/exec';
   var GOOGLE_CLIENT_ID = '660707205594-74rvsq9s1h87v1s5pi9nvtms1e4qipat.apps.googleusercontent.com';
   var LINE_CHANNEL_ID = '2010402308';
-  var BUILD_VERSION = 'v0.7.0-20260725-backend-direct-return-v1';
+  var FACEBOOK_APP_ID = '1053775314267018';
+  var BUILD_VERSION = 'v0.7.1-20260805-facebook-login-restore-v1';
 
   function cleanBase(url){
     return String(url || '').trim().replace(/\/+$/, '');
@@ -71,10 +72,15 @@
     googleClientId: GOOGLE_CLIENT_ID,
     googleWebClientId: GOOGLE_CLIENT_ID,
     lineChannelId: LINE_CHANNEL_ID,
+    facebookAppId: FACEBOOK_APP_ID,
+    facebookPermissions: ['public_profile', 'email'],
+    facebookRedirectUri: joinUrl(oauthCallbackBaseUrl, 'facebook-callback.html'),
+    // 授權碼只能由後端配合 App Secret 交換；App Secret 絕不可放在 GitHub Pages。
+    facebookTokenExchangeUrl: GAS_API_URL + '?action=facebookOAuthExchange',
 
     // Email 驗證採信箱連結回到 ANG HR，不在入口輸入驗證碼。
     emailVerificationMode: 'link',
-    enabledLoginProviders: ['email', 'google', 'line'],
+    enabledLoginProviders: ['email', 'google', 'line', 'facebook'],
 
     themeColors: ['#FF87E0', '#CCA4FF', '#8089FF', '#59DDFF'],
     defaultCompanyId: '',

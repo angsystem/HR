@@ -18,13 +18,15 @@
   <link rel="icon" href="./icons/icon-192.png?v=20260731-v1-entry" sizes="192x192" type="image/png" />
   <link rel="apple-touch-icon" href="./icons/apple-touch-icon.png?v=20260731-v1-entry" />
 
-  <script src="./config.js?v=20260731-v1-entry"></script>
+  <script src="./config.js?v=20260805-facebook-login-v1"></script>
   <script defer src="./auth-backend-redirect.js?v=20260731-v1-entry"></script>
+  <script defer src="./ang_deep_link_receiver.js?v=20260805-facebook-login-v1"></script>
+  <script defer src="./facebook-auth.js?v=20260805-facebook-login-v1"></script>
   <script type="module" crossorigin src="./assets/index-EmailLink60-v2.js?v=20260731-v1-entry"></script>
 
   <link rel="stylesheet" crossorigin href="./assets/index-C1fEYMkG.css?v=20260731-v1-entry" />
   <link rel="stylesheet" href="./manager-welcome.css?v=20260731-v1-entry" />
-  <link rel="stylesheet" href="./social-login-providers.css?v=20260731-v1-entry" />
+  <link rel="stylesheet" href="./social-login-providers.css?v=20260805-facebook-login-v1" />
   <link rel="stylesheet" href="./index-card-rules.css?v=20260731-v1-entry" />
   <link rel="stylesheet" href="./ang-hr-v1-entry.css?v=20260731-v1-entry" />
 </head>
@@ -41,7 +43,7 @@
       if (!('serviceWorker' in navigator)) return;
       if (location.protocol !== 'https:' && location.hostname !== 'localhost' && location.hostname !== '127.0.0.1') return;
       window.addEventListener('load', function () {
-        navigator.serviceWorker.register('./sw.js?v=20260731-v1-entry', { scope: './' }).catch(function (error) {
+        navigator.serviceWorker.register('./sw.js?v=20260805-facebook-login-v1', { scope: './' }).catch(function (error) {
           console.warn('[ANG HR PWA] Service Worker 註冊失敗：', error);
         });
       });

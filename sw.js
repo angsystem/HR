@@ -1,7 +1,7 @@
 /* ANG HR PWA cache — 2026-07-25 backend direct auth return */
 'use strict';
 
-const CACHE_VERSION = 'ang-hr-v0.7.0-20260725-backend-direct-return-v1';
+const CACHE_VERSION = 'ang-hr-v0.7.1-20260805-facebook-login-restore-v1';
 const SHELL_CACHE = CACHE_VERSION + '-shell';
 const RUNTIME_CACHE = CACHE_VERSION + '-runtime';
 const APP_SHELL = [
@@ -9,6 +9,7 @@ const APP_SHELL = [
   './index.html',
   './config.js',
   './auth-backend-redirect.js',
+  './ang_deep_link_receiver.js',
   './facebook-auth.js',
   './manager-welcome.js',
   './manager-welcome.css',
