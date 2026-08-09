@@ -21,11 +21,12 @@
   var GAS_API_URL = 'https://script.google.com/macros/s/AKfycbzNycUTGQG0gqgb8B6F7tndEhRXU7GAiKFFWZr0e8sDwL2kXU5tBGLlJR_iBdX7SCnH/exec';
   var GOOGLE_CLIENT_ID = '660707205594-74rvsq9s1h87v1s5pi9nvtms1e4qipat.apps.googleusercontent.com';
   var LINE_CHANNEL_ID = '2010402308';
-  // LINE MINI App / LIFF 的 LIFF ID。正式建立 LIFF App 後填入，例如 1234567890-AbCdEfGh。
-  // 留空時不影響原本 Web / Flutter 登入；可用 ?lineMini=1&preview=1 查看 MINI App 啟動畫面。
-  var LINE_LIFF_ID = '';
+  // LINE MINI App Developing 環境 LIFF ID。
+  // Review: 2011034601-TDlqK0Zf
+  // Published: 2011034602-tSlRYw6V
+  var LINE_LIFF_ID = '2011034600-oDPVcVyv';
   var FACEBOOK_APP_ID = '1053775314267018';
-  var BUILD_VERSION = 'v0.7.1-20260809-line-mini-preview-v1';
+  var BUILD_VERSION = 'v0.7.1-20260809-line-mini-developing-v1';
 
   function cleanBase(url){
     return String(url || '').trim().replace(/\/+$/, '');
