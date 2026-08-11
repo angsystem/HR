@@ -29,7 +29,7 @@
   var LINE_LIFF_ENV = 'published';
   var LINE_LIFF_ID = LINE_LIFF_IDS[LINE_LIFF_ENV];
   var FACEBOOK_APP_ID = '1053775314267018';
-  var BUILD_VERSION = 'v0.7.2-20260811-line-mini-published-org-v1';
+  var BUILD_VERSION = 'v0.7.2-20260811-line-mini-published-org-v2';
 
   function cleanBase(url){
     return String(url || '').trim().replace(/\/+$/, '');
@@ -103,4 +103,15 @@
     platformCreatorEmployeeId: 'ANG8963',
     freePrivilegeOwnerId: 'ANG8963'
   };
+
+  // 所有正式 HR 頁面共用組織圖入口；launcher 自己會判斷頁面與登入狀態，不影響登入頁。
+  try {
+    if (window.document && !window.document.querySelector('script[data-ang-org-launcher]')) {
+      var orgLauncher = window.document.createElement('script');
+      orgLauncher.src = joinUrl(frontendBaseUrl, 'organization-launcher.js') + '?v=' + encodeURIComponent(BUILD_VERSION);
+      orgLauncher.async = true;
+      orgLauncher.setAttribute('data-ang-org-launcher', '1');
+      (window.document.head || window.document.documentElement).appendChild(orgLauncher);
+    }
+  } catch (e) {}
 })(window);
