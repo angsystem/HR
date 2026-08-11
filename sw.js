@@ -1,13 +1,18 @@
-/* ANG HR PWA cache — 2026-07-25 backend direct auth return */
+/* ANG HR PWA cache — 2026-08-11 LINE Mini App + organization chart */
 'use strict';
 
-const CACHE_VERSION = 'ang-hr-v0.7.1-20260805-facebook-login-restore-v1';
+const CACHE_VERSION = 'ang-hr-v0.7.2-20260811-line-mini-published-org-v2';
 const SHELL_CACHE = CACHE_VERSION + '-shell';
 const RUNTIME_CACHE = CACHE_VERSION + '-runtime';
 const APP_SHELL = [
   './',
   './index.html',
   './config.js',
+  './line-mini-app-entry.js',
+  './organization.html',
+  './organization-chart.js',
+  './organization-chart.css',
+  './organization-launcher.js',
   './auth-backend-redirect.js',
   './ang_deep_link_receiver.js',
   './facebook-auth.js',
