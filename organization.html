@@ -1,0 +1,39 @@
+<!doctype html>
+<html lang="zh-Hant">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width,initial-scale=1,maximum-scale=1,user-scalable=no,viewport-fit=cover">
+  <meta name="theme-color" content="#f5f7fb">
+  <title>ANG HR｜組織圖</title>
+  <script src="./config.js?v=20260811-line-mini-published-org-v1"></script>
+  <script src="./ang-frontend-api.js?v=20260811-line-mini-published-org-v1"></script>
+  <link rel="stylesheet" href="./organization-chart.css?v=20260811-line-mini-published-org-v1">
+</head>
+<body>
+  <main class="org-shell">
+    <header class="org-top">
+      <div>
+        <div class="org-title">員工組織圖</div>
+        <div class="org-sub">主職／兼任分開顯示｜員工端遵守可見範圍</div>
+      </div>
+      <div class="org-actions">
+        <button class="org-btn" id="backBtn" type="button">返回</button>
+        <button class="org-btn" id="refreshBtn" type="button">重新整理</button>
+        <button class="org-btn primary" id="layoutBtn" type="button">切換橫向</button>
+      </div>
+    </header>
+
+    <div class="org-legend">
+      <span class="org-chip"><span class="org-dot"></span>主職</span>
+      <span class="org-chip"><span class="org-dot secondary"></span>兼任</span>
+      <span class="org-chip" id="orgRoleBadge">讀取角色中</span>
+    </div>
+
+    <div class="org-status" id="orgStatus">正在讀取組織資料…</div>
+    <section class="org-canvas" id="orgCanvas" aria-live="polite">
+      <div class="org-empty">載入中…</div>
+    </section>
+  </main>
+  <script src="./organization-chart.js?v=20260811-line-mini-published-org-v1"></script>
+</body>
+</html>
