@@ -16,17 +16,20 @@
   }
 
   var FRONTEND_BASE_URL = detectFrontendBase();
-  // App 的 www/file:// 不能作第三方驗證回程；OAuth 與 Email 一律回公開 HTTPS 前端。
+  // App 的 www/file:// 不能作第三方驗證回程；OAuth、Email、LINE MINI App 一律回公開 HTTPS 前端。
   var OAUTH_CALLBACK_BASE_URL = 'https://angsystem.github.io/HR';
   var GAS_API_URL = 'https://script.google.com/macros/s/AKfycbzNycUTGQG0gqgb8B6F7tndEhRXU7GAiKFFWZr0e8sDwL2kXU5tBGLlJR_iBdX7SCnH/exec';
   var GOOGLE_CLIENT_ID = '660707205594-74rvsq9s1h87v1s5pi9nvtms1e4qipat.apps.googleusercontent.com';
   var LINE_CHANNEL_ID = '2010402308';
-  // LINE MINI App Developing 環境 LIFF ID。
-  // Review: 2011034601-TDlqK0Zf
-  // Published: 2011034602-tSlRYw6V
-  var LINE_LIFF_ID = '2011034600-oDPVcVyv';
+  var LINE_LIFF_IDS = {
+    developing: '2011034600-oDPVcVyv',
+    review: '2011034601-TDlqK0Zf',
+    published: '2011034602-tSlRYw6V'
+  };
+  var LINE_LIFF_ENV = 'published';
+  var LINE_LIFF_ID = LINE_LIFF_IDS[LINE_LIFF_ENV];
   var FACEBOOK_APP_ID = '1053775314267018';
-  var BUILD_VERSION = 'v0.7.1-20260809-line-mini-developing-v1';
+  var BUILD_VERSION = 'v0.7.2-20260811-line-mini-published-org-v1';
 
   function cleanBase(url){
     return String(url || '').trim().replace(/\/+$/, '');
@@ -61,11 +64,13 @@
     personalPage: 'personal.html',
     creatorPage: 'creator.html',
     appPage: 'app.html',
+    organizationPage: 'organization.html',
     indexPageUrl: joinUrl(frontendBaseUrl, 'index.html'),
     employeePageUrl: joinUrl(frontendBaseUrl, 'employee.html'),
     adminPageUrl: joinUrl(frontendBaseUrl, 'admin.html'),
     personalPageUrl: joinUrl(frontendBaseUrl, 'personal.html'),
     creatorPageUrl: joinUrl(frontendBaseUrl, 'creator.html'),
+    organizationPageUrl: joinUrl(frontendBaseUrl, 'organization.html'),
     appShellUrl: joinUrl(frontendBaseUrl, 'app.html'),
     authReturnUrl: joinUrl(oauthCallbackBaseUrl, 'index.html'),
 
@@ -77,6 +82,10 @@
     googleWebClientId: GOOGLE_CLIENT_ID,
     lineChannelId: LINE_CHANNEL_ID,
     lineLiffId: LINE_LIFF_ID,
+    lineLiffEnvironment: LINE_LIFF_ENV,
+    lineLiffIds: LINE_LIFF_IDS,
+    lineMiniAppEndpoint: joinUrl(oauthCallbackBaseUrl, 'index.html'),
+    lineMiniAppScopes: ['openid', 'profile'],
     facebookAppId: FACEBOOK_APP_ID,
     facebookPermissions: ['public_profile', 'email'],
     facebookRedirectUri: joinUrl(oauthCallbackBaseUrl, 'facebook-callback.html'),
