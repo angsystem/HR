@@ -1,6 +1,6 @@
 (function(){
   'use strict';
-  var VERSION='20260815-web-login-reference-v2';
+  var VERSION='20260815-web-login-reference-v3';
   var cfg=window.ANG_HR_CONFIG||{};
 
   function q(sel,root){try{return (root||document).querySelector(sel);}catch(_){return null;}}
@@ -73,7 +73,14 @@
   }
 
   function ensureAppleButton(card,row){
-    if(q('.ang-login-provider-apple',row))return;
+    var latest=window.ANG_HR_CONFIG||cfg||{};
+    var url=String(latest.appleLoginUrl||latest.appleOAuthUrl||'').trim();
+    var existing=q('.ang-login-provider-apple',row);
+    if(!url){
+      if(existing)existing.remove();
+      return;
+    }
+    if(existing)return;
     var button=document.createElement('button');
     button.type='button';
     button.className='ang-login-provider-apple';
@@ -81,11 +88,13 @@
     button.title='Apple 登入';
     button.textContent=' Apple';
     button.addEventListener('click',function(){
-      var latest=window.ANG_HR_CONFIG||cfg||{};
-      var url=String(latest.appleLoginUrl||latest.appleOAuthUrl||'').trim();
-      if(url){window.location.href=url;return;}
-      showInlineMessage(card,'Apple 登入介面已保留；後台 Apple OAuth 尚未設定完成，因此不會產生假登入。','error');
-      try{window.dispatchEvent(new CustomEvent('ANG_HR_APPLE_LOGIN_REQUEST'));}catch(_){}
+      var current=window.ANG_HR_CONFIG||cfg||{};
+      var target=String(current.appleLoginUrl||current.appleOAuthUrl||'').trim();
+      if(!target){
+        button.remove();
+        return;
+      }
+      window.location.href=target;
     });
     row.appendChild(button);
   }
