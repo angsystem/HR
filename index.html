@@ -51,7 +51,7 @@
       if (!('serviceWorker' in navigator)) return;
       if (location.protocol !== 'https:' && location.hostname !== 'localhost' && location.hostname !== '127.0.0.1') return;
       window.addEventListener('load', function () {
-        navigator.serviceWorker.register('./sw.js?v=20260811-line-mini-published-org-v2', { scope: './' }).catch(function (error) {
+        navigator.serviceWorker.register('./sw.js?v=20260816-unified-web-config-v1', { scope: './' }).catch(function (error) {
           console.warn('[ANG HR PWA] Service Worker 註冊失敗：', error);
         });
       });
