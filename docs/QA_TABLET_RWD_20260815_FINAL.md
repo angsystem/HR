@@ -1,0 +1,1 @@
+Final review note: Desktop breakpoint must not activate on touch-first tablets. Keep this rule paired with the Web-only override and do not propagate it to Flutter.
