@@ -1,0 +1,8 @@
+/* ANG HR Desktop Web login provider alignment override.
+   Keeps Mobile Web provider layout unchanged. Desktop fills available width
+   according to the providers that are actually visible (e.g. Apple may be absent). */
+@media (min-width:1100px) and (hover:hover) and (pointer:fine){
+  .manager-card.login-unified .social-login-row{
+    grid-template-columns:repeat(auto-fit,minmax(120px,1fr))!important;
+  }
+}
