@@ -1,9 +1,9 @@
-/* ANG HR Web Login v2 — reference package proportions + fail-closed login UX. */
+/* ANG HR Web Login v3 — mobile keeps App interaction; desktop uses a real wide login workspace. */
 html,body,#root{width:100%;max-width:100%;height:100%;min-height:100%;overflow:hidden!important}
 body{margin:0;background:#02040a}
 .landing{width:100vw!important;height:100dvh!important;min-height:100dvh!important;max-width:100vw!important;overflow:hidden!important}
 
-/* Login/entry stays App-sized. Desktop centers the App shell instead of stretching it. */
+/* Mobile / tablet default: App-style carousel. */
 .manager-carousel{
   left:50%!important;
   right:auto!important;
@@ -53,7 +53,6 @@ body{margin:0;background:#02040a}
 .manager-card.login-unified .login-card-body{width:100%!important;max-width:100%!important;min-width:0!important;overflow-x:hidden!important;box-sizing:border-box!important}
 .manager-card.login-unified .login-card-title h2{font-size:24px!important;line-height:1.15!important;margin-bottom:6px!important}
 
-/* Verification-mode row mirrors the reference package: clear mode first, providers second. */
 .ang-login-mode-row{display:grid;grid-template-columns:1fr 1fr;gap:8px;margin:8px 0 10px;width:100%}
 .ang-login-mode-row button{min-height:38px;border-radius:13px;border:1px solid rgba(128,137,255,.24);background:rgba(128,137,255,.08);color:inherit;font:900 12px/1.2 inherit;padding:8px 10px;cursor:pointer}
 .ang-login-mode-row button.active{background:linear-gradient(135deg,rgba(10,55,104,.82),rgba(46,142,235,.82));color:#fff;border-color:rgba(109,181,255,.68);box-shadow:0 8px 18px rgba(10,55,104,.24)}
@@ -88,11 +87,9 @@ body{margin:0;background:#02040a}
 .ang-web-login-note[data-state="error"]{color:#ef4444;opacity:1}
 .ang-web-login-note[data-state="info"]{color:#60a5fa;opacity:1}
 
-/* Compact fields so the whole verification flow remains visible. */
 .manager-card.login-unified input{max-width:100%!important;box-sizing:border-box!important}
 .manager-card.login-unified .login-verify-button{min-height:44px!important;margin-top:8px!important}
 
-/* Logo/encouragement proportions from the reference App shell. */
 .ang-app-logo{top:max(calc(env(safe-area-inset-top) + 36px),5.6dvh)!important;width:min(245px,58vw)!important;max-height:min(145px,17dvh)!important}
 .ang-app-encouragement{top:min(286px,34dvh)!important;left:28px!important;right:28px!important}
 
@@ -105,9 +102,83 @@ body{margin:0;background:#02040a}
   .manager-carousel{padding-left:18px!important;padding-right:18px!important;scroll-padding-inline:18px!important}
   .manager-carousel>article.manager-card,.manager-carousel>.manager-card{flex-basis:calc(100vw - 36px)!important;width:calc(100vw - 36px)!important;max-width:calc(100vw - 36px)!important}
 }
+
+/* Desktop: stop rendering the phone shell as a tiny strip. Show one wide, centered work area. */
 @media (min-width:768px){
-  .landing{background-position:center top!important}
-  .manager-carousel{width:430px!important;max-width:430px!important}
-  .manager-carousel>article.manager-card,.manager-carousel>.manager-card{flex-basis:342px!important;width:342px!important;max-width:342px!important}
-  .ang-app-logo{width:245px!important;max-height:145px!important}
+  .landing{
+    background-color:#02040a!important;
+    background-size:cover!important;
+    background-position:center 18%!important;
+  }
+  .landing::before{
+    background:linear-gradient(90deg,rgba(2,4,10,.58) 0%,rgba(2,4,10,.18) 30%,rgba(2,4,10,.18) 70%,rgba(2,4,10,.58) 100%),linear-gradient(180deg,rgba(2,4,10,.08),rgba(2,4,10,.34))!important;
+  }
+  .ang-app-logo{
+    top:28px!important;
+    width:138px!important;
+    max-height:88px!important;
+  }
+  .ang-app-encouragement{
+    top:118px!important;
+    left:50%!important;
+    right:auto!important;
+    width:min(760px,70vw)!important;
+    transform:translateX(-50%)!important;
+  }
+  .manager-carousel{
+    left:50%!important;
+    right:auto!important;
+    bottom:34px!important;
+    width:min(920px,calc(100vw - 96px))!important;
+    max-width:min(920px,calc(100vw - 96px))!important;
+    height:min(590px,calc(100dvh - 180px))!important;
+    transform:translateX(-50%)!important;
+    padding:0!important;
+    gap:0!important;
+    overflow-x:auto!important;
+    overflow-y:hidden!important;
+    scroll-snap-type:x mandatory!important;
+    scroll-padding-inline:0!important;
+    border-radius:30px!important;
+    overscroll-behavior-x:contain!important;
+  }
+  .manager-carousel>article.manager-card,
+  .manager-carousel>.manager-card{
+    flex:0 0 100%!important;
+    width:100%!important;
+    max-width:100%!important;
+    height:100%!important;
+    min-height:100%!important;
+    max-height:100%!important;
+    margin:0!important;
+    border-radius:30px!important;
+    scroll-snap-align:center!important;
+    opacity:1!important;
+    transform:none!important;
+  }
+  .manager-carousel>.manager-card.expanded,
+  .manager-carousel>.manager-card.expanded.login-unified,
+  .manager-carousel>.manager-card.collapsed{
+    height:100%!important;
+    min-height:100%!important;
+    max-height:100%!important;
+  }
+  .manager-card.login-unified .unified-login-body,
+  .manager-card.login-unified .login-card-body{
+    max-width:760px!important;
+    margin:0 auto!important;
+  }
+  .manager-card.login-unified .social-login-row{
+    grid-template-columns:repeat(5,minmax(0,1fr))!important;
+    gap:10px!important;
+  }
+  .manager-card.login-unified .social-login-row>button,
+  .manager-card.login-unified .social-login-row>a{
+    min-height:50px!important;
+    height:50px!important;
+    font-size:13px!important;
+  }
+  .ang-app-dots{
+    bottom:18px!important;
+  }
 }
