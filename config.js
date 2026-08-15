@@ -24,12 +24,12 @@
   var LINE_LIFF_IDS = {
     developing: '2011034600-oDPVcVyv',
     review: '2011034601-TDlqK0Zf',
-    published: '2011034602-tSlRYw6V'
+    published: '2010402308-aEXeFYXe'
   };
   var LINE_LIFF_ENV = 'published';
   var LINE_LIFF_ID = LINE_LIFF_IDS[LINE_LIFF_ENV];
   var FACEBOOK_APP_ID = '1053775314267018';
-  var BUILD_VERSION = 'v0.7.2-20260811-line-mini-published-org-v2';
+  var BUILD_VERSION = 'v0.7.3-20260815-unified-line-web-config';
 
   function cleanBase(url){
     return String(url || '').trim().replace(/\/+$/, '');
@@ -85,7 +85,7 @@
     lineLiffEnvironment: LINE_LIFF_ENV,
     lineLiffIds: LINE_LIFF_IDS,
     lineMiniAppEndpoint: joinUrl(oauthCallbackBaseUrl, 'index.html'),
-    lineMiniAppScopes: ['openid', 'profile'],
+    lineMiniAppScopes: ['openid', 'profile', 'email'],
     facebookAppId: FACEBOOK_APP_ID,
     facebookPermissions: ['public_profile', 'email'],
     facebookRedirectUri: joinUrl(oauthCallbackBaseUrl, 'facebook-callback.html'),
