@@ -1,0 +1,7 @@
+/* ANG HR Web login safety override.
+ * Phone login mode is temporarily hidden because the current formal verification handler
+ * still routes the primary verify button through Email-link verification only.
+ * Keep this as a separate Web override so Flutter/App baseline and backend flows are untouched.
+ */
+.manager-card.login-unified .ang-login-mode-row{display:none!important}
+.manager-card.login-unified .ang-login-provider-phone{display:none!important}
