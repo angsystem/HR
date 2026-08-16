@@ -14,6 +14,24 @@
     device: ['ang_hr_device_id','ang_device_id','device_id']
   };
 
+  var SHARED_ASSET_BASE = (function(){
+    try {
+      var src = document.currentScript && document.currentScript.src;
+      return new URL('.', src || window.location.href).toString();
+    } catch(err) { return './'; }
+  })();
+
+  function ensureWebRwdGuard(){
+    try {
+      if (document.querySelector('link[data-ang-web-rwd-guard]')) return;
+      var link = document.createElement('link');
+      link.rel = 'stylesheet';
+      link.href = new URL('web-rwd-tablet-guard-20260816.css?v=20260816-standalone-v1', SHARED_ASSET_BASE).toString();
+      link.setAttribute('data-ang-web-rwd-guard','1');
+      (document.head || document.documentElement).appendChild(link);
+    } catch(err) {}
+  }
+
   function getParam(name){
     try { return new URLSearchParams(window.location.search).get(name) || ''; }
     catch(err){ return ''; }
@@ -186,8 +204,6 @@
     return String(base).split('#')[0] + (String(base).indexOf('?') > -1 ? '&' : '?') + qs.join('&');
   }
 
-
-
   var ACCESS_CONTEXTS_KEY = 'ang_hr_access_contexts';
   var ACTIVE_CONTEXT_KEY = 'ang_hr_active_context';
 
@@ -322,6 +338,7 @@
     switchContext: switchContext
   };
 
+  ensureWebRwdGuard();
   if (document.readyState === 'loading') document.addEventListener('DOMContentLoaded', function(){ syncIdentity(); installContextSwitcher(false); });
   else { syncIdentity(); installContextSwitcher(false); }
 })(window, document);
