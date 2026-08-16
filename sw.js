@@ -1,7 +1,7 @@
-/* ANG HR PWA cache — 2026-08-16 unified Web config */
+/* ANG HR PWA cache — 2026-08-17 Mobile Safe Area scope */
 'use strict';
 
-const CACHE_VERSION = 'ang-hr-20260816-unified-web-config-v1';
+const CACHE_VERSION = 'ang-hr-20260817-mobile-safe-area-scope-v1';
 const SHELL_CACHE = CACHE_VERSION + '-shell';
 const RUNTIME_CACHE = CACHE_VERSION + '-runtime';
 const APP_SHELL = [
