@@ -29,7 +29,7 @@
   var LINE_LIFF_ENV = 'published';
   var LINE_LIFF_ID = LINE_LIFF_IDS[LINE_LIFF_ENV];
   var FACEBOOK_APP_ID = '1053775314267018';
-  var BUILD_VERSION = 'v0.7.3-20260815-unified-line-web-config';
+  var BUILD_VERSION = 'v0.7.4-20260816-tablet-workspace-rwd';
 
   function cleanBase(url){
     return String(url || '').trim().replace(/\/+$/, '');
@@ -103,6 +103,17 @@
     platformCreatorEmployeeId: 'ANG8963',
     freePrivilegeOwnerId: 'ANG8963'
   };
+
+  // 共用 Web RWD guard：修正登入後舊 768px desktop-grid 規則誤套到 touch-first 平板。
+  try {
+    if (window.document && !window.document.querySelector('link[data-ang-web-rwd-guard]')) {
+      var rwdGuard = window.document.createElement('link');
+      rwdGuard.rel = 'stylesheet';
+      rwdGuard.href = joinUrl(frontendBaseUrl, 'web-rwd-tablet-guard-20260816.css') + '?v=' + encodeURIComponent(BUILD_VERSION);
+      rwdGuard.setAttribute('data-ang-web-rwd-guard', '1');
+      (window.document.head || window.document.documentElement).appendChild(rwdGuard);
+    }
+  } catch (e) {}
 
   // 所有正式 HR 頁面共用組織圖入口；launcher 自己會判斷頁面與登入狀態，不影響登入頁。
   try {
