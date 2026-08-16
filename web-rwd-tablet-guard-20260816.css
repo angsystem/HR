@@ -8,12 +8,12 @@
   }
 }
 
-/* Mobile/Tablet safe-area/content spacing for pages with fixed bottom controls.
-   Base rules intentionally avoid :has() so older Android/LINE WebViews still
-   receive safe bottom spacing. Modern browsers get the more precise rules below. */
+/* Mobile/Tablet safe-area/content spacing for logged-in workspace pages.
+   Do not apply padding directly to body: config.js also runs on the full-screen
+   login/entry page, where global body padding can clip the 100dvh shell. */
 @media (max-width:1099px), (hover:none) and (pointer:coarse) {
-  body {
-    padding-bottom:calc(100px + env(safe-area-inset-bottom)) !important;
+  .safe {
+    padding-bottom:env(safe-area-inset-bottom) !important;
   }
 
   /* Compatibility fallback: keep the shared company/plan switcher away from
@@ -24,14 +24,7 @@
     bottom:calc(76px + env(safe-area-inset-bottom)) !important;
   }
 
-  @supports selector(body:has(.nav)) {
-    body:has(.nav) {
-      padding-bottom:calc(96px + env(safe-area-inset-bottom)) !important;
-    }
-    body:has(.fab-wrap) {
-      padding-bottom:calc(100px + env(safe-area-inset-bottom)) !important;
-    }
-
+  @supports selector(body:has(.fab-wrap)) {
     /* Employee pages without the Admin FAB keep the switcher in its normal
        lower-right position; Admin moves it left to avoid the radial FAB. */
     body:not(:has(.fab-wrap)) #ang-context-switcher-root {
