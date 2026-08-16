@@ -8,6 +8,24 @@
   }
 }
 
+/* Mobile safe-area/content spacing for pages with fixed bottom controls. */
+@supports selector(body:has(.nav)) {
+  body:has(.nav) {
+    padding-bottom:calc(96px + env(safe-area-inset-bottom)) !important;
+  }
+  body:has(.fab-wrap) {
+    padding-bottom:calc(100px + env(safe-area-inset-bottom)) !important;
+  }
+
+  /* Admin radial FAB occupies the lower-right corner. Keep the shared
+     company/plan switcher on the opposite side so both remain tappable. */
+  body:has(.fab-wrap) #ang-context-switcher-root {
+    left:12px !important;
+    right:auto !important;
+    bottom:calc(16px + env(safe-area-inset-bottom)) !important;
+  }
+}
+
 /* True desktop workspace rules only apply to wide fine-pointer devices. */
 @media (min-width:1100px) and (hover:hover) and (pointer:fine) {
   .desktop-grid {
