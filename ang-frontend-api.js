@@ -26,7 +26,7 @@
       if (document.querySelector('link[data-ang-web-rwd-guard]')) return;
       var link = document.createElement('link');
       link.rel = 'stylesheet';
-      link.href = new URL('web-rwd-tablet-guard-20260816.css?v=20260816-standalone-v1', SHARED_ASSET_BASE).toString();
+      link.href = new URL('web-rwd-tablet-guard-20260816.css?v=20260817-safe-area-scope-v1', SHARED_ASSET_BASE).toString();
       link.setAttribute('data-ang-web-rwd-guard','1');
       (document.head || document.documentElement).appendChild(link);
     } catch(err) {}
