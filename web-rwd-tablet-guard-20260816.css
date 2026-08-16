@@ -1,0 +1,23 @@
+/* ANG HR Web shared RWD guard — keep touch-first tablets on Mobile/Tablet layout. */
+@media (min-width:768px) and (max-width:1099px),
+       (hover:none) and (pointer:coarse) {
+  .desktop-grid,
+  .desktop-grid-2 {
+    display:block !important;
+    grid-template-columns:none !important;
+  }
+}
+
+/* True desktop workspace rules only apply to wide fine-pointer devices. */
+@media (min-width:1100px) and (hover:hover) and (pointer:fine) {
+  .desktop-grid {
+    display:grid !important;
+    grid-template-columns:1.1fr .9fr !important;
+    gap:12px !important;
+  }
+  .desktop-grid-2 {
+    display:grid !important;
+    grid-template-columns:1fr 1fr !important;
+    gap:12px !important;
+  }
+}
