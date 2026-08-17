@@ -81,4 +81,48 @@
     border-radius:20px !important;
     padding-bottom:7px !important;
   }
+
+  /* Admin uses the same six permission/module actions as Mobile Web. On a
+     desktop pointer device, the L-shaped radial control wastes a 222×224 px
+     corner and still looks like a stretched phone interaction. Preserve the
+     exact buttons, order, permission state and collapse logic, but arrange the
+     satellites as a compact horizontal desktop dock. */
+  .fab-wrap {
+    right:24px !important;
+    bottom:16px !important;
+    width:430px !important;
+    height:64px !important;
+  }
+  .fab-home {
+    right:0 !important;
+    bottom:4px !important;
+  }
+  .fab-sat.sat-creator,
+  .fab-sat.sat-admin,
+  .fab-sat.sat-manager,
+  .fab-sat.sat-personnel,
+  .fab-sat.sat-salary,
+  .fab-sat.sat-data {
+    bottom:8px !important;
+    width:48px !important;
+    height:48px !important;
+  }
+  .fab-sat.sat-creator{right:66px !important;}
+  .fab-sat.sat-admin{right:120px !important;}
+  .fab-sat.sat-manager{right:174px !important;}
+  .fab-sat.sat-personnel{right:228px !important;}
+  .fab-sat.sat-salary{right:282px !important;}
+  .fab-sat.sat-data{right:336px !important;}
+  .fab-sat.sat-creator i,
+  .fab-sat.sat-admin i,
+  .fab-sat.sat-manager i,
+  .fab-sat.sat-personnel i,
+  .fab-sat.sat-salary i,
+  .fab-sat.sat-data i{font-size:14px !important;}
+  .fab-sat.sat-creator span,
+  .fab-sat.sat-admin span,
+  .fab-sat.sat-manager span,
+  .fab-sat.sat-personnel span,
+  .fab-sat.sat-salary span,
+  .fab-sat.sat-data span{font-size:8px !important;}
 }
