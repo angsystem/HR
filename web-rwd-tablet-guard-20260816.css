@@ -16,6 +16,13 @@
     padding-bottom:env(safe-area-inset-bottom) !important;
   }
 
+  /* Employee/Admin use viewport-fit=cover. Keep sticky workspace controls and
+     their content below the iOS/LINE WebView top safe area without changing
+     desktop spacing or moving the whole document. */
+  .topbar {
+    padding-top:calc(8px + env(safe-area-inset-top)) !important;
+  }
+
   /* Compatibility fallback: keep the shared company/plan switcher away from
      the common lower-right action zone even when :has() is unavailable. */
   #ang-context-switcher-root {
