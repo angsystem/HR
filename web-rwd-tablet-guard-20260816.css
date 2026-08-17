@@ -67,4 +67,18 @@
     grid-template-columns:1fr 1fr !important;
     gap:16px !important;
   }
+
+  /* Employee still uses the same shared module navigation on desktop, but a
+     full-viewport mobile bottom bar wastes horizontal space and reads like a
+     stretched phone UI. Keep the same buttons/logic and present them as a
+     centered desktop control strip instead. */
+  .nav {
+    left:50% !important;
+    right:auto !important;
+    bottom:16px !important;
+    width:min(calc(100% - 48px),760px) !important;
+    transform:translateX(-50%) !important;
+    border-radius:20px !important;
+    padding-bottom:7px !important;
+  }
 }
