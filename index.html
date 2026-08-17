@@ -51,7 +51,7 @@
       if (!('serviceWorker' in navigator)) return;
       if (location.protocol !== 'https:' && location.hostname !== 'localhost' && location.hostname !== '127.0.0.1') return;
       window.addEventListener('load', function () {
-        navigator.serviceWorker.register('./sw.js?v=20260817-mobile-topbar-safe-area-v1', { scope: './' }).catch(function (error) {
+        navigator.serviceWorker.register('./sw.js?v=20260818-rwd-guard-network-first-v1', { scope: './' }).catch(function (error) {
           console.warn('[ANG HR PWA] Service Worker 註冊失敗：', error);
         });
       });
