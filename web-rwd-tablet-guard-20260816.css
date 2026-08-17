@@ -82,6 +82,14 @@
     padding-bottom:7px !important;
   }
 
+  /* Keep the shared company/plan switcher visibly separated from the desktop
+     Employee/Admin docks. Its default 76px bottom offset can touch the dock's
+     64px footprint and shadows; 96px preserves a clear, clickable gap without
+     changing context-switching logic or mobile positioning. */
+  #ang-context-switcher-root {
+    bottom:96px !important;
+  }
+
   /* Admin uses the same six permission/module actions as Mobile Web. On a
      desktop pointer device, the L-shaped radial control wastes a 222×224 px
      corner and still looks like a stretched phone interaction. Preserve the
