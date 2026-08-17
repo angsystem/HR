@@ -1,7 +1,7 @@
-/* ANG HR PWA cache — 2026-08-18 RWD guard freshness */
+/* ANG HR PWA cache — 2026-08-18 RWD guard offline fallback */
 'use strict';
 
-const CACHE_VERSION = 'ang-hr-20260818-rwd-guard-network-first-v1';
+const CACHE_VERSION = 'ang-hr-20260818-rwd-guard-offline-fallback-v2';
 const SHELL_CACHE = CACHE_VERSION + '-shell';
 const RUNTIME_CACHE = CACHE_VERSION + '-runtime';
 const APP_SHELL = [
@@ -59,7 +59,15 @@ async function networkFirst(request) {
   } catch (error) {
     const cached = await caches.match(request);
     if (cached) return cached;
-    return caches.match('./index.html');
+
+    // HTML shell fallback is valid only for page navigations. Returning
+    // index.html for a stylesheet/script request causes the browser to reject
+    // the resource because the MIME type/content is wrong.
+    if (request.mode === 'navigate') {
+      const shell = await caches.match('./index.html');
+      if (shell) return shell;
+    }
+    return Response.error();
   }
 }
 
