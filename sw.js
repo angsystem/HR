@@ -1,7 +1,7 @@
-/* ANG HR PWA cache — 2026-08-17 Mobile topbar Safe Area */
+/* ANG HR PWA cache — 2026-08-18 RWD guard freshness */
 'use strict';
 
-const CACHE_VERSION = 'ang-hr-20260817-mobile-topbar-safe-area-v1';
+const CACHE_VERSION = 'ang-hr-20260818-rwd-guard-network-first-v1';
 const SHELL_CACHE = CACHE_VERSION + '-shell';
 const RUNTIME_CACHE = CACHE_VERSION + '-runtime';
 const APP_SHELL = [
@@ -81,6 +81,14 @@ self.addEventListener('fetch', (event) => {
   if (url.origin !== self.location.origin) return;
 
   if (request.mode === 'navigate') {
+    event.respondWith(networkFirst(request));
+    return;
+  }
+
+  // The shared RWD guard changes independently of standalone page scripts.
+  // Always check the network first so Employee/Admin do not render one load
+  // behind after a Safe Area or breakpoint fix.
+  if (url.pathname.endsWith('/web-rwd-tablet-guard-20260816.css')) {
     event.respondWith(networkFirst(request));
     return;
   }
