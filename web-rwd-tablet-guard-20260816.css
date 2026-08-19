@@ -70,6 +70,23 @@
   }
 }
 
+/* Very narrow phones already compact Admin to 42px. The shared 48px override
+   used to cancel that rule (and also kept Employee larger than necessary),
+   crowding the sticky header on ~320–430px viewports. Keep both workspaces
+   consistent and compact on these screens. */
+@media (max-width:430px) {
+  .topbar .brand-logo {
+    width:42px !important;
+    height:42px !important;
+    flex:0 0 42px !important;
+    border-radius:14px !important;
+    font-size:15px !important;
+  }
+  .topbar .brand-logo img {
+    border-radius:14px !important;
+  }
+}
+
 /* True desktop workspace rules only apply to wide fine-pointer devices. */
 @media (min-width:1100px) and (hover:hover) and (pointer:fine) {
   /* Keep large monitors readable: use the width for multi-column work instead
