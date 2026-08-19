@@ -12,8 +12,11 @@
    Do not apply padding directly to body: config.js also runs on the full-screen
    login/entry page, where global body padding can clip the 100dvh shell. */
 @media (max-width:1099px), (hover:none) and (pointer:coarse) {
+  /* Keep enough room for the fixed bottom controls as well as the device safe
+     area. A safe-area-only override would erase Employee/Admin's historical
+     96/100px navigation clearance and let the last card sit under the dock. */
   .safe {
-    padding-bottom:env(safe-area-inset-bottom) !important;
+    padding-bottom:calc(100px + env(safe-area-inset-bottom)) !important;
   }
 
   /* Employee historically used a 72px logo while Admin uses 48px. On narrow
@@ -56,6 +59,15 @@
   }
 
   @supports selector(body:has(.fab-wrap)) {
+    /* Employee pages without the Admin FAB keep their original 96px content
+       clearance; Admin keeps 100px for the larger action cluster. */
+    body:not(:has(.fab-wrap)) .safe {
+      padding-bottom:calc(96px + env(safe-area-inset-bottom)) !important;
+    }
+    body:has(.fab-wrap) .safe {
+      padding-bottom:calc(100px + env(safe-area-inset-bottom)) !important;
+    }
+
     /* Employee pages without the Admin FAB keep the switcher in its normal
        lower-right position; Admin moves it left to avoid the radial FAB. */
     body:not(:has(.fab-wrap)) #ang-context-switcher-root {
