@@ -16,6 +16,22 @@
     padding-bottom:env(safe-area-inset-bottom) !important;
   }
 
+  /* Employee historically used a 72px logo while Admin uses 48px. On narrow
+     screens that makes the sticky Employee header much taller than the rest of
+     the Web system and consumes valuable vertical space. Normalize logged-in
+     workspace logos to the compact Admin-size footprint without touching data,
+     permissions, navigation or the full-screen entry page. */
+  .topbar .brand-logo {
+    width:48px !important;
+    height:48px !important;
+    flex:0 0 48px !important;
+    border-radius:16px !important;
+    font-size:16px !important;
+  }
+  .topbar .brand-logo img {
+    border-radius:16px !important;
+  }
+
   /* Employee/Admin use viewport-fit=cover. Keep sticky workspace controls and
      their content below the iOS/LINE WebView top safe area without changing
      desktop spacing or moving the whole document. */
