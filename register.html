@@ -6,6 +6,7 @@
   <title>ANG HR SYSTEMS｜正式註冊</title>
   <link rel="preload" as="image" href="https://pub-51476fa95e5148749c1b932e123dc797.r2.dev/ang-entry-bg-day.png?v=20260614-free-use" referrerpolicy="no-referrer" />
   <link rel="preload" as="image" href="https://pub-51476fa95e5148749c1b932e123dc797.r2.dev/ang-entry-bg-night.png?v=20260614-free-use" referrerpolicy="no-referrer" />
+  <script src="./config.js?v=20260821-register-public-api-v1"></script>
   <style>
     :root{
       --bg-day:url("https://pub-51476fa95e5148749c1b932e123dc797.r2.dev/ang-entry-bg-day.png?v=20260614-free-use");
@@ -155,6 +156,11 @@
       return url.href;
     }
 
+    function getPublicApiUrl(){
+      const cfg=window.ANG_HR_CONFIG || {};
+      return String(cfg.gasApiUrl || cfg.apiBaseUrl || '').trim();
+    }
+
     function goBack(){ window.location.href = buildFileUrl('index.html', {}); }
 
     function getParams(){ const sp = new URLSearchParams(window.location.search); const obj = {}; sp.forEach(function(v,k){ obj[k] = String(v || '').trim(); }); return obj; }
@@ -218,11 +224,22 @@
         }
       }
 
-      fetch(buildFileUrl('api', { action:'startFreeUseCompany' }), {
+      const apiUrl=getPublicApiUrl();
+      if(!apiUrl){
+        localStorage.setItem('ang_hr_pending_free_use_signup', JSON.stringify(payload));
+        setStatus('error','目前無法取得 ANG HR 驗證服務。資料只暫存在此裝置，正式公司尚未建立。');
+        return;
+      }
+      const requestUrl=new URL(apiUrl, window.location.href);
+      requestUrl.searchParams.set('action','startFreeUseCompany');
+      fetch(requestUrl.toString(), {
         method:'POST',
         headers:{ 'Content-Type':'text/plain;charset=utf-8' },
-        body:JSON.stringify(payload)
-      }).then(function(r){ return r.json(); })
+        body:JSON.stringify(Object.assign({}, payload, { action:'startFreeUseCompany', payload:payload }))
+      }).then(function(r){
+        if(!r.ok) throw new Error('HTTP_'+r.status);
+        return r.json();
+      })
       .then(function(res){ handleResult(res, payload); })
       .catch(function(){
         localStorage.setItem('ang_hr_pending_free_use_signup', JSON.stringify(payload));
@@ -240,7 +257,7 @@
       setStatus('success', (res.message || res.msg) || '正式公司已建立，免費使用期已啟用');
       const nextUrl = res.nextUrl || res.redirectUrl || res.url || '';
       if (nextUrl) { setTimeout(function(){ window.location.href = nextUrl; }, 650); return; }
-      setTimeout(function(){ window.location.href = buildFileUrl('login.html', { tab:'login', role:'admin', company:res.companyCode || '', email:payload.admin_email }); }, 900);
+      setTimeout(function(){ window.location.href = buildFileUrl('index.html', { tab:'login', role:'admin', company:res.companyCode || '', email:payload.admin_email }); }, 900);
     }
 
     function init(){
