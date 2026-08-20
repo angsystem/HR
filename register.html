@@ -31,6 +31,7 @@
     html,body{margin:0;min-height:100%;}
     body{
       min-height:100vh;
+      min-height:100dvh;
       display:flex;
       justify-content:center;
       background:#000;
@@ -44,6 +45,7 @@
       width:100%;
       max-width:430px;
       min-height:100vh;
+      min-height:100dvh;
       overflow:hidden;
       background:linear-gradient(180deg,#eef7ff 0%,#dff3ff 45%,#f3e7ff 100%);
     }
@@ -51,7 +53,7 @@
     .screen::before{content:"";position:absolute;inset:0;background-image:var(--bg-day);background-size:cover;background-position:center top;opacity:1;}
     body[data-theme="dark"] .screen::before{background-image:var(--bg-night);}
     .screen::after{content:"";position:absolute;inset:0;background:linear-gradient(180deg,rgba(0,0,0,.05),rgba(0,0,0,.24));pointer-events:none;}
-    .wrap{position:relative;z-index:2;min-height:100vh;padding:calc(22px + env(safe-area-inset-top)) 18px calc(22px + env(safe-area-inset-bottom));display:flex;flex-direction:column;justify-content:flex-end;}
+    .wrap{position:relative;z-index:2;min-height:100vh;min-height:100dvh;padding:calc(22px + env(safe-area-inset-top)) 18px calc(22px + env(safe-area-inset-bottom));display:flex;flex-direction:column;justify-content:flex-end;}
     .card{background:var(--card);border:1px solid var(--line);border-radius:30px;padding:22px;box-shadow:var(--shadow);backdrop-filter:blur(24px);-webkit-backdrop-filter:blur(24px);}
     .top-row{display:flex;align-items:center;justify-content:space-between;gap:12px;margin-bottom:14px;}
     .brand{font-size:13px;font-weight:1000;letter-spacing:.12em;color:var(--muted);}
@@ -75,6 +77,16 @@
     .status.error{background:rgba(239,68,68,.14);color:#fecaca;border:1px solid rgba(239,68,68,.18);}
     body:not([data-theme="dark"]) .status.info{color:#2563eb;}body:not([data-theme="dark"]) .status.success{color:#059669;}body:not([data-theme="dark"]) .status.error{color:#dc2626;}
     .fine{margin:12px 0 0;color:var(--muted);font-size:12px;line-height:1.55;font-weight:800;text-align:center;}
+
+    @media (min-width:1100px) and (hover:hover) and (pointer:fine){
+      .screen{max-width:1040px;}
+      .wrap{padding:48px;justify-content:center;}
+      .card{width:100%;max-width:920px;margin:0 auto;padding:30px;}
+      h1{font-size:34px;}
+      .sub{max-width:720px;font-size:15px;}
+      .form{grid-template-columns:repeat(2,minmax(0,1fr));gap:14px 16px;}
+      .btn,.status,.fine{grid-column:1/-1;}
+    }
   </style>
 </head>
 <body data-theme="dark">
@@ -214,7 +226,7 @@
       .then(function(res){ handleResult(res, payload); })
       .catch(function(){
         localStorage.setItem('ang_hr_pending_free_use_signup', JSON.stringify(payload));
-        setStatus('success','資料已暫存。請確認 GAS API / register 後端已接 startFreeUseCompany。');
+        setStatus('error','連線失敗。資料只暫存在此裝置，正式公司尚未建立；請恢復連線後重新送出。');
       });
     }
 
