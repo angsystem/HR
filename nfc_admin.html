@@ -82,7 +82,7 @@ function st(s){$('status').textContent=s}
 async function api(action,payload){const r=await fetch(GAS,{method:'POST',headers:{'Content-Type':'text/plain;charset=utf-8'},body:JSON.stringify(Object.assign({action,company_code:$('companyCode').value,device_id:device()},payload||{}))});return JSON.parse(await r.text())}
 async function registerTag(){try{st('送出中...');const data=await api('registerNfcTag',{id:$('empId').value,token:$('token').value,nfc_id:$('nfcId').value,branch_id:$('branchId').value,branch_name:$('branchName').value,name:$('name').value,allowed_actions:$('allowed').value,clock_location_required:$('locReq').value,clock_location_lat:$('lat').value,clock_location_lng:$('lng').value,clock_location_radius:$('radius').value});if(!data.ok)throw new Error(data.message||'註冊失敗');st(data.message);loadList();}catch(e){st(e.message)}}
 async function loadList(){try{const data=await api('getNfcSettings',{});if(!data.ok)throw new Error(data.message||'讀取失敗');const rows=data.items||[];$('list').innerHTML='<table><thead><tr><th>NFC</th><th>分店</th><th>名稱</th><th>啟用</th></tr></thead><tbody>'+rows.map(x=>'<tr><td>'+esc(x.nfc_id)+'</td><td>'+esc(x.branch_id+' '+x.branch_name)+'</td><td>'+esc(x.name)+'</td><td>'+esc(String(x.enabled))+'</td></tr>').join('')+'</tbody></table>';}catch(e){$('list').textContent=e.message}}
-function esc(s){return String(s||'').replace(/[&<>\"]/g,m=>({'&':'&amp;','<':'&lt;','>':'&gt;','\"':'&quot;'}[m]))}
+function esc(s){return String(s||'').replace(/[&<>"]/g,m=>({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;'}[m]))}
 loadList();
 </script>
 </body>
