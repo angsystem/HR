@@ -21,7 +21,7 @@ body:before{content:"";position:fixed;inset:-30%;pointer-events:none;background:
  radial-gradient(circle at 78% 18%,rgba(89,221,255,.13),transparent 30%),
  radial-gradient(circle at 52% 88%,rgba(128,137,255,.14),transparent 34%)}
 .hidden{display:none!important}
-.shell{position:relative;min-height:100vh}
+.shell{position:relative;min-height:100vh;min-height:100dvh}
 .topbar{position:sticky;top:0;z-index:30;display:flex;align-items:center;justify-content:space-between;gap:14px;padding:14px 20px;padding-top:calc(14px + env(safe-area-inset-top));background:rgba(8,9,13,.78);backdrop-filter:blur(22px);border-bottom:1px solid var(--line)}
 .brand{display:flex;align-items:center;gap:12px;min-width:0}
 .logo{width:42px;height:42px;border-radius:15px;background:linear-gradient(135deg,var(--c1),var(--c2),var(--c3),var(--c4));box-shadow:0 8px 28px rgba(128,137,255,.25)}
@@ -81,7 +81,7 @@ label{display:grid;gap:7px;font-size:12px;color:var(--muted);font-weight:800}
 .toast.show{opacity:1;transform:translateX(-50%)}
 .mobile-nav{display:none}
 @media(max-width:1000px){.stats{grid-template-columns:repeat(2,1fr)}}
-@media(max-width:760px){
+@media(max-width:1099px),(hover:none),(pointer:coarse){
  .layout{display:block;padding:12px 12px 92px}.sidebar{display:none}.topbar{padding-left:14px;padding-right:14px}
  .page-head{align-items:flex-start;flex-direction:column}.page-head h2{font-size:25px}
  .stats{grid-template-columns:1fr 1fr;gap:9px}.stat{padding:14px}.stat .value{font-size:25px}
