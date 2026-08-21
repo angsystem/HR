@@ -1,7 +1,7 @@
-/* ANG HR PWA cache — 2026-08-18 RWD guard offline fallback */
+/* ANG HR PWA cache — 2026-08-21 shared config freshness */
 'use strict';
 
-const CACHE_VERSION = 'ang-hr-20260818-rwd-guard-offline-fallback-v2';
+const CACHE_VERSION = 'ang-hr-20260821-config-network-first-v1';
 const SHELL_CACHE = CACHE_VERSION + '-shell';
 const RUNTIME_CACHE = CACHE_VERSION + '-runtime';
 const APP_SHELL = [
@@ -71,6 +71,22 @@ async function networkFirst(request) {
   }
 }
 
+async function networkFirstConfig(request) {
+  try {
+    const response = await fetch(request);
+    if (response && response.ok) {
+      const cache = await caches.open(RUNTIME_CACHE);
+      cache.put(request, response.clone());
+    }
+    return response;
+  } catch (error) {
+    const exact = await caches.match(request);
+    if (exact) return exact;
+    const shellConfig = await caches.match('./config.js');
+    return shellConfig || Response.error();
+  }
+}
+
 async function staleWhileRevalidate(request) {
   const cache = await caches.open(RUNTIME_CACHE);
   const cached = await cache.match(request);
@@ -90,6 +106,14 @@ self.addEventListener('fetch', (event) => {
 
   if (request.mode === 'navigate') {
     event.respondWith(networkFirst(request));
+    return;
+  }
+
+  // Authentication/provider settings and loader versions must not lag one
+  // navigation behind after a deployment. Prefer the latest config, while
+  // retaining the precached base config as an offline fallback.
+  if (url.pathname.endsWith('/config.js')) {
+    event.respondWith(networkFirstConfig(request));
     return;
   }
 
