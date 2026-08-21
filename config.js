@@ -29,7 +29,7 @@
   var LINE_LIFF_ENV = 'published';
   var LINE_LIFF_ID = LINE_LIFF_IDS[LINE_LIFF_ENV];
   var FACEBOOK_APP_ID = '1053775314267018';
-  var BUILD_VERSION = 'v0.7.6-20260821-register-google-guard-v1';
+  var BUILD_VERSION = 'v0.7.6-20260821-register-google-guard-v2';
 
   function cleanBase(url){
     return String(url || '').trim().replace(/\/+$/, '');
