@@ -6,6 +6,19 @@
     display:block !important;
     grid-template-columns:none !important;
   }
+
+  /* Personal has its own historical @media(min-width:760px) rules that turn
+     tablet layouts into four-column desktop cards and a two-column desktop
+     content region. Keep touch-first tablets on the same two-column/stacked
+     Mobile Web information density as phones, while leaving true Desktop
+     Personal unchanged. */
+  main.app > .content .desktop-cols {
+    display:block !important;
+    grid-template-columns:none !important;
+  }
+  main.app > .content .grid {
+    grid-template-columns:repeat(2,minmax(0,1fr)) !important;
+  }
 }
 
 /* Mobile/Tablet safe-area/content spacing for logged-in workspace pages.
