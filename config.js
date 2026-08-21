@@ -29,7 +29,7 @@
   var LINE_LIFF_ENV = 'published';
   var LINE_LIFF_ID = LINE_LIFF_IDS[LINE_LIFF_ENV];
   var FACEBOOK_APP_ID = '1053775314267018';
-  var BUILD_VERSION = 'v0.7.6-20260817-mobile-topbar-safe-area';
+  var BUILD_VERSION = 'v0.7.6-20260821-register-google-guard-v1';
 
   function cleanBase(url){
     return String(url || '').trim().replace(/\/+$/, '');
@@ -103,6 +103,18 @@
     platformCreatorEmployeeId: 'ANG8963',
     freePrivilegeOwnerId: 'ANG8963'
   };
+
+  // 正式註冊頁 Google：公開 Web 尚未完成 OAuth 回程前 fail-closed，避免未驗證即送出公司建立。
+  try {
+    var currentPath = String(window.location && window.location.pathname || '').toLowerCase();
+    if (/\/register\.html$/.test(currentPath) && window.document && !window.document.querySelector('script[data-ang-register-google-guard]')) {
+      var registerGoogleGuard = window.document.createElement('script');
+      registerGoogleGuard.src = joinUrl(frontendBaseUrl, 'register-google-guard.js') + '?v=' + encodeURIComponent(BUILD_VERSION);
+      registerGoogleGuard.defer = true;
+      registerGoogleGuard.setAttribute('data-ang-register-google-guard', '1');
+      (window.document.head || window.document.documentElement).appendChild(registerGoogleGuard);
+    }
+  } catch (e) {}
 
   // 共用 Web RWD guard：修正登入後舊 768px desktop-grid 規則誤套到 touch-first 平板。
   try {
